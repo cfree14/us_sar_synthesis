@@ -23,9 +23,15 @@ stock_key <- readxl::read_excel("data/stock_key_pacific.xlsx")
 freeR::which_duplicated(stock_key$stock) # must have no duplicates
 
 # To do list
-# Check for missing values in data_orig; fill in true NAs with N/A; 
-# expand workflow to confirm that only true NAs are present
-# Record the SIM modifiers
+# - Check for missing values in data_orig; fill in true NAs with N/A; expand workflow to confirm that only true NAs are present
+# - Record the SIM modifiers
+# - Derive non-fish SIM
+# - Mark revision years
+# - Extract survey years
+
+# Checks 
+# 1) Are PBR calculations aligned?
+# 2) Is total SIM larger than fisheries SIM?
 
 
 # Step 1. Merge
@@ -63,7 +69,7 @@ data1 <- data_orig %>%
   mutate(year = str_split(filename, "_", simplify = TRUE)[, 2] %>% as.numeric(.)) %>% 
   # Convert to numeric
   mutate_at(vars(n_est, n_cv, n_min, r_max, rf, pbr,
-                 survey1, survey2, survey3, revised), .funs=as.numeric) %>% 
+                 survey1, survey2, survey3, revision_yr), .funs=as.numeric) %>% 
   # Fix strategic (yes/no) 
   mutate(strategic_yn=recode(strategic_yn,
                              "Y"="Strategic",
@@ -100,21 +106,33 @@ data1 <- data_orig %>%
   # Format SIM fisheries
   mutate(sim_fish_orig=gsub(" ", "", sim_fish_orig), 
          sim_fish=gsub("|<|>|≥|.*-", "", sim_fish_orig) %>% as.numeric()) %>% 
+  # Derive PBR
+  mutate(pbr_derived=n_min*(r_max/2)*rf,
+         pbr_check=round(pbr_derived - pbr, 0)) %>%
+  # Format revised (yes/no)
+  mutate(revised_yn=ifelse(revised_yn=="yes" & !is.na(revised_yn), "Revised", "Same as previous")) %>% 
   # Arrange
   select(-region) %>% 
   select(filename, year, 
          group, comm_name, species, 
          area, center, 
-         n_est, n_cv, n_min, r_max, rf, pbr, 
+         n_est, n_cv, n_min, r_max, rf, 
+         pbr, pbr_derived, pbr_check,
          sim_tot_orig, sim_tot,
          sim_fish_orig, sim_fish,
          strategic_yn,
-         survey1, survey2, survey3, revised, notes,
+         survey1, survey2, survey3, revision_yr, revised_yn, notes,
          everything())
 
 # Inspect
 str(data1)
 freeR::complete(data1)
+
+# Number of revised stocks per year
+revision_stats <- data1 %>% 
+  group_by(year) %>% 
+  summarize(nrevised=sum(revised_yn=="yes" & !is.na(revised_yn))) %>% 
+  ungroup()
 
 # Center
 table(data1$year)
@@ -241,11 +259,12 @@ data2 <- data1 %>%
          group, 
          stock, comm_name, species, 
          region, area, center, 
-         n_est, n_cv, n_min, r_max, rf, pbr, 
+         n_est, n_cv, n_min, r_max, rf, 
+         pbr, pbr_derived, pbr_check,
          sim_tot_orig, sim_tot,
          sim_fish_orig, sim_fish,
          strategic_yn,
-         survey1, survey2, survey3, revised, notes,
+         survey1, survey2, survey3, revised_yn, notes,
          everything())
 
 # Inspect
@@ -260,8 +279,34 @@ data2 %>%
   count(stock, year) %>% 
   filter(n!=1)
 
+
+# Step 3. Expand 1999 stocks
+################################################################################
+
+# Build missing 1999 stocks
+data99 <- data2 %>% 
+  filter(year==1999)
+data98 <- data2 %>% 
+  filter(year==1998)
+data99_not_updated <- data98 %>% 
+  # Reduce to stocks excluded from 1999 table
+  filter(!stock %in% data99$stock) %>% 
+  # Update to reflect 1999
+  mutate(year=1999,
+         filename="1999 SAR (not included in 1999 SAR table)", 
+         revised_yn="Same as previous")
+
+# Add missing 1999 stocks to data
+data3 <- bind_rows(data2, data99_not_updated) %>% 
+  arrange(year, region, group)
+
+
+# Check 
+################################################################################
+
+
 #
-ggplot(data2 %>% filter(group=="Dolphins"), # Phocids, Otariids, Porpoises, Small whales, Large whales, 
+ggplot(data3 %>% filter(group=="Porpoises"), # Phocids, Otariids, Porpoises, Small whales, Large whales, Dolphins
        aes(y=stock, x=year, fill=strategic_yn)) +
   facet_grid(group+region~., scale="free_y", space="free_y") +
   geom_tile() +
@@ -272,13 +317,9 @@ ggplot(data2 %>% filter(group=="Dolphins"), # Phocids, Otariids, Porpoises, Smal
   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
 
 
-# Calclate PBR
-# mutate(pbr_calc=n_min*(r_max/2)*rf, 
-#        pbr_check=pbr-pbr_calc) %>% 
-
 # Export
 ################################################################################
 
 # Export data
-saveRDS(data2, file=file.path(outdir, "Pacific_SARs_parameters.Rds"))
+saveRDS(data3, file=file.path(outdir, "Pacific_SARs_parameters.Rds"))
 
