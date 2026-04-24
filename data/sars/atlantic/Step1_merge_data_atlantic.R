@@ -34,7 +34,8 @@ data_orig <- purrr::map_df(files2merge, function(x){
                            na=c("-", "unk", "undet", "n/a", "N/A", "NA", 
                                 "unk for all but 2 stocks", "undet for all but 2 stocks",
                                 "unk for all but 3 stocks", "undet for all but 3 stocks",
-                                "unk for all but 4 stocks", "undet for all but 4 stocks")) %>% 
+                                "unk for all but 4 stocks", "undet for all but 4 stocks",
+                                "unk for all but 6 stocks", "undet for all but 6 stocks")) %>% 
     mutate(filename=x)
 })
 
@@ -100,7 +101,7 @@ data <- data_orig %>%
   # Remove useless
   # select(-id) %>% 
   # Arrange
-  select(filename, year, 
+  select(filename, year, id, 
          group, comm_name, species, 
          center, region, area,
          n, n_cv, 
@@ -130,9 +131,6 @@ table(data$strategic_yn)
 # Revised info
 table(data$revised_yn)
 table(data$revised_yr)
-sort(unique(data$revised))
-
-# Revised
 sort(unique(data$revised))
 
 # RF and Rmax
@@ -319,7 +317,7 @@ data1 <- data %>%
          group, comm_name, species, 
          center, region, area,
          n, n_cv, n_min,
-         r_max, rf, pbr, msi_total, msi_total_cv, msi_fisheries, strategic_yn,
+         r_max, rf, pbr, msi_total, msi_fisheries, msi_fisheries_cv, strategic_yn,
          revised, 
          everything())
 
