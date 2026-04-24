@@ -29,7 +29,12 @@ species_key <- readxl::read_excel("data/species_key.xlsx")
 # Read data
 files2merge <- list.files(indir, pattern=".xlsx")
 data_orig <- purrr::map_df(files2merge, function(x){
-  df <- readxl::read_excel(file.path(indir, x), na=c("-", "unk", "undet", "n/a", "N/A", "NA")) %>% 
+  df <- readxl::read_excel(file.path(indir, x), 
+                           col_types = "text",
+                           na=c("-", "unk", "undet", "n/a", "N/A", "NA", 
+                                "unk for all but 2 stocks", "undet for all but 2 stocks",
+                                "unk for all but 3 stocks", "undet for all but 3 stocks",
+                                "unk for all but 4 stocks", "undet for all but 4 stocks")) %>% 
     mutate(filename=x)
 })
 
@@ -69,7 +74,7 @@ data <- data_orig %>%
   # Format N CV
   #mutate(n_cv=gsub(" k", "", n_cv)) %>% 
   # Convert to numeric
-  mutate_at(vars(rf), as.numeric) %>% # n_cv
+  mutate_at(vars(n, n_cv, n_min, r_max, rf, pbr), as.numeric) %>% # n_cv
   # Format Rmax
   # mutate(r_max=recode(r_max,
   #                     "0.02a" = "0.02",
@@ -98,10 +103,10 @@ data <- data_orig %>%
   select(filename, year, 
          group, comm_name, species, 
          center, region, area,
-         #n, #n_cv, 
+         n, n_cv, 
          n_min,
          r_max, rf, pbr, msi_total, 
-        # msi_total_cv,
+         #msi_total_cv,
          msi_fisheries, msi_fisheries_cv,
          strategic_yn,
          revised_yn, revised_yr, revised,
