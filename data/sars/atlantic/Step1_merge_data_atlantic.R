@@ -72,48 +72,45 @@ data <- data_orig %>%
   left_join(species_key, by="comm_name") %>% 
   # Format area
   mutate(area=gsub("\r\n", " ", area) %>% stringr::str_squish(.)) %>% 
-  # Format N CV
-  #mutate(n_cv=gsub(" k", "", n_cv)) %>% 
   # Convert to numeric
-  mutate_at(vars(n, n_cv, n_min, r_max, rf, pbr), as.numeric) %>% # n_cv
-  # Format Rmax
-  # mutate(r_max=recode(r_max,
-  #                     "0.02a" = "0.02",
-  #                     "0.04a"="0.04") %>% as.numeric(.)) %>%
-  # Format N
-  # mutate(n=gsub(",", "", n),
-  #        n=case_when(grepl("unk", n) ~ "",
-  #                    n=="7.6M" ~ "7600000",
-  #                    T ~ n),
-  #        n=gsub("[^0-9]", "", n) %>% as.numeric(.)) %>% 
+  mutate_at(vars(n, n_cv, n_min, r_max, rf, pbr, msi_fisheries_cv), as.numeric) %>% 
+  # Format revised (y/n) before extracting year
+  mutate(revised_yn=stringr::str_squish(revised_yn),
+         revised_yn=recode(revised_yn,
+                           "N (2011" = "N (2011)", 
+                           "N 2007" = "N (2007)")) %>% 
   # Extracted revision yr
-  mutate(revised_yr=str_extract(revised_yn, "(?<=\\()\\d+(?=\\))") %>% as.numeric()) %>%
+  mutate(revised_yr1=str_extract(revised_yn, "(?<=\\()\\d+(?=\\))") %>% as.numeric()) %>%
+  # Merge provided and extracted revision year
+  mutate(revised_yr=ifelse(!is.na(revised_yr), revised_yr, revised_yr1)) %>% 
+  select(-revised_yr1) %>% 
   # Clean revised yes/no
-  mutate(revised_yn=str_remove_all(revised_yn, "[0-9() ]")) %>% 
-  # Fill missing revision year
-  mutate(revised_yr=ifelse(is.na(revised_yr) & revised_yn=="Y", year, revised_yr) ) %>% 
+  mutate(revised_yn=str_remove_all(revised_yn, "[0-9() ]")) %>%
+  # Fill missing revision year for years with revised==yes
+  mutate(revised_yr=ifelse(is.na(revised_yr) & revised_yn=="Y", year, revised_yr) ) %>%
   # Add "nothing" to revision notes when no revision occured
   mutate(revised=ifelse(is.na(revised) & revised_yn=="N", "nothing", revised)) %>% 
+  # Format revised
+  mutate(revised=recode(revised,
+                        "p, m" = "m, p",
+                        "strandings"="stranding data")) %>% 
   # Format strategic (Y/N)
   mutate(strategic_yn=recode(strategic_yn, 
                              "Y"="Strategic",
                              "N"="Non-strategic")) %>% 
   # Remove useless
-  # select(-id) %>% 
+  select(-id) %>% 
   # Arrange
-  select(filename, year, id, 
+  select(filename, year, #id, 
          group, comm_name, species, 
          center, region, area,
          n, n_cv, 
          n_min,
          r_max, rf, pbr, msi_total, 
-         #msi_total_cv,
          msi_fisheries, msi_fisheries_cv,
          strategic_yn,
          revised_yn, revised_yr, revised,
          everything())
-
-# N, N_CV, N_MIN, PBR, MSI, MSI_CV, MSI_FISHERIES
 
 # Inspect
 str(data)
@@ -129,7 +126,7 @@ table(data$center)
 table(data$strategic_yn)
 
 # Revised info
-table(data$revised_yn)
+sort(unique(data$revised_yn))
 table(data$revised_yr)
 sort(unique(data$revised))
 
