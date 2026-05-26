@@ -15,6 +15,8 @@ outdir <- "data/sars/alaska/processed"
 # Species key
 species_key <- readxl::read_excel("data/species_key.xlsx")
 
+# Killer whale stocks are super confusing - review carefully
+
 
 # Merge data
 ################################################################################
@@ -25,7 +27,7 @@ data_orig <- purrr::map_df(files2merge, function(x){
   
   # Read file
   df <- readxl::read_excel(file.path(indir, x), 
-                           na=c("-", "unk", "undet", "n/a", "N/A", "UNDET", "b"), 
+                           na=c("-", "unk", "undet", "n/a", "N/A", "UNDET", "UNK", "b", "see txt", "seetxt"), 
                            col_types = "text") %>% 
     # Add filename
     mutate(filename=x) %>% 
@@ -57,6 +59,9 @@ data <- data_orig %>%
   # Format species
   mutate(comm_name=stringr::str_squish(comm_name),
          comm_name=recode(comm_name,
+                          "Pac white-sided dolphin"="Pacific white-sided dolphin",
+                          "Pacific white- sided dolphin"="Pacific white-sided dolphin",
+                          "Northern right whale"="North Pacific right whale",
                           "Right whale"="North Pacific right whale")) %>% 
   # Add species info
   left_join(species_key, by="comm_name") %>% 
@@ -70,51 +75,92 @@ data <- data_orig %>%
   mutate(revised=recode(revised, 
                         "N/A (New SAR in 2022)"="2022", 
                         "N/A (New SAR in 2023)"="2023") %>% as.numeric(.)) %>% 
+  # Format N_est
+  mutate(n_est=gsub("\r|,", "", n_est),
+         n_est=gsub("[A-Za-z]+$", "", n_est)) %>% 
+  # Format N Min
+  mutate(n_min=gsub(",", "", n_min),
+         pbr=gsub(",", "", pbr)) %>% 
   # Format SIM fisheries
   mutate(sim_fisheries=recode(sim_fisheries, 
                               "51.6a"="51.6")) %>% 
   # Convert numeric
-  # Neet to format N_MIN, N_CV, PBR, survey_interval, etc
-  mutate_at(vars(r_max, rf, n_cv, sim_fisheries, sim_native), as.numeric) %>% #
+  # Neet to format N_MIN, N_CV, PBR, survey_interval, n_cv, sim_fisheries, sim_native, etc
+  mutate_at(vars(r_max, rf, n_est, n_cv, n_min, pbr,
+                 sim_total, sim_native, sim_fisheries), as.numeric) %>% #
   # Format areas
   mutate(area=gsub("\r", " ", area), 
          area=gsub("E. ", "Eastern ", area),
+         area=gsub("East. ", "Eastern ", area),
          area=gsub("W. ", "Western ", area),
+         area=gsub("West. ", "Western ", area),
          area=gsub("N. ", "North ", area),
          area=gsub("SE", "Southeast", area),
          area=gsub("U. S.", "U.S.", area),
          area=gsub("/ ", "/", area),
+         area=gsub("transient", "Transient", area),
+         area=gsub("resident", "Resident", area),
          area=recode(area,
-                     "AT1 transient"="AT1 Transient",
+                     "Unidentified stock"="Unidentified",
+                     # Make longer
                      "Cook Inlet/Shelikof"="Cook Inlet/Shelikof Strait",
                      "Sitka/Chatham"="Sitka/Chatham Strait",
                      "Lynn Canal/Stephens"="Lynn Canal/Stephens Passage",
-                     "Unidentified stock"="Unidentified",
-                     "Eastern US only"="Eastern U.S.",
-                     "Western"="Western U.S.",
+                     "Beaufort" = "Beaufort Sea",
+                     # Eastern North Pacific
                      "Eastern Pacific"="Eastern North Pacific",
+                     "Eastern North Pac."= "Eastern North Pacific",
+                     "Western North Pac."= "Western North Pacific",
+                     # Central North Pacific
+                     "Cent.North Pacific"="North Pacific",
                      "Cent. North Pacific"="North Pacific",
+                     "Central North Pacific"="North Pacific",
+                     # Harbor porpoise
+                     "Alaska-aerial" ="Alaska (aerial survey)",
+                     "Alaska-vessel" ="Alaska (vessel survey)",
+                     # Eastern/Western U.S.
+                     "East. U.S." = "Eastern U.S.",
+                     "Eastern US only"="Eastern U.S.",
+                     "W.U.S." ='Western U.S.',
+                     "Western"="Western U.S.",
                      # Humpback craziness
+                     "CNorth - entire stock" = "Central North Pacific",
+                     "Central North Pacific - entire stock" = "Central North Pacific",
+                     "CNorth - SoutheastAK feeding area" = "CNP-SEAK/NBC feeding area",
+                     "CNorth - SoutheastAK/NBC feeding area" = "CNP-SEAK/NBC feeding area",
+                     "CNorth - BS/AI feeding area" = "CNP-BS/AI feeding area",               
+                     "CNorth - GOA feeding area" = "CNP-GOA feeding area",           
                      # ENP Alaska Resident
                      "Alaska Resident" = "ENP Alaska Resident",
                      "Eastern North Pacific Alaska Resident" = "ENP Alaska Resident",
                      # ENP GOA/BSAI Transient
                      "GOA, AI, BS Transient" = "ENP GOA/BSAI Transient",
                      "Eastern North Pacific Gulf of Alaska, Aleutian Islands, and Bering Sea Transient" = "ENP GOA/BSAI Transient",
+                     # ENP Transient
+                     "Transient" = "ENP Transient",
+                     "Eastern North Pacific Transient" = "ENP Transient",
                      # ENP Northern Resident (British Columbia)
+                     "Resident" = "ENP Northern Resident (British Columbia)", 
+                     "Northern resident (British Columbia" = "ENP Northern Resident (British Columbia)",
                      "Northern Resident (British Columbia" = "ENP Northern Resident (British Columbia)",
+                     "Eastern North Pacific North Resident" = "ENP Northern Resident (British Columbia)",
                      "Eastern North Pacific Northern Resident" = "ENP Northern Resident (British Columbia)",
                      "Eastern North Pacific Northern Resident (British Columbia" = "ENP Northern Resident (British Columbia)",                      
                      "Eastern North Pacific Northern Resident [British Columbia]" = "ENP Northern Resident (British Columbia)",
                      ),
-         area=case_when(comm_name=="Spotted seal" & area %in% c("Bering", "Alaska") ~ "Bering stock",
+         # Species-specific fixes
+         area=case_when(comm_name=="Humpback whale" & area %in% c("North Pacific") ~ "Central North Pacific",
+                        comm_name=="Sperm whale" & area %in% c("Alaska") ~ "North Pacific",
+                        comm_name=="North Pacific right whale" & area %in% c("North Pacific") ~ "Eastern North Pacific",
+                        comm_name=="Fin whale" & area %in% c("Alaska", "North Pacific") ~ "Northeast Pacific",
+                        comm_name=="Spotted seal" & area %in% c("Bering", "Alaska") ~ "Bering stock",
                         comm_name=="Ringed seal" & area %in% c("Arctic", "Alaska") ~ "Arctic stock",
                         comm_name=="Bearded seal" & area %in% c("Beringia", "Alaska") ~ "Beringia stock",
                         T ~ area)) %>% 
   # Arrange
   select(filename, year, region, group, comm_name, species, area,
-         n_est, n_cv, n_min, r_max, rf, pbr,
-         sim_fisheries, sim_native, sim_total, strategic_yn, 
+         n_est, n_est_notes, n_cv, n_min, n_min_notes, r_max, rf, pbr, pbr_notes,
+         sim_fisheries, sim_native, sim_total, sim_total_notes, strategic_yn, 
          last_survey, survey_interval, updated_yn, revised, comments, everything())
 
 # Inspect
@@ -127,10 +173,11 @@ sort(unique(data$area))
 # Strategic
 table(data$strategic_yn)
 
-sort(unique(data$n_est))
-sort(unique(data$n_min))
-sort(unique(data$sim_total))
-sort(unique(data$sim_native))
+# Rmax
+freeR::uniq(data$r_max)
+
+# RF
+freeR::uniq(data$rf)
 
 # Last survey
 sort(unique(data$last_survey))
@@ -142,6 +189,17 @@ sort(unique(data$updated_yn))
 # Revised year
 sort(unique(data$revised))
 
+# N values
+freeR::uniq(data$n_est)
+freeR::uniq(data$n_cv)
+freeR::uniq(data$n_min)
+freeR::uniq(data$pbr)
+
+# SIM
+freeR::uniq(data$sim_total)
+freeR::uniq(data$sim_native)
+freeR::uniq(data$sim_fisheries)
+
 
 # Visualize stocks
 ################################################################################
@@ -149,17 +207,20 @@ sort(unique(data$revised))
 # Confirm 1 row per stock
 count(data, comm_name, area, year) %>% filter(n>1)
 
-# Done: Otariids, Porpoises, Small whales, Dolphins, Phocids
-# Working: Large whales
-ggplot(data, #%>% filter(group=="Large whales"), 
+# Done: Otariids, Porpoises, Dolphins, Phocids, Large whales
+# Working: Small whales
+ggplot(data, 
        aes(x=year, 
            y=paste(comm_name, area, sep="-"), fill=strategic_yn)) +
   facet_grid(group~., scales="free_y", space="free_y") +
   geom_tile() +
   # Labels
-  labs(x="Year", y="") +
+  labs(x="Year", y="", fill='Status') +
+  scale_x_continuous(breaks=seq(1992, 2026,2)) +
+  # Legend
   # Theme
-  theme_bw()
+  theme_bw() +
+  theme(legend.position = "top")
 
 
 # Export data
