@@ -145,6 +145,8 @@ spp_key <- data %>%
 # cv_key <- data %>% 
 #   count(n_cv)
 
+freeR::uniq(data$msi_total)
+
 
 # Fix areas
 ################################################################################
