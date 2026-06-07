@@ -98,6 +98,11 @@ data <- data_orig %>%
   mutate(strategic_yn=recode(strategic_yn, 
                              "Y"="Strategic",
                              "N"="Non-strategic")) %>% 
+  # Format MSI total
+  # rename(msi_total_orig=msi_total) %>% 
+  # mutate(msi_total = ifelse(grepl("-", msi_total_orig),
+  #                             sub(".*-", "", msi_total_orig),
+  #                             msi_total_orig) %>% as.numeric(.)) 
   # Remove useless
   select(-id) %>% 
   # Arrange
@@ -131,19 +136,20 @@ table(data$revised_yr)
 sort(unique(data$revised))
 
 # RF and Rmax
+range(data$rf, na.rm=T) # Can RF really bye 0.05?
+range(data$r_max, na.rm=T) # Rmax's should not be zero
 table(data$rf)
 table(data$r_max)
 
 # N values
-# sort(unique(data$n))
+sort(unique(data$n))
 sort(unique(data$n_min))
 
 # Species
 spp_key <- data %>% 
   count(comm_name, species)
 
-# cv_key <- data %>% 
-#   count(n_cv)
+
 
 freeR::uniq(data$msi_total)
 
@@ -330,7 +336,7 @@ ggplot(data1 %>% filter(group=="Dolphins" & grepl("Common", comm_name)), aes(y=a
   theme_bw()
 
 # Large whales, Small whales, Porpoises, Phocids, Dolphins
-ggplot(data1 %>% filter(group=="Phocids"), aes(y=stock, x=year, fill=strategic_yn)) +
+ggplot(data1 %>% filter(group=="Large whales"), aes(y=stock, x=year, fill=strategic_yn)) +
   geom_tile() +
   theme_bw()
 

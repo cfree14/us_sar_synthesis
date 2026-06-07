@@ -76,6 +76,7 @@ my_theme <-  theme(axis.text=element_text(size=8),
                    legend.title=element_text(size=9),
                    strip.text=element_text(size=8),
                    plot.title=element_text(size=9),
+                   plot.tag=element_text(size=9),
                    # Gridlines
                    panel.grid.major.x = element_blank(), 
                    panel.grid.minor = element_blank(),
@@ -89,12 +90,16 @@ my_theme <-  theme(axis.text=element_text(size=8),
 
 # Percent default
 g1 <- ggplot(stats, aes(y=region1, x=prop, fill=rmax_type)) +
-  facet_wrap(~group, ncol=1) +
+  facet_grid(group~., scales="free_y", space="free_y") +
+  # facet_wrap(~group, ncol=1) + # Shows Atlantic Otariids 
+  # Data
   geom_col(position = position_stack(reverse = TRUE)) + 
   # Labels
   labs(x="Percent of stocks", y="", tag="A") +
+  scale_x_continuous(labels=scales::percent_format()) +
   # Legend
-  scale_fill_manual(name="Rmax type", values=c("grey30", "red", "blue"),
+  scale_fill_manual(name=expression("R"["max"]*" type"), 
+                     values=c("grey80", "red", "blue"),
                     guide = guide_legend(title.position = "top")) +
   # Theme
   theme_bw() + my_theme +
@@ -102,18 +107,22 @@ g1 <- ggplot(stats, aes(y=region1, x=prop, fill=rmax_type)) +
 g1
 
 g2 <- ggplot(stats1, aes(y=region1, x=r_max, size=prop)) +
-  facet_wrap(~group, ncol=1) +
+  facet_grid(group~., scales="free_y", space="free_y") +
+  # facet_wrap(~group, ncol=1) + # Shows Atlantic Otariids 
+  # Data
+  geom_point(mapping=aes(color=rmax_type)) +
   # Ref lines
   geom_vline(data=ref_lines, mapping=aes(xintercept = rmax_default), 
              color="grey30", linetype="dotted", inherit.aes = F) +
-  # Data
-  geom_point(mapping=aes(color=rmax_type)) +
   # Labels
-  labs(x="Rmax", y="", tag="B") +
+  labs(x=expression("R"["max"]), y="", tag="B") +
   scale_x_continuous(lim=c(0, NA), breaks=seq(0,0.2,0.02)) +
   # Legend
-  scale_color_manual(name="Rmax type", values=c("grey30", "red", "blue"), guide="none") +
-  scale_size_continuous(name="% of stocks", labels=scales::percent_format(), guide = guide_legend(title.position = "top")) +
+  scale_color_manual(name=expression("R"["max"]*" type"), 
+                     values=c("grey80", "red", "blue"), guide="none") +
+  scale_size_continuous(name="Percent of stocks", 
+                        labels=scales::percent_format(), 
+                        guide = guide_legend(title.position = "top")) +
   # Theme
   theme_bw() + my_theme +
   theme(legend.position = "top")

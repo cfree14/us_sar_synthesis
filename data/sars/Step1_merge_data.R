@@ -82,7 +82,11 @@ ak <- ak_orig %>%
 ################################################################################
 
 # Merge
-data <- bind_rows(pac, atl, ak)
+data <- bind_rows(pac, atl, ak) %>% 
+  # Add stock
+  mutate(stock=paste0(comm_name, " (", area, ")")) %>% 
+  # Arrange
+  select(region1:group, stock, everything())
 
 # Inspect
 str(data)
