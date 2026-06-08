@@ -107,7 +107,7 @@ g1 <- ggplot(stats, aes(x=nmin_ratio, y=pbr_ratio, fill=rf_change)) +
                      breaks=c(0.01, 0.1, 1, 10, 100, 1000),
                      labels=c("0.01", "0.1", "1", "10", "100", "1000")) +
   # Labs
-  labs(x="Nmin ratio", y="PBR ratio", tag="A") +
+  labs(x="Nmin ratio\n(final / initial)", y="PBR ratio\n(final / initial)", tag="A") +
   # Legend
   scale_fill_gradient2(mid="white", high="navy", low="darkred") +
   # Theme
@@ -126,7 +126,7 @@ g2 <- ggplot(stats2, aes(x=n_ratio, y=pbr_ratio, fill=rf_change)) +
   # 1:1 line
   geom_abline(slope=1) +
   annotate(geom="text", x=0.1, y=100, label="PBR generous", size=2) +
-  annotate(geom="text", x=100, y=0.1, label="PBR constrained", size=2) +
+  annotate(geom="text", x=10, y=0.1, label="PBR constrained", size=2) +
   # Axes
   # lims(x=c(0, 40), y=c(0, 40)) +
   scale_x_continuous(trans="log10", 
@@ -136,9 +136,9 @@ g2 <- ggplot(stats2, aes(x=n_ratio, y=pbr_ratio, fill=rf_change)) +
                      breaks=c(0.01, 0.1, 1, 10, 100, 1000),
                      labels=c("0.01", "0.1", "1", "10", "100", "1000")) +
   # Labs
-  labs(x="N ratio", y="PBR ratio", tag="B") +
+  labs(x="N ratio\n(final / initial)", y="PBR ratio\n(final / initial)", tag="B") +
   # Legend
-  scale_fill_gradient2(name="ΔRecovery factor\n(end-start)", mid="white", high="navy", low="darkred") +
+  scale_fill_gradient2(name="ΔRecovery factor\n(final - initial)", mid="white", high="navy", low="darkred") +
   guides(fill = guide_colorbar(ticks.colour = "black", frame.colour = "black", frame.linewidth = 0.2)) +
   # Theme
   theme_bw() + my_theme +
@@ -151,7 +151,7 @@ g <- gridExtra::grid.arrange(g1, g2, nrow=1, widths=c(0.4, 0.6))
 
 # Export
 ggsave(g, filename=file.path(plotdir, "FigX_change_in_pbr_vs_abundance.png"),
-       width=6.5, height=3, units="in", dpi=600, bg="white")
+       width=6.5, height=2.75, units="in", dpi=600, bg="white")
 
 
 
