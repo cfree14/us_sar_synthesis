@@ -9,8 +9,8 @@ rm(list = ls())
 library(tidyverse)
 
 # Directories
-indir <- "data/sars/atlantic/tables"
-outdir <- "data/sars/atlantic/processed"
+indir <- "/Users/cfree/Dropbox/us_sar_synthesis_data/atlantic/tables"
+outdir <- "data/sars/processed"
 
 # Species key
 species_key <- readxl::read_excel("data/species_key.xlsx")

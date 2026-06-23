@@ -9,8 +9,8 @@ rm(list = ls())
 library(tidyverse)
 
 # Directories
-indir <- "data/sars/alaska/tables"
-outdir <- "data/sars/alaska/processed"
+indir <- "/Users/cfree/Dropbox/us_sar_synthesis_data/alaska/tables"
+outdir <- "data/sars/processed"
 
 # Species key
 species_key <- readxl::read_excel("data/species_key.xlsx")
@@ -37,7 +37,8 @@ data_orig <- purrr::map_df(files2merge, function(x){
                     "sim_fisheries" = "sim_fishery",
                     "rf" = "fr",
                     "strategic_yn" = "stragetig_yn",
-                    "survey_interval" = "years_since")))
+                    "survey_interval" = "years_since",
+                    "updated_yn"="revised_yn")))
   
 })
 
@@ -121,6 +122,7 @@ data <- data_orig %>%
                      # Eastern/Western U.S.
                      "East. U.S." = "Eastern U.S.",
                      "Eastern US only"="Eastern U.S.",
+                     "Eastern" = "Eastern U.S.",
                      "W.U.S." ='Western U.S.',
                      "Western"="Western U.S.",
                      # Humpback craziness
@@ -129,7 +131,8 @@ data <- data_orig %>%
                      "CNorth - SoutheastAK feeding area" = "CNP-SEAK/NBC feeding area",
                      "CNorth - SoutheastAK/NBC feeding area" = "CNP-SEAK/NBC feeding area",
                      "CNorth - BS/AI feeding area" = "CNP-BS/AI feeding area",               
-                     "CNorth - GOA feeding area" = "CNP-GOA feeding area",           
+                     "CNorth - GOA feeding area" = "CNP-GOA feeding area", 
+                     "Hawaiʻi" = "Hawaii",
                      # ENP Alaska Resident
                      "Alaska Resident" = "ENP Alaska Resident",
                      "Eastern North Pacific Alaska Resident" = "ENP Alaska Resident",
@@ -209,7 +212,7 @@ count(data, comm_name, area, year) %>% filter(n>1)
 
 # Done: Otariids, Porpoises, Dolphins, Phocids, Large whales
 # Working: Small whales
-ggplot(data, 
+ggplot(data, #%>% filter(group=="Small whales"), 
        aes(x=year, 
            y=paste(comm_name, area, sep="-"), fill=strategic_yn)) +
   facet_grid(group~., scales="free_y", space="free_y") +

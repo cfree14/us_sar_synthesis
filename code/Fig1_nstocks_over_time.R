@@ -9,7 +9,7 @@ rm(list = ls())
 library(tidyverse)
 
 # Directories
-outdir <- "data/sars/merged"
+outdir <- "data/sars/processed"
 plotdir <- "figures"
 
 # Read data
@@ -88,6 +88,6 @@ g <- ggplot(nstocks_ord, aes(x=year, y=nstocks, color=region1)) +
 g
 
 # Export
-ggsave(g, filename=file.path(plotdir, "FigX_nstocks_over_time.png"), 
+ggsave(g, filename=file.path(plotdir, "Fig1_nstocks_over_time.png"), 
        width=6.5, height=4, units="in", dpi=600, bg="white")
 

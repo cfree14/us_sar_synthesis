@@ -9,7 +9,7 @@ rm(list = ls())
 library(tidyverse)
 
 # Directories
-outdir <- "data/sars/merged"
+outdir <- "data/sars/processed"
 plotdir <- "figures"
 
 # Read data
@@ -53,7 +53,7 @@ g <- ggplot(data_orig %>% filter(region1=="Alaska"),
 g
 
 # Export
-ggsave(g, filename=file.path(plotdir, "FigSX_sar_coverage_ak.png"), 
+ggsave(g, filename=file.path(plotdir, "FigS1_sar_coverage_ak.png"), 
        width=6.5, height=7.0, units="in", dpi=600, bg="white")
 
 
@@ -75,7 +75,7 @@ g <- ggplot(data_orig %>% filter(region1=="Pacific"),
 g
 
 # Export
-ggsave(g, filename=file.path(plotdir, "FigSX_sar_coverage_pacific.png"), 
+ggsave(g, filename=file.path(plotdir, "FigS2_sar_coverage_pacific.png"), 
        width=6.5, height=7.0, units="in", dpi=600, bg="white")
 
 
@@ -97,5 +97,5 @@ g <- ggplot(data_orig %>% filter(region1=="Atlantic"),
 g
 
 # Export
-ggsave(g, filename=file.path(plotdir, "FigSX_sar_coverage_atlantic.png"), 
+ggsave(g, filename=file.path(plotdir, "FigS3_sar_coverage_atlantic.png"), 
        width=6.5, height=7.0, units="in", dpi=600, bg="white")

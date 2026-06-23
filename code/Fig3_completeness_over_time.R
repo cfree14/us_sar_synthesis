@@ -9,7 +9,7 @@ rm(list = ls())
 library(tidyverse)
 
 # Directories
-outdir <- "data/sars/merged"
+outdir <- "data/sars/processed"
 plotdir <- "figures"
 
 # Read data
@@ -80,7 +80,7 @@ g <- ggplot(stats, aes(x=year, y=p_complete, color=region1)) +
 g
 
 # Export
-ggsave(g, filename=file.path(plotdir, "FigX_completeness_over_time.png"), 
+ggsave(g, filename=file.path(plotdir, "Fig3_completeness_over_time.png"), 
        width=6.5, height=6.5, units="in", dpi=600, bg="white")
 
 

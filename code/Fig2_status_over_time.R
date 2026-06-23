@@ -9,7 +9,7 @@ rm(list = ls())
 library(tidyverse)
 
 # Directories
-outdir <- "data/sars/merged"
+outdir <- "data/sars/processed"
 plotdir <- "figures"
 
 # Read data
@@ -104,7 +104,7 @@ g2
 g <- gridExtra::grid.arrange(g1, g2, nrow=1, widths=c(0.4, 0.6))
 
 # Export
-ggsave(g, filename=file.path(plotdir, "FigX_status_over_time.png"), 
+ggsave(g, filename=file.path(plotdir, "Fig2_status_over_time.png"), 
        width=6.5, height=3, units="in", dpi=600, bg="white")
 
 

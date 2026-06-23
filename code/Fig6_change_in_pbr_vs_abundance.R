@@ -9,7 +9,7 @@ rm(list = ls())
 library(tidyverse)
 
 # Directories
-outdir <- "data/sars/merged"
+outdir <- "data/sars/processed"
 plotdir <- "figures"
 
 # Read data
@@ -150,10 +150,7 @@ g <- gridExtra::grid.arrange(g1, g2, nrow=1, widths=c(0.4, 0.6))
 
 
 # Export
-ggsave(g, filename=file.path(plotdir, "FigX_change_in_pbr_vs_abundance.png"),
+ggsave(g, filename=file.path(plotdir, "Fig6_change_in_pbr_vs_abundance.png"),
        width=6.5, height=2.75, units="in", dpi=600, bg="white")
-
-
-
 
 

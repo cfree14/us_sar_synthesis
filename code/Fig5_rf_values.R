@@ -9,7 +9,7 @@ rm(list = ls())
 library(tidyverse)
 
 # Directories
-outdir <- "data/sars/merged"
+outdir <- "data/sars/processed"
 plotdir <- "figures"
 
 # Read data
@@ -63,7 +63,7 @@ g
 
 
 # Export
-ggsave(g, filename=file.path(plotdir, "FigX_rf_values.png"), 
+ggsave(g, filename=file.path(plotdir, "Fig5_rf_values.png"), 
        width=6.5, height=3., units="in", dpi=600, bg="white")
 
 
