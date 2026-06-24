@@ -171,8 +171,8 @@ data1 <- data %>%
          area=gsub(" south", " South", area),
          area=gsub(" central", " Central", area),
          area=gsub(" migratory", " Migratory", area),
-         
          area=recode(area,
+                     "Gulf of America" = "Gulf of Mexico",
                      "Gulf of Maine/ Bay of Fundy" = "Gulf of Maine/Bay of Fundy",
                      "Gulf of Maine, Bay of Fundy" = "Gulf of Maine/Bay of Fundy",
                      "Northwest North Atlantic"="Western North Atlantic")) %>%
@@ -337,6 +337,11 @@ ggplot(data1 %>% filter(group=="Dolphins" & grepl("Common", comm_name)), aes(y=a
 
 # Large whales, Small whales, Porpoises, Phocids, Dolphins
 ggplot(data1 %>% filter(group=="Large whales"), aes(y=stock, x=year, fill=strategic_yn)) +
+  geom_tile() +
+  theme_bw()
+
+# Large whales, Small whales, Porpoises, Phocids, Dolphins
+ggplot(data1 %>% filter(group!="Dolphins"), aes(y=stock, x=year, fill=strategic_yn)) +
   geom_tile() +
   theme_bw()
 
