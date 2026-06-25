@@ -74,14 +74,14 @@ g <- ggplot(nstocks_ord, aes(x=year, y=nstocks, color=region1)) +
   facet_wrap(~group_label, ncol=3, scales="free_y") +
   geom_line() +
   geom_point(data=nstocks_labels_org) +
-  geom_text(data=nstocks_labels_org, mapping=aes(hjust=0, label=nstocks), x=2024, size=2.2) +
+  geom_text(data=nstocks_labels_org, mapping=aes(hjust=0, label=nstocks), x=2025, size=2.2) +
   # Labels
   labs(x="Year", y="Number of stocks") +
   # Legend
   scale_color_discrete(name="Region") +
   # Axes
   scale_y_continuous(lim=c(0, NA)) +
-  scale_x_continuous(lim=c(1995, 2025), breaks = seq(1995,2025, 5)) +
+  scale_x_continuous(lim=c(1995, 2026), breaks = seq(1995, 2025, 5)) +
   # Theme
   theme_bw() + my_theme +
   theme(legend.position = "top")

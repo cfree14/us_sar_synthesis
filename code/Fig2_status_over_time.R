@@ -68,10 +68,10 @@ g1 <- ggplot(stats_region, aes(x=year, y=prop_ns, color=region1)) +
   geom_line() +
   geom_point(data=stats_region %>% filter(year==max(year))) +
   geom_text(data=stats_region %>% filter(year==max(year)), 
-            mapping=aes(label=label), x=2024, size=2.2, hjust=0, show.legend = F) +
+            mapping=aes(label=label), x=2025, size=2.2, hjust=0, show.legend = F) +
   # Labels
   labs(x="Year", y="Percent non-strategic", tag="A") +
-  scale_x_continuous(breaks=seq(1995, 2025, 5), lim=c(1995, 2026)) +
+  scale_x_continuous(breaks=seq(1995, 2025, 5), lim=c(1995, 2027)) +
   scale_y_continuous(labels=scales::percent_format(), lim=c(0,1)) +
   # Legend
   scale_color_discrete(name="Region") +
@@ -86,10 +86,10 @@ g2 <- ggplot(stats_group, aes(x=year, y=prop_ns, color=group)) +
   geom_line() +
   geom_point(data=stats_group %>% filter(year==max(year))) +
   geom_text(data=stats_group %>% filter(year==max(year)), 
-            mapping=aes(label=label), x=2024, size=2.2, hjust=0, show.legend = F) +
+            mapping=aes(label=label), x=2025, size=2.2, hjust=0, show.legend = F) +
   # Labels
   labs(x="Year", y="", tag="B") +
-  scale_x_continuous(breaks=seq(1995, 2025, 5), lim=c(1995, 2026)) +
+  scale_x_continuous(breaks=seq(1995, 2025, 5), lim=c(1995, 2027)) +
   scale_y_continuous(labels=scales::percent_format(), lim=c(0,1)) +
   # Legend
   scale_color_discrete(name="Group") +
