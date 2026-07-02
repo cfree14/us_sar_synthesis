@@ -1,25 +1,25 @@
 "comm_name","area_orig","n"
-"Baird's beaked whale","California/Oregon/Washington",27
-"Blainville's beaked whale","Hawaii",15
+"Baird's beaked whale","California/Oregon/Washington",28
+"Blainville's beaked whale","Hawaii",16
 "Blainville's beaked whale","Hawaii Pelagic",12
-"Blue whale","California/Mexico",2
+"Blue whale","California/Mexico",3
 "Blue whale","Central N Pacific",7
 "Blue whale","Central North Pacific",8
 "Blue whale","Eastern N Pacific",7
 "Blue whale","Eastern North Pacific",18
-"Blue whale","Hawaii",12
+"Blue whale","Hawaii",13
 "Bryde's whale","California/Oregon/Washington",7
-"Bryde's whale","Eastern Tropical Pacific",13
-"Bryde's whale","Hawaii",27
-"California sea lion","U.S.",26
+"Bryde's whale","Eastern Tropical Pacific",14
+"Bryde's whale","Hawaii",28
+"California sea lion","U.S.",27
 "California sea lion","United States",1
 "Common bottlenose dolphin","4 Islands Region",12
 "Common bottlenose dolphin","4 Islands Region (new stock)",1
 "Common bottlenose dolphin","California Coastal",21
-"Common bottlenose dolphin","California coastal",6
+"Common bottlenose dolphin","California coastal",7
 "Common bottlenose dolphin","California/Oregon/Washington Offshore",25
-"Common bottlenose dolphin","California/Oregon/Washington offshore",2
-"Common bottlenose dolphin","Hawaii",12
+"Common bottlenose dolphin","California/Oregon/Washington offshore",3
+"Common bottlenose dolphin","Hawaii",13
 "Common bottlenose dolphin","Hawaii Island",8
 "Common bottlenose dolphin","Hawaii Island (new stock)",1
 "Common bottlenose dolphin","Hawaii Pelagic",15
@@ -30,15 +30,15 @@
 "Common bottlenose dolphin","Maui Nui",2
 "Common bottlenose dolphin","Oahu",14
 "Common bottlenose dolphin","Oahu (new stock)",1
-"Cuvier's beaked whale","California/Oregon/Washington",27
-"Cuvier's beaked whale","Hawaii",15
+"Cuvier's beaked whale","California/Oregon/Washington",28
+"Cuvier's beaked whale","Hawaii",16
 "Cuvier's beaked whale","Hawaii Pelagic",12
-"Dall's porpoise","California/Oregon/Washington",27
-"Dwarf sperm whale","California/Oregon/Washington",21
-"Dwarf sperm whale","Hawaii",27
+"Dall's porpoise","California/Oregon/Washington",28
+"Dwarf sperm whale","California/Oregon/Washington",22
+"Dwarf sperm whale","Hawaii",28
 "False killer whale","American Samoa",14
 "False killer whale","American Samoa (new stock)",1
-"False killer whale","Hawaii",10
+"False killer whale","Hawaii",11
 "False killer whale","Hawaii Insular",4
 "False killer whale","Hawaii Pelagic",17
 "False killer whale","Main Hawaiian Islands Insular",13
@@ -47,8 +47,8 @@
 "False killer whale","Northwestern Hawaiian Islands",3
 "False killer whale","Palmyra",1
 "False killer whale","Palmyra Atoll",17
-"Fin whale","California/Oregon/Washington",27
-"Fin whale","Hawaii",27
+"Fin whale","California/Oregon/Washington",28
+"Fin whale","Hawaii",28
 "Fraser's dolphin","Hawaii",21
 "Gray whale","Eastern N Pacific",7
 "Gray whale","Eastern North Pacific",6
@@ -56,94 +56,94 @@
 "Gray whale","Western North Pacific",3
 "Gray whale","Western North Pacific (new report)",1
 "Guadalupe fur seal","Mexico",5
-"Guadalupe fur seal","Mexico to California",22
-"Harbor porpoise","Central California",5
+"Guadalupe fur seal","Mexico to California",23
+"Harbor porpoise","Central California",6
 "Harbor porpoise","Central Oregon",2
-"Harbor porpoise","Inland Washington",3
+"Harbor porpoise","Inland Washington",4
 "Harbor porpoise","Monterey Bay",23
 "Harbor porpoise","Morro Bay",23
 "Harbor porpoise","Northern CA/Southern OR",23
-"Harbor porpoise","Northern California",5
+"Harbor porpoise","Northern California",6
 "Harbor porpoise","Northern OR/Washington Coast",10
 "Harbor porpoise","Northern Oregon/Washington Coast",6
 "Harbor porpoise","Oregon & Washington coast",1
 "Harbor porpoise","Oregon/Washington Coast",10
-"Harbor porpoise","Oregon/Washington coast",1
+"Harbor porpoise","Oregon/Washington coast",2
 "Harbor porpoise","San Francisco-Russian River",23
 "Harbor porpoise","Washington Inland Waters",25
-"Harbor seal","California",27
+"Harbor seal","California",28
 "Harbor seal","Hood Canal",12
 "Harbor seal","Inland Washington",1
 "Harbor seal","Oregon & Washington coast",1
 "Harbor seal","Oregon/Washington Coast",25
-"Harbor seal","Oregon/Washington coast",1
+"Harbor seal","Oregon/Washington coast",2
 "Harbor seal","Southern Puget Sound",12
 "Harbor seal","Washington Inland Waters",13
 "Harbor seal","Washington Northern Inland Waters",12
-"Harbor seal","Washington inland waters",1
-"Hawaiian monk seal","Hawaii",28
+"Harbor seal","Washington inland waters",2
+"Hawaiian monk seal","Hawaii",29
 "Humpback whale","American Samoa",16
 "Humpback whale","California/Oregon/Mexico",1
-"Humpback whale","California/Oregon/Washington",17
+"Humpback whale","California/Oregon/Washington",18
 "Humpback whale","California/Oregon/Washington-Mexico",1
 "Humpback whale","Central America/Southern Mexico-California/Oregon/Washington",3
 "Humpback whale","Eastern North Pacific",6
 "Humpback whale","Mainland Mexico-California/Oregon/Washington",3
-"Killer whale","California/Oregon/Washington",2
+"Killer whale","California/Oregon/Washington",3
 "Killer whale","ENP Southern Resident Stock",1
 "Killer whale","Eastern N Pacific Offshore",7
 "Killer whale","Eastern N Pacific Southern Resident",7
 "Killer whale","Eastern North Pacific Offshore",19
 "Killer whale","Eastern North Pacific Southern Resident",18
 "Killer whale","Eastern North Pacific Transient",3
-"Killer whale","Hawaii",27
+"Killer whale","Hawaii",28
 "Killer whale","Southern Resident Stock",2
-"Long-beaked common dolphin","California",21
+"Long-beaked common dolphin","California",22
 "Long-beaked common dolphin","California/Oregon/Washington",6
 "Longman's beaked whale","Hawaii",21
-"Melon-headed whale","Hawaii",15
+"Melon-headed whale","Hawaii",16
 "Melon-headed whale","Hawaiian Islands",12
 "Melon-headed whale","Kohala Resident",12
-"Mesoplodont beaked whales","California/Oregon/Washington",27
-"Minke whale","California/Oregon/Washington",27
+"Mesoplodont beaked whales","California/Oregon/Washington",28
+"Minke whale","California/Oregon/Washington",28
 "Minke whale","Hawaii",21
 "Northern elephant seal","California Breeding",10
-"Northern elephant seal","California breeding",17
+"Northern elephant seal","California breeding",18
 "Northern fur seal","California",11
 "Northern fur seal","California Stock",1
-"Northern fur seal","San Miguel Island",15
-"Northern right whale dolphin","California/Oregon/Washington",27
+"Northern fur seal","San Miguel Island",16
+"Northern right whale dolphin","California/Oregon/Washington",28
 "Northern sea otter","Northern (Washington)",1
 "Northern sea otter","Washington",10
-"Pacific white-sided dolphin","California/Oregon/Washington",27
+"Pacific white-sided dolphin","California/Oregon/Washington",28
 "Pantropical spotted dolphin","4 Islands Region",10
-"Pantropical spotted dolphin","Hawaii",15
+"Pantropical spotted dolphin","Hawaii",16
 "Pantropical spotted dolphin","Hawaii Island",12
 "Pantropical spotted dolphin","Hawaii Pelagic",12
 "Pantropical spotted dolphin","Maui Nui",2
 "Pantropical spotted dolphin","Oahu",12
-"Pygmy killer whale","Hawaii",27
-"Pygmy sperm whale","California/Oregon/Washington",27
-"Pygmy sperm whale","Hawaii",27
-"Risso's dolphin","California/Oregon/Washington",27
-"Risso's dolphin","Hawaii",27
+"Pygmy killer whale","Hawaii",28
+"Pygmy sperm whale","California/Oregon/Washington",28
+"Pygmy sperm whale","Hawaii",28
+"Risso's dolphin","California/Oregon/Washington",28
+"Risso's dolphin","Hawaii",28
 "Rough-toothed dolphin","American Samoa",14
 "Rough-toothed dolphin","American Samoa (new stock)",1
-"Rough-toothed dolphin","Hawaii",27
+"Rough-toothed dolphin","Hawaii",28
 "Sei whale","California/Oregon/Washington",4
 "Sei whale","Eastern N Pacific",7
-"Sei whale","Eastern North Pacific",16
+"Sei whale","Eastern North Pacific",17
 "Sei whale","Hawaii",21
-"Short-beaked common dolphin","California/Oregon/Washington",27
-"Short-finned pilot whale","California/Oregon/Washington",28
-"Short-finned pilot whale","Hawaii",27
+"Short-beaked common dolphin","California/Oregon/Washington",28
+"Short-finned pilot whale","California/Oregon/Washington",29
+"Short-finned pilot whale","Hawaii",28
 "Southern sea otter","Southern",10
 "Southern sea otter","Southern (California)",1
-"Sperm whale","California/Oregon/Washington",28
-"Sperm whale","Hawaii",27
+"Sperm whale","California/Oregon/Washington",29
+"Sperm whale","Hawaii",28
 "Spinner dolphin","American Samoa",14
 "Spinner dolphin","American Samoa (new stock)",1
-"Spinner dolphin","Hawaii",12
+"Spinner dolphin","Hawaii",13
 "Spinner dolphin","Hawaii Island",14
 "Spinner dolphin","Hawaii Island (new stock)",1
 "Spinner dolphin","Hawaii Pelagic",15
@@ -158,6 +158,6 @@
 "Spinner dolphin","Oahu / 4 Islands Region",5
 "Spinner dolphin","Pearl and Hermes Reef",14
 "Spinner dolphin","Pearl and Hermes Reef (new stock)",1
-"Striped dolphin","California/Oregon/Washington",27
-"Striped dolphin","Hawaii",14
+"Striped dolphin","California/Oregon/Washington",28
+"Striped dolphin","Hawaii",15
 "Striped dolphin","Hawaii Pelagic",13

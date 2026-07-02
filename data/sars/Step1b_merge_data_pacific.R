@@ -42,7 +42,9 @@ species_key <- readxl::read_excel("data/species_key.xlsx")
 files2merge <- list.files(indir, pattern=".xlsx")
 data_orig <- purrr::map_df(files2merge, function(x){
   df <- readxl::read_excel(file.path(indir, x), na=c("N/A", "n/a", "unk", "undet", "und"), col_types = "text") %>% 
-    mutate(filename=x)
+    mutate(filename=x) %>% 
+    # Fix typos in names
+    rename(any_of(c("notes" = "comments")))
 })
 
 # Inspect
@@ -256,127 +258,3 @@ ggplot(data3 %>% filter(group=="Porpoises"), # Phocids, Otariids, Porpoises, Sma
 # Export data
 saveRDS(data3, file=file.path(outdir, "Pacific_SARs_parameters.Rds"))
 
-
-
-
-
-# Step 3. Fix areas and stocks ids
-################################################################################
-
-# Format
-# data2 <- data1 %>% 
-#   # Clean up punctuation
-#   mutate(area=gsub("’|ʻ","'", area),
-#          area=gsub("-","-", area),
-#          area=gsub(" - ", "-", area),
-#          area=gsub(" ‚Äì ", "-", area),
-#          area=gsub(" & ", "/", area)) %>% 
-#   # Remove parenthetical comments
-#   mutate(area=gsub(" \\(new stock\\)", "", area),
-#          area=gsub(" \\(new report\\)", "", area)) %>% 
-#   # Format some capitalization
-#   mutate(area=gsub("coast", "Coast", area),
-#          area=gsub("breeding", "Breeding", area),
-#          area=gsub("inland", "Inland", area),
-#          area=gsub("offshore", "Offshore", area),
-#          area=gsub("waters", "Waters", area)) %>% 
-#   # Harmonize some others
-#   mutate(area=gsub("Oahu", "O'ahu", area)) %>% 
-#   # Clean up Kaua'i / Ni'ihau
-#   mutate(area=recode(area,
-#                      "Kaua'I and Ni'ihau" = "Kaua'i / Ni'ihau",
-#                      "Kaua'I / Ni'ihau" = "Kaua'i / Ni'ihau",
-#                      "Kaua'i / Ni'ihau" = "Kaua'i / Ni'ihau",
-#                      "Kaua'i and Ni'ihau" = "Kaua'i / Ni'ihau",
-#                      "KauaI / Niihau" = "Kaua'i / Ni'ihau",
-#                      "Kauai and Niihau" = "Kaua'i / Ni'ihau")) %>% 
-#   # Expand abbreviations
-#   mutate(area=gsub(" N ", " North ", area)) %>% 
-#   # Shorten abbreviations
-#   mutate(area=gsub("California", "CA", area),
-#          area=gsub("Oregon", "OR", area),
-#          area=gsub("Washington", "WA", area),
-#          area=gsub("Hawai'i|Hawaii|Hawaiian", "HI", area),
-#          area=gsub("Eastern Tropical Pacific", "ETP", area),
-#          area=gsub("Central North Pacific", "CNP", area),
-#          area=gsub("Eastern North Pacific", "ENP", area),
-#          area=gsub("United States", "U.S.", area)) %>% 
-#   # Build stock id
-#   mutate(stock=paste0(comm_name, " (", area, ")")) %>% 
-#   # Format stock ids
-#   mutate(stock=recode(stock, 
-#                       # Hawaii Pelagic
-#                       "Blainville's beaked whale (HI Pelagic)"  = "Blainville's beaked whale (HI)",
-#                       "Cuvier's beaked whale (HI Pelagic)" = "Cuvier's beaked whale (HI)",
-#                       "Striped dolphin (HI Pelagic)" = "Striped dolphin (HI)",
-#                       # Bottlenose dolphin
-#                       "Common bottlenose dolphin (4 Islands Region)" = "Common bottlenose dolphin (Maui Nui)", 
-#                       # Pantropical spotted dolphin
-#                       "Pantropical spotted dolphin (4 Islands Region)" = "Pantropical spotted dolphin (Maui Nui)",
-#                       # Long-beaked dolphin
-#                       "Long-beaked common dolphin (CA/OR/WA)" = "Long-beaked common dolphin (CA)",
-#                       # Pacific white-sided dolphin
-#                       "Pacific white-sided dolphin (CA/OR/WA)" = "Pacific white-sided dolphin (CA/OR/WA-N/S)",
-#                       # Spinner dolphin
-#                       # "Spinner dolphin (HI)" = "Spinner dolphin (HI Island)",                       
-#                       "Spinner dolphin (Kure / Midway)" = "Spinner dolphin (Midway / Kure)",         
-#                       "Spinner dolphin (O'ahu / 4 Islands Region)" = "Spinner dolphin (O'ahu / 4 Islands)",
-#                        # Sei whale
-#                       "Sei whale (CA/OR/WA)" = "Sei whale (ENP)",
-#                       # Blue whale
-#                       "Blue whale (HI)" = "Blue whale (CNP)",
-#                       "Blue whale (CA/Mexico)" = "Blue whale (ENP)",
-#                       # Bryde's whale
-#                       "Bryde's whale (CA/OR/WA)" = "Bryde's whale (ETP)",
-#                       # Humpback whale
-#                       "Humpback whale (CA/OR/Mexico)" = "Humpback whale (CA/OR/WA)",                              
-#                       "Humpback whale (CA/OR/WA-Mexico)" = "Humpback whale (CA/OR/WA)",                             
-#                       "Humpback whale (Central America / Southern Mexico – CA/OR/WA)" = "Humpback whale (Central America / Southern Mexico)",
-#                       "Humpback whale (ENP)" = "Humpback whale (CA/OR/WA)",                                        
-#                       "Humpback whale (MaInland Mexico – CA/OR/WA)" = "Humpback whale (Mainland Mexico)",
-#                       # False killer whales
-#                       "False killer whale (HI Insular)"= "False killer whale (MHI Insular)",                             
-#                       "False killer whale (HI)" = "False killer whale (HI Pelagic)",                                     
-#                       "False killer whale (Main HI Islands Insular)" = "False killer whale (MHI Insular)",                 
-#                       "False killer whale (Northwest HI Islands)" = "False killer whale (NW HI)",                   
-#                       "False killer whale (Northwestern HI Islands)" = "False killer whale (NW HI)",                 
-#                       "False killer whale (NW HI Islands)" = "False killer whale (NW HI)",                           
-#                       "False killer whale (Palmyra)" = "False killer whale (Palmyra Atoll)", 
-#                       # Melon-headed whales
-#                       "Melon-headed whale (HI)" = "Melon-headed whale (HI Stock)",
-#                       # Killer whales
-#                       "Killer whale (Southern Resident Stock)" = "Killer whale (ENP Southern Resident)",  
-#                       # Harbor porpoise
-#                       "Harbor porpoise (San Francisco -Russian River)"  = "Harbor porpoise (San Francisco-Russian River)",             
-#                       "Harbor porpoise (San Francisco – Russian River)" = "Harbor porpoise (San Francisco-Russian River)",
-#                       "Harbor porpoise (Northern CA)" = "Harbor porpoise (Northern CA / Southern OR)",
-#                       "Harbor porpoise (Northern CA/Southern OR)" = "Harbor porpoise (Northern CA / Southern OR)",
-#                       "Harbor porpoise (Northern OR/WA Coast)" = "Harbor porpoise (Northern OR / WA Coast)",
-#                       "Harbor porpoise (OR/WA Coast)" = "Harbor porpoise (Northern OR / WA Coast)",
-#                       "Harbor porpoise (Inland WA)" = "Harbor porpoise (WA Inland Waters)",
-#                       # Harbor seals
-#                       "Harbor seal (Inland WA)" = "Harbor seal (WA Inland Waters)",                                       
-#                       "Harbor seal (OR/WA Coast)" = "Harbor seal (OR/WA Coastal)",                                    
-#                       "Harbor seal (WA Northern Inland Waters)"  = "Harbor seal (WA Inland Waters)",
-#                       # Fur seals
-#                       "Guadalupe fur seal (Mexico)" = "Guadalupe fur seal (US/Mexico)",
-#                       "Guadalupe fur seal (Mexico to CA)"="Guadalupe fur seal (US/Mexico)",
-#                       # Sea otters
-#                       "Northern sea otter (Northern (WA))" = "Northern sea otter (WA)",                           
-#                       "Southern sea otter (Southern (CA))" = "Southern sea otter (CA)",                           
-#                       "Southern sea otter (Southern)"  = "Southern sea otter (CA)",                                
-#                       "Northern sea otter (WA)" = "Northern sea otter (WA)")) %>% 
-#   # Add region
-#   left_join(stock_key %>% select(stock, region), by="stock") %>% 
-#   # Arrange
-#   select(filename, year, 
-#          group, 
-#          stock, comm_name, species, 
-#          region, area, center, 
-#          n_est, n_cv, n_min, r_max, rf, 
-#          pbr, pbr_derived, pbr_check,
-#          sim_tot_orig, sim_tot,
-#          sim_fish_orig, sim_fish,
-#          strategic_yn,
-#          survey1, survey2, survey3, revised_yn, notes,
-#          everything())
