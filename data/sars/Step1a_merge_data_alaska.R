@@ -9,7 +9,7 @@ rm(list = ls())
 library(tidyverse)
 
 # Directories
-indir <- "/Users/cfree/Dropbox/us_sar_synthesis_data/alaska/tables"
+indir <- "/Users/cfree/Dropbox/Whales/us_sar_synthesis_data/alaska/tables"
 outdir <- "data/sars/processed"
 
 # Species key

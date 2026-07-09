@@ -41,23 +41,23 @@ data <- data_orig %>%
   # Factor groups
   mutate(group=factor(group, levels=c("Dolphins", "Small whales", "Porpoises", "Large whales", "Otariids", "Phocids"))) %>% 
   # Order regions
-  mutate(region1=factor(region1, levels=c("Alaska", "Pacific", "Atlantic") %>% rev()))
+  mutate(region=factor(region, levels=c("Alaska", "Pacific", "Atlantic") %>% rev()))
 
 # Summarize percent by region, group, type
 stats <- data %>% 
-  group_by(region1, group, rmax_type) %>% 
+  group_by(region, group, rmax_type) %>% 
   summarise(n=n()) %>% 
   ungroup() %>% 
-  group_by(region1, group) %>% 
+  group_by(region, group) %>% 
   mutate(prop=n/sum(n)) %>% 
   ungroup()
 
 # Summarize percent by region, group, type, and specific value
 stats1 <- data %>% 
-  group_by(region1, group, rmax_type, r_max) %>% 
+  group_by(region, group, rmax_type, r_max) %>% 
   summarise(n=n()) %>% 
   ungroup() %>% 
-  group_by(region1, group) %>% 
+  group_by(region, group) %>% 
   mutate(prop=n/sum(n)) %>% 
   ungroup()
 
@@ -89,7 +89,7 @@ my_theme <-  theme(axis.text=element_text(size=8),
 
 
 # Percent default
-g1 <- ggplot(stats, aes(y=region1, x=prop, fill=rmax_type)) +
+g1 <- ggplot(stats, aes(y=region, x=prop, fill=rmax_type)) +
   facet_grid(group~., scales="free_y", space="free_y") +
   # facet_wrap(~group, ncol=1) + # Shows Atlantic Otariids 
   # Data
@@ -106,7 +106,7 @@ g1 <- ggplot(stats, aes(y=region1, x=prop, fill=rmax_type)) +
   theme(legend.position = "top")
 g1
 
-g2 <- ggplot(stats1, aes(y=region1, x=r_max, size=prop)) +
+g2 <- ggplot(stats1, aes(y=region, x=r_max, size=prop)) +
   facet_grid(group~., scales="free_y", space="free_y") +
   # facet_wrap(~group, ncol=1) + # Shows Atlantic Otariids 
   # Data

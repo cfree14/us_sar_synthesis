@@ -26,7 +26,7 @@ data <- data_orig %>%
 
 # Status by region
 stats_region <- data %>% 
-  group_by(region1, year) %>% 
+  group_by(region, year) %>% 
   summarize(n=n(),
             n_ns=sum(!is.na(strategic_yn) & strategic_yn=="Non-strategic"), 
             prop_ns = n_ns / n) %>% 
@@ -64,7 +64,7 @@ my_theme <-  theme(axis.text=element_text(size=8),
 
 
 # Plot status by region
-g1 <- ggplot(stats_region, aes(x=year, y=prop_ns, color=region1)) +
+g1 <- ggplot(stats_region, aes(x=year, y=prop_ns, color=region)) +
   geom_line() +
   geom_point(data=stats_region %>% filter(year==max(year))) +
   geom_text(data=stats_region %>% filter(year==max(year)), 

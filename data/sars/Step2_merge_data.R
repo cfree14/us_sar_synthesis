@@ -30,20 +30,21 @@ colnames(atl_orig)
 colnames(ak_orig)
 
 # Ultimate goal:
-# year, group, comm_name, species, area,
+# region, subregion, year, group, comm_name, species, area,
 # n_est, n_vc, n_min, r_max, rf, pbr,
 # sim_total, sim_fisheries, strategic_yn, revised_yn, comments
 
 # Pacific
-pac <- pac_orig %>% 
-  # Add 
-  mutate(region1="Pacific") %>% 
+pac <- pac_orig %>%
+  # Region
+  rename(subregion=region) %>% 
+  mutate(region="Pacific") %>% 
   # Rename
   rename(sim_total=sim_tot,
          sim_fisheries=sim_fish,
          comments=notes) %>% 
   # Simplify
-  select(region1, filename, 
+  select(region, subregion, filename, 
          year, group, comm_name, species, area,
          n_est, n_min, r_max, rf, pbr,
          sim_total, sim_fisheries, 
@@ -51,27 +52,29 @@ pac <- pac_orig %>%
 
 # Atlantic
 atl <- atl_orig %>% 
-  # Add 
-  mutate(region1="Atlantic") %>% 
+  # Region
+  rename(subregion=region) %>% 
+  mutate(region="Atlantic") %>% 
   # Rename
   rename(n_est=n,
          sim_total=msi_total,
          sim_fisheries=msi_fisheries) %>% 
   # Simplify
-  select(region1, filename, 
+  select(region, subregion, filename, 
          year, group, comm_name, species, area,
          n_est, n_min, r_max, rf, pbr,
          #sim_total, sim_fisheries, # not numeric yet
          strategic_yn, revised_yn, comments)
 
-# Atlantic
+# Alaska
 ak <- ak_orig %>% 
-  # Add 
-  mutate(region1="Alaska") %>% 
+  # Region
+  mutate(region="Alaska",
+         subregion=region) %>% 
   # Rename
   rename(revised_yn=updated_yn) %>% 
   # Simplify
-  select(region1, filename, 
+  select(region, subregion, filename, 
          year, group, comm_name, species, area,
          n_est, n_cv, n_min, r_max, rf, pbr,
          sim_total, sim_fisheries, strategic_yn, revised_yn, comments)
@@ -86,7 +89,7 @@ data <- bind_rows(pac, atl, ak) %>%
   # Add stock
   mutate(stock=paste0(comm_name, " (", area, ")")) %>% 
   # Arrange
-  select(region1:group, stock, everything())
+  select(region:group, stock, everything())
 
 # Inspect
 str(data)

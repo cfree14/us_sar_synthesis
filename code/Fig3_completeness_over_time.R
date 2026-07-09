@@ -22,12 +22,12 @@ data <- readRDS(data, file=file.path(outdir, "US_sars_data.Rds"))
 # Completeness
 stats <- data %>% 
   # Reduce
-  select(region1, year, n_est, n_cv, n_min, r_max, rf, 
+  select(region, year, n_est, n_cv, n_min, r_max, rf, 
          pbr, sim_total, sim_fisheries,strategic_yn) %>% 
   # Gather
   gather(key="variable", value="value", 3:ncol(.)) %>% 
   # Summarize
-  group_by(variable, region1, year) %>% 
+  group_by(variable, region, year) %>% 
   summarize(n=n(),
             n_complete=sum(!is.na(value)),
             p_complete=n_complete/n) %>% 
@@ -66,7 +66,7 @@ my_theme <-  theme(axis.text=element_text(size=8),
 
 
 # Plot completeness over time
-g <- ggplot(stats, aes(x=year, y=p_complete, color=region1)) +
+g <- ggplot(stats, aes(x=year, y=p_complete, color=region)) +
   facet_wrap(~variable, ncol=3) +
   geom_line() +
   # Labels
@@ -82,8 +82,5 @@ g
 # Export
 ggsave(g, filename=file.path(plotdir, "Fig3_completeness_over_time.png"), 
        width=6.5, height=6.5, units="in", dpi=600, bg="white")
-
-
-
 
 

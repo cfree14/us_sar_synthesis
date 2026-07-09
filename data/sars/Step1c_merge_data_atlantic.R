@@ -9,7 +9,7 @@ rm(list = ls())
 library(tidyverse)
 
 # Directories
-indir <- "/Users/cfree/Dropbox/us_sar_synthesis_data/atlantic/tables"
+indir <- "/Users/cfree/Dropbox/Whales/us_sar_synthesis_data/atlantic/tables"
 keydir <- "data/sars/keys"
 outdir <- "data/sars/processed"
 
@@ -172,6 +172,9 @@ data1 <- data %>%
   # Add area
   rename(area_orig=area) %>% 
   left_join(area_key_use, by=c("comm_name", "area_orig")) %>% 
+  # Make Bryde's whale actually Rice's whale (Balaenoptera ricei)
+  mutate(comm_name=recode(comm_name, "Bryde's whale" = "Rice's whale"),
+         species=recode(species, "Balaenoptera brydei" = "Balaenoptera ricei")) %>% 
   # Build stock
   mutate(stock=paste0(comm_name, " (", area, ")")) %>% 
   # Arrange
@@ -189,7 +192,7 @@ data1 <- data %>%
 # Inspect
 freeR::complete(data1)
 
-# Confirm only one value per 1 year per stock - FIX THIS
+# Confirm only one value per 1 year per stock
 data1 %>% count(comm_name, area, year) %>% 
   filter(n>1)
 

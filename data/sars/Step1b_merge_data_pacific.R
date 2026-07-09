@@ -9,7 +9,7 @@ rm(list = ls())
 library(tidyverse)
 
 # Directories
-indir <- "/Users/cfree/Dropbox/us_sar_synthesis_data/pacific/tables"
+indir <- "/Users/cfree/Dropbox/Whales/us_sar_synthesis_data/pacific/tables"
 keydir <- "data/sars/keys"
 outdir <- "data/sars/processed"
 
@@ -241,7 +241,7 @@ ggplot(data3,#%>% filter(group=="Porpoises"), # Phocids, Otariids, Porpoises, Sm
   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
 
 # 
-ggplot(data3 %>% filter(group=="Porpoises"), # Phocids, Otariids, Porpoises, Small whales, Large whales, Dolphins
+ggplot(data3 %>% filter(group=="Dolphins"), # Phocids, Otariids, Porpoises, Small whales, Large whales, Dolphins
        aes(y=stock, x=year, fill=strategic_yn)) +
   facet_grid(group+region~., scale="free_y", space="free_y") +
   geom_tile() +

@@ -28,7 +28,7 @@ stats <- data %>%
   # Reduce to years with PBR and PMIN
   filter(!is.na(pbr) & !is.na(n_min)) %>% 
   # Summarize by stock
-  group_by(region1, group, comm_name, area) %>% 
+  group_by(region, group, comm_name, area) %>% 
   summarize(yr1=min(year),
             yr2=max(year),
             pbr1=pbr[year==yr1],
@@ -49,7 +49,7 @@ stats2 <- data %>%
   # Reduce to years with PBR and PMIN
   filter(!is.na(pbr) & !is.na(n_est)) %>% 
   # Summarize by stock
-  group_by(region1, group, comm_name, area) %>% 
+  group_by(region, group, comm_name, area) %>% 
   summarize(yr1=min(year),
             yr2=max(year),
             pbr1=pbr[year==yr1],
@@ -72,6 +72,7 @@ stats2 <- data %>%
 # Theme
 my_theme <-  theme(axis.text=element_text(size=8),
                    axis.title=element_text(size=9),
+                   plot.subtitle = element_text(size=7),
                    legend.text=element_text(size=8),
                    legend.title=element_text(size=9),
                    strip.text=element_text(size=8),
@@ -107,7 +108,8 @@ g1 <- ggplot(stats, aes(x=nmin_ratio, y=pbr_ratio, fill=rf_change)) +
                      breaks=c(0.01, 0.1, 1, 10, 100, 1000),
                      labels=c("0.01", "0.1", "1", "10", "100", "1000")) +
   # Labs
-  labs(x="Nmin ratio\n(final / initial)", y="PBR ratio\n(final / initial)", tag="A") +
+  labs(x="Nmin ratio\n(final / initial)", y="PBR ratio\n(final / initial)", 
+       tag="A", subtitle=paste(nrow(stats), "stocks")) +
   # Legend
   scale_fill_gradient2(mid="white", high="navy", low="darkred") +
   # Theme
@@ -136,7 +138,8 @@ g2 <- ggplot(stats2, aes(x=n_ratio, y=pbr_ratio, fill=rf_change)) +
                      breaks=c(0.01, 0.1, 1, 10, 100, 1000),
                      labels=c("0.01", "0.1", "1", "10", "100", "1000")) +
   # Labs
-  labs(x="N ratio\n(final / initial)", y="PBR ratio\n(final / initial)", tag="B") +
+  labs(x="Nest ratio\n(final / initial)", y="PBR ratio\n(final / initial)", 
+       tag="B", subtitle=paste(nrow(stats2), "stocks")) +
   # Legend
   scale_fill_gradient2(name="ΔRecovery factor\n(final - initial)", mid="white", high="navy", low="darkred") +
   guides(fill = guide_colorbar(ticks.colour = "black", frame.colour = "black", frame.linewidth = 0.2)) +

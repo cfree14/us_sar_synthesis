@@ -25,7 +25,7 @@ data <- readRDS(file=file.path(outdir, "US_sars_data.Rds"))
 # Build
 nstocks <- data %>% 
   filter(group!="USFWS marine mammals") %>% 
-  group_by(region1, group, year) %>% 
+  group_by(region, group, year) %>% 
   summarize(nstocks=n()) %>% 
   ungroup()
 
@@ -48,6 +48,47 @@ nstocks_ord <- nstocks %>%
 nstocks_labels_org <- nstocks_labels %>% 
   left_join(nstocks_group %>% select(group, group_label))
 
+
+# Stats for manuscript
+################################################################################
+
+# Total Number of stocks over time
+n_tot <- nstocks %>% 
+  group_by(year) %>% 
+  summarize(nstocks=sum(nstocks)) %>% 
+  ungroup() %>% 
+  mutate(perc=(nstocks-nstocks[year==1995]) / nstocks[year==1995],
+         added=nstocks-nstocks[year==1995])
+
+# Change by region
+n_reg <- nstocks %>% 
+  group_by(region, year) %>% 
+  summarize(nstocks=sum(nstocks)) %>% 
+  ungroup() %>% 
+  filter(year %in% c(1995, 2024)) %>% 
+  mutate(year=paste0("n", year)) %>% 
+  spread(key="year", value="nstocks") %>% 
+  mutate(added=n2024-n1995)
+
+# Change by region and group
+n_reg_group <- nstocks %>% 
+  group_by(region, group, year) %>% 
+  summarize(nstocks=sum(nstocks)) %>% 
+  ungroup() %>% 
+  filter(year %in% c(1995, 2024)) %>% 
+  mutate(year=paste0("n", year)) %>% 
+  spread(key="year", value="nstocks") %>% 
+  mutate(added=n2024-n1995)
+
+# Change by group
+n_group <- nstocks %>% 
+  group_by(group, year) %>% 
+  summarize(nstocks=sum(nstocks)) %>% 
+  ungroup() %>% 
+  filter(year %in% c(1995, 2024)) %>% 
+  mutate(year=paste0("n", year)) %>% 
+  spread(key="year", value="nstocks") %>% 
+  mutate(added=n2024-n1995)
   
 
 # Plot data
@@ -70,7 +111,7 @@ my_theme <-  theme(axis.text=element_text(size=8),
                    legend.background = element_rect(fill=alpha('blue', 0)))
 
 # Plot number of stocks over time
-g <- ggplot(nstocks_ord, aes(x=year, y=nstocks, color=region1)) +
+g <- ggplot(nstocks_ord, aes(x=year, y=nstocks, color=region)) +
   facet_wrap(~group_label, ncol=3, scales="free_y") +
   geom_line() +
   geom_point(data=nstocks_labels_org) +
