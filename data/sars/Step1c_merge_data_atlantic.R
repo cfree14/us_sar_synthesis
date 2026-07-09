@@ -40,6 +40,20 @@ data_orig <- purrr::map_df(files2merge, function(x){
     mutate(filename=x)
 })
 
+# Function to calculate average of range
+avg_range <- function(x) {
+  x <- gsub(",", "", x)
+  mean(as.numeric(strsplit(x, "-")[[1]]))
+}
+avg_range("167,000-188,000")
+
+# Function to get max of range
+max_range <- function(x) {
+  x <- gsub(",", "", x)
+  max(as.numeric(strsplit(x, "-")[[1]]))
+}
+max_range("167,000-188,000")
+
 # Format data
 data <- data_orig %>% 
   # Add year
@@ -75,7 +89,8 @@ data <- data_orig %>%
   # Format area
   mutate(area=gsub("\r\n", " ", area) %>% stringr::str_squish(.)) %>% 
   # Convert to numeric
-  mutate_at(vars(n, n_cv, n_min, r_max, rf, pbr, msi_fisheries_cv), as.numeric) %>% 
+  mutate_at(vars(n_cv, n, n_min, 
+                 r_max, rf, pbr, msi_fisheries_cv), as.numeric) %>% 
   # Format revised (y/n) before extracting year
   mutate(revised_yn=stringr::str_squish(revised_yn),
          revised_yn=recode(revised_yn,
@@ -92,6 +107,8 @@ data <- data_orig %>%
   mutate(revised_yr=ifelse(is.na(revised_yr) & revised_yn=="Y", year, revised_yr) ) %>%
   # Add "nothing" to revision notes when no revision occured
   mutate(revised=ifelse(is.na(revised) & revised_yn=="N", "nothing", revised)) %>% 
+  # Format revised (y/n)
+  mutate(revised_yn=recode(revised_yn, "N"="no", "Y"="yes")) %>% 
   # Format revised
   mutate(revised=recode(revised,
                         "p, m" = "m, p",
@@ -100,11 +117,24 @@ data <- data_orig %>%
   mutate(strategic_yn=recode(strategic_yn, 
                              "Y"="Strategic",
                              "N"="Non-strategic")) %>% 
+  # Format MSI fisheries
+  rename(msi_fisheries_orig=msi_fisheries) %>%
+  mutate(msi_fisheries_orig=gsub("–", "-", msi_fisheries_orig),
+         msi_fisheries=ifelse(grepl("-", msi_fisheries_orig), 
+                              avg_range(msi_fisheries_orig), msi_fisheries_orig)) %>% 
+  mutate(msi_fisheries=as.numeric(msi_fisheries)) %>%
   # Format MSI total
-  # rename(msi_total_orig=msi_total) %>% 
+  rename(msi_total_orig=msi_total) %>%
+  mutate(msi_total_orig=gsub("–", "-", msi_total_orig),
+         msi_total=ifelse(grepl("-", msi_total_orig), 
+                              max_range(msi_total_orig), msi_total_orig)) %>% 
+  mutate(msi_total=as.numeric(msi_total)) %>%
+  # mutate(msi_fisheries_cv=ifelse(grepl("\\(", msi_fisheries_orig), 
+  #                                extract_from_parentheses(msi_fisheries_orig), 
+  #                                msi_fisheries_cv)) %>% 
   # mutate(msi_total = ifelse(grepl("-", msi_total_orig),
   #                             sub(".*-", "", msi_total_orig),
-  #                             msi_total_orig) %>% as.numeric(.)) 
+  #                             msi_total_orig) %>% as.numeric(.))
   # Remove useless
   select(-c(id, region)) %>% 
   # Arrange
@@ -113,8 +143,9 @@ data <- data_orig %>%
          center, area,
          n, n_cv, 
          n_min,
-         r_max, rf, pbr, msi_total, 
-         msi_fisheries, msi_fisheries_cv,
+         r_max, rf, pbr, 
+         msi_total_orig, msi_total,
+         msi_fisheries_orig, msi_fisheries, msi_fisheries_cv,
          strategic_yn,
          revised_yn, revised_yr, revised,
          everything())
@@ -137,15 +168,24 @@ sort(unique(data$revised_yn))
 table(data$revised_yr)
 sort(unique(data$revised))
 
+# !!!!!!!!!!!!!!!!!!!! ERRORS TO FIX IN REVISON RECORDS HERE !!!!!!!!!!!!!!!!!!!!!!
+data %>% 
+  count(revised_yn, revised)
+
 # RF and Rmax
+# !!!!!!!!!!!!!!!!!!!! ERRORS TO FIX HERE !!!!!!!!!!!!!!!!!!!!!!
 range(data$rf, na.rm=T) # Can RF really bye 0.05?
 range(data$r_max, na.rm=T) # Rmax's should not be zero
 table(data$rf)
 table(data$r_max)
 
 # N values
-sort(unique(data$n))
+sort(unique(data$n)) 
 sort(unique(data$n_min))
+
+# MSI
+sort(unique(data$msi_total))
+sort(unique(data$msi_fisheries))
 
 # Species
 spp_key <- data %>% 

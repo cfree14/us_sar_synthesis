@@ -27,7 +27,7 @@ data_orig <- purrr::map_df(files2merge, function(x){
   
   # Read file
   df <- readxl::read_excel(file.path(indir, x), 
-                           na=c("-", "unk", "undet", "n/a", "N/A", "UNDET", "UNK", "b", "see txt", "seetxt"), 
+                           na=c("-", "unk", "undet", "n/a", "N/A", "UNDET", "UNK", "b", "see txt", "seetxt", "NA"), 
                            col_types = "text") %>% 
     # Add filename
     mutate(filename=x) %>% 
@@ -72,10 +72,15 @@ data <- data_orig %>%
   mutate(strategic_yn=recode(strategic_yn, 
                              "NS"="Non-strategic",
                              "S"="Strategic")) %>% 
+  # Format statuses
+  mutate(osp_status=stringr::str_to_sentence(osp_status)) %>% 
+  mutate(esa_status=stringr::str_to_sentence(esa_status)) %>% 
   # Format revised
   mutate(revised=recode(revised, 
                         "N/A (New SAR in 2022)"="2022", 
                         "N/A (New SAR in 2023)"="2023") %>% as.numeric(.)) %>% 
+  # Format updated
+  mutate(updated_yn=recode(updated_yn, "N"="no", "Y"="yes")) %>% 
   # Format N_est
   mutate(n_est=gsub("\r|,", "", n_est),
          n_est=gsub("[A-Za-z]+$", "", n_est)) %>% 
@@ -175,12 +180,17 @@ sort(unique(data$area))
 
 # Strategic
 table(data$strategic_yn)
+table(data$osp_status)
+table(data$esa_status)
 
 # Rmax
 freeR::uniq(data$r_max)
 
 # RF
 freeR::uniq(data$rf)
+
+# MNPL
+freeR::uniq(data$mnpl)
 
 # Last survey
 sort(unique(data$last_survey))

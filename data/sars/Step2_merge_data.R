@@ -46,9 +46,11 @@ pac <- pac_orig %>%
   # Simplify
   select(region, subregion, filename, 
          year, group, comm_name, species, area,
-         n_est, n_min, r_max, rf, pbr,
+         n_est, n_cv, n_min, r_max, rf, pbr,
          sim_total, sim_fisheries, 
-         strategic_yn, revised_yn, comments)
+         strategic_yn, revised_yn, comments,
+         # 2024 ones
+         osp_status, esa_status, mnpl)
 
 # Atlantic
 atl <- atl_orig %>% 
@@ -62,9 +64,11 @@ atl <- atl_orig %>%
   # Simplify
   select(region, subregion, filename, 
          year, group, comm_name, species, area,
-         n_est, n_min, r_max, rf, pbr,
-         #sim_total, sim_fisheries, # not numeric yet
+         n_est, n_cv, n_min, r_max, rf, pbr,
+         sim_total, sim_fisheries, 
          strategic_yn, revised_yn, comments)
+         # 2024 ones
+         # osp_status, esa_status, mnpl)
 
 # Alaska
 ak <- ak_orig %>% 
@@ -77,7 +81,9 @@ ak <- ak_orig %>%
   select(region, subregion, filename, 
          year, group, comm_name, species, area,
          n_est, n_cv, n_min, r_max, rf, pbr,
-         sim_total, sim_fisheries, strategic_yn, revised_yn, comments)
+         sim_total, sim_fisheries, strategic_yn, revised_yn, comments,
+         # 2024 ones
+         osp_status, esa_status, mnpl)
 
 
 

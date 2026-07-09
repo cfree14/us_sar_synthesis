@@ -41,7 +41,7 @@ species_key <- readxl::read_excel("data/species_key.xlsx")
 # Loop through files
 files2merge <- list.files(indir, pattern=".xlsx")
 data_orig <- purrr::map_df(files2merge, function(x){
-  df <- readxl::read_excel(file.path(indir, x), na=c("N/A", "n/a", "unk", "undet", "und"), col_types = "text") %>% 
+  df <- readxl::read_excel(file.path(indir, x), na=c("N/A", "n/a", "N/a", "unk", "undet", "und"), col_types = "text") %>% 
     mutate(filename=x) %>% 
     # Fix typos in names
     rename(any_of(c("notes" = "comments")))
@@ -62,6 +62,13 @@ stats <- purrr::map_df(years, function(x){
 # Step 2. Basic cleaning
 ################################################################################
 
+# Function to calculate average of range
+avg_range <- function(x) {
+  x <- gsub(",", "", x)
+  mean(as.numeric(strsplit(x, "-")[[1]]))
+}
+avg_range("167,000-188,000")
+
 # Format
 data1 <- data_orig %>% 
   # Rename
@@ -70,8 +77,12 @@ data1 <- data_orig %>%
          sim_fish_orig=sim_fisheries) %>% 
   # Add year
   mutate(year = str_split(filename, "_", simplify = TRUE)[, 2] %>% as.numeric(.)) %>% 
+  # Format Nest that is a range
+  mutate(n_est_notes=ifelse(grepl("-", n_est), n_est, n_est_notes)) %>% 
+  mutate(n_est=ifelse(grepl("-", n_est), avg_range(n_est), n_est)) %>%
   # Convert to numeric
-  mutate_at(vars(n_est, n_cv, n_min, r_max, rf, pbr,
+  mutate_at(vars( n_est, n_cv, 
+                  n_min, r_max, rf, pbr, #n_est,
                  survey1, survey2, survey3, revision_yr), .funs=as.numeric) %>% 
   # Fix strategic (yes/no) 
   mutate(strategic_yn=recode(strategic_yn,
@@ -79,6 +90,9 @@ data1 <- data_orig %>%
                              "N"="Non-strategic",
                              "NS"="Non-strategic",
                              "S"="Strategic")) %>% 
+  # Format statuses
+  mutate(osp_status=stringr::str_to_sentence(osp_status)) %>% 
+  mutate(esa_status=stringr::str_to_sentence(esa_status)) %>% 
   # Split species/stock into common name and area (for ones with that format)
   separate(species_stock, into=c("comm_name1", "area1"), sep=" \\(", remove=F) %>% 
   mutate(area1=gsub("\\)", "", area1), 
@@ -145,16 +159,28 @@ revision_stats <- data1 %>%
   summarize(nrevised=sum(revised_yn=="yes" & !is.na(revised_yn))) %>% 
   ungroup()
 
-# Center
+# Year
 table(data1$year)
+
+# Center
 table(data1$center)
+
+# Status
 table(data1$strategic_yn)
+table(data1$osp_status)
+table(data1$esa_status)
 
 # Species key
 spp_key <- data1 %>% 
   count(comm_name, species)
 
 table(data1$sim_tot)
+
+# Revision
+table(data1$revised_yn)
+
+freeR::uniq(data1$n_cv)
+freeR::uniq(data1$n_est)
 
 
 # Build area keys
