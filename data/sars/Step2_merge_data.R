@@ -94,12 +94,42 @@ ak <- ak_orig %>%
 data <- bind_rows(pac, atl, ak) %>% 
   # Add stock
   mutate(stock=paste0(comm_name, " (", area, ")")) %>% 
+  # Format revised_yn
+  mutate(revised_yn=recode(revised_yn, 
+                           "Revised" = "yes",
+                           "Same as previous" = "no")) %>% 
   # Arrange
   select(region:group, stock, everything())
 
 # Inspect
 str(data)
 freeR::complete(data)
+
+# Region
+table(data$region)
+table(data$subregion)
+
+# N_CV
+range(data$n_cv, na.rm = T)
+
+# RMAX - 0 values and 0.2 values real?
+table(data$r_max)
+
+# RF
+table(data$rf) # 0 value real? 0.04 and 0.05 allowed?
+
+# Check PBR calculations
+
+# Confirm that SIM total is more than SIM fisheries
+# Ultimately, need SIM native in there
+
+# Confirm that Nmin is less than Nest
+
+# Status
+table(data$strategic_yn)
+
+# Revised
+table(data$revised_yn)
 
 
 # Export
