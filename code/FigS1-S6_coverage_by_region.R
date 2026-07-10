@@ -235,3 +235,75 @@ g5
 ggsave(g5, filename=file.path(plotdir, "FigS5_sar_coverage_atl_dolphins.png"), 
        width=6.5, height=7.0, units="in", dpi=600, bg="white")
 
+
+
+# Plot
+g5a <- ggplot(data %>% filter(region=="Atlantic" & group == "Dolphins" & comm_name!="Common bottlenose dolphin"),
+             aes(x = year, y = area, fill = strategic_yn)) +
+  # Facet
+  ggh4x::facet_nested(
+    rows = vars(comm_name, subregion),
+    scales = "free_y",
+    space = "free_y",
+    nest_line = element_line()   # draws a separator between groups
+  ) +
+  # Plot data
+  geom_tile() +
+  # Labels
+  labs(x = "Year", y = "", fill = "Status") +
+  # Axes
+  scale_x_continuous(breaks = seq(1992, 2024, 2)) +
+  # Legend
+  scale_fill_manual(values=c("grey80", "darkred"), na.value = "grey10") +
+  # Theme
+  theme_bw() +
+  my_theme +
+  theme(
+    strip.background = element_rect(
+      colour = "black",
+      fill = NA,   # or whatever fill you're using
+      linewidth = 0.2
+    ),
+    strip.text.y = element_text(angle = 0),
+    panel.spacing.y = unit(0, "mm")   # removes spacing between all panels
+  ) 
+g5a
+
+# Export
+ggsave(g5a, filename=file.path(plotdir, "FigS5a_sar_coverage_atl_dolphins1.png"), 
+       width=6.5, height=3.5, units="in", dpi=600, bg="white")
+
+# Plot
+g5b <- ggplot(data %>% filter(region=="Atlantic" & group == "Dolphins" & comm_name=="Common bottlenose dolphin"),
+              aes(x = year, y = area, fill = strategic_yn)) +
+  # Facet
+  ggh4x::facet_nested(
+    rows = vars(comm_name, subregion),
+    scales = "free_y",
+    space = "free_y",
+    nest_line = element_line()   # draws a separator between groups
+  ) +
+  # Plot data
+  geom_tile() +
+  # Labels
+  labs(x = "Year", y = "", fill = "Status") +
+  # Axes
+  scale_x_continuous(breaks = seq(1992, 2024, 2)) +
+  # Legend
+  scale_fill_manual(values=c("grey80", "darkred"), na.value = "grey10") +
+  # Theme
+  theme_bw() +
+  my_theme +
+  theme(
+    strip.background = element_rect(
+      colour = "black",
+      fill = NA,   # or whatever fill you're using
+      linewidth = 0.2
+    ),
+    panel.spacing.y = unit(0, "mm")   # removes spacing between all panels
+  ) 
+g5b
+
+# Export
+ggsave(g5b, filename=file.path(plotdir, "FigS5b_sar_coverage_atl_dolphins2.png"), 
+       width=6.5, height=6.5, units="in", dpi=600, bg="white")

@@ -3,7 +3,7 @@
 "Atlantic spotted dolphin","Gulf of Mexico",11
 "Atlantic spotted dolphin","Gulf of Mexico (Continental shelf and Oceanic)",3
 "Atlantic spotted dolphin","No. Gulf of Mexico",1
-"Atlantic spotted dolphin","Northern Gulf of Mexico",4
+"Atlantic spotted dolphin","Northern Gulf of Mexico",7
 "Atlantic spotted dolphin","Northern Gulf of Mexico (Continental shelf and Oceanic)",1
 "Atlantic spotted dolphin","Northern Gulf of Mexico (Outer continental shelf and Oceanic)",4
 "Atlantic spotted dolphin","Puerto Rico and U.S. Virgin Islands",7
@@ -15,20 +15,20 @@
 "Blainville's beaked whale","Gulf of Mexico",11
 "Blainville's beaked whale","Gulf of Mexico Oceanic",3
 "Blainville's beaked whale","No. Gulf of Mexico",1
-"Blainville's beaked whale","Northern Gulf of Mexico",4
+"Blainville's beaked whale","Northern Gulf of Mexico",7
 "Blainville's beaked whale","Northern Gulf of Mexico Oceanic",5
 "Blainville's beaked whale","Western North Atlantic",16
 "Blue whale","Western North Atlantic",28
 "Bryde's whale","Gulf of Mexico",9
 "Bryde's whale","Gulf of Mexico Oceanic",3
 "Bryde's whale","No. Gulf of Mexico",1
-"Bryde's whale","Northern Gulf of Mexico",4
+"Bryde's whale","Northern Gulf of Mexico",7
 "Bryde's whale","Northern Gulf of Mexico Oceanic",5
 "Clymene dolphin","Gulf of America",1
 "Clymene dolphin","Gulf of Mexico",11
 "Clymene dolphin","Gulf of Mexico Oceanic",3
 "Clymene dolphin","No. Gulf of Mexico",1
-"Clymene dolphin","Northern Gulf of Mexico",4
+"Clymene dolphin","Northern Gulf of Mexico",7
 "Clymene dolphin","Northern Gulf of Mexico Oceanic",5
 "Clymene dolphin","Western North Atlantic",21
 "Common bottlenose dolphin","Apalachee Bay",5
@@ -186,7 +186,7 @@
 "Cuvier's beaked whale","Gulf of Mexico",11
 "Cuvier's beaked whale","Gulf of Mexico Oceanic",3
 "Cuvier's beaked whale","No. Gulf of Mexico",1
-"Cuvier's beaked whale","Northern Gulf of Mexico",4
+"Cuvier's beaked whale","Northern Gulf of Mexico",7
 "Cuvier's beaked whale","Northern Gulf of Mexico Oceanic",5
 "Cuvier's beaked whale","Puerto Rico and U.S. Virgin Islands",7
 "Cuvier's beaked whale","Puerto Rico and US Virgin Islands",5
@@ -196,14 +196,14 @@
 "Dwarf sperm whale","Gulf of Mexico",11
 "Dwarf sperm whale","Gulf of Mexico Oceanic",3
 "Dwarf sperm whale","No. Gulf of Mexico",1
-"Dwarf sperm whale","Northern Gulf of Mexico",6
+"Dwarf sperm whale","Northern Gulf of Mexico",7
 "Dwarf sperm whale","Northern Gulf of Mexico Oceanic",5
 "Dwarf sperm whale","Western North Atlantic",28
 "False killer whale","Gulf of America",1
 "False killer whale","Gulf of Mexico",11
 "False killer whale","Gulf of Mexico Oceanic",3
 "False killer whale","No. Gulf of Mexico",1
-"False killer whale","Northern Gulf of Mexico",4
+"False killer whale","Northern Gulf of Mexico",7
 "False killer whale","Northern Gulf of Mexico Oceanic",5
 "False killer whale","Western North Atlantic",11
 "Fin whale","Western North Atlantic",28
@@ -211,14 +211,14 @@
 "Fraser's dolphin","Gulf of Mexico",11
 "Fraser's dolphin","Gulf of Mexico Oceanic",3
 "Fraser's dolphin","No. Gulf of Mexico",1
-"Fraser's dolphin","Northern Gulf of Mexico",4
+"Fraser's dolphin","Northern Gulf of Mexico",7
 "Fraser's dolphin","Northern Gulf of Mexico Oceanic",5
 "Fraser's dolphin","Western North Atlantic",21
 "Gervais' beaked whale","Gulf of America",1
 "Gervais' beaked whale","Gulf of Mexico",11
 "Gervais' beaked whale","Gulf of Mexico Oceanic",3
 "Gervais' beaked whale","No. Gulf of Mexico",1
-"Gervais' beaked whale","Northern Gulf of Mexico",4
+"Gervais' beaked whale","Northern Gulf of Mexico",7
 "Gervais' beaked whale","Northern Gulf of Mexico Oceanic",5
 "Gervais' beaked whale","Western North Atlantic",16
 "Gray seal","Northwest North Atlantic",3
@@ -237,7 +237,7 @@
 "Killer whale","Gulf of Mexico",11
 "Killer whale","Gulf of Mexico Oceanic",3
 "Killer whale","No. Gulf of Mexico",1
-"Killer whale","Northern Gulf of Mexico",4
+"Killer whale","Northern Gulf of Mexico",7
 "Killer whale","Northern Gulf of Mexico Oceanic",5
 "Killer whale","Western North Atlantic",28
 "Long-finned pilot whale","Western North Atlantic",28
@@ -245,7 +245,7 @@
 "Melon-headed whale","Gulf of Mexico",11
 "Melon-headed whale","Gulf of Mexico Oceanic",3
 "Melon-headed whale","No. Gulf of Mexico",1
-"Melon-headed whale","Northern Gulf of Mexico",4
+"Melon-headed whale","Northern Gulf of Mexico",7
 "Melon-headed whale","Northern Gulf of Mexico Oceanic",5
 "Melon-headed whale","Western North Atlantic",21
 "Mesoplodont beaked whales","Western North Atlantic",11
@@ -259,21 +259,21 @@
 "Pantropical spotted dolphin","Gulf of Mexico",11
 "Pantropical spotted dolphin","Gulf of Mexico Oceanic",3
 "Pantropical spotted dolphin","No. Gulf of Mexico",1
-"Pantropical spotted dolphin","Northern Gulf of Mexico",4
+"Pantropical spotted dolphin","Northern Gulf of Mexico",7
 "Pantropical spotted dolphin","Northern Gulf of Mexico Oceanic",5
 "Pantropical spotted dolphin","Western North Atlantic",28
 "Pygmy killer whale","Gulf of America",1
 "Pygmy killer whale","Gulf of Mexico",11
 "Pygmy killer whale","Gulf of Mexico Oceanic",3
 "Pygmy killer whale","No. Gulf of Mexico",1
-"Pygmy killer whale","Northern Gulf of Mexico",4
+"Pygmy killer whale","Northern Gulf of Mexico",7
 "Pygmy killer whale","Northern Gulf of Mexico Oceanic",5
 "Pygmy killer whale","Western North Atlantic",28
 "Pygmy sperm whale","Gulf of America",1
 "Pygmy sperm whale","Gulf of Mexico",11
 "Pygmy sperm whale","Gulf of Mexico Oceanic",3
 "Pygmy sperm whale","No. Gulf of Mexico",1
-"Pygmy sperm whale","Northern Gulf of Mexico",6
+"Pygmy sperm whale","Northern Gulf of Mexico",7
 "Pygmy sperm whale","Northern Gulf of Mexico Oceanic",5
 "Pygmy sperm whale","Western North Atlantic",28
 "Rice's whale","Gulf of America",1
@@ -282,14 +282,14 @@
 "Risso's dolphin","Gulf of Mexico",11
 "Risso's dolphin","Gulf of Mexico Oceanic",3
 "Risso's dolphin","No. Gulf of Mexico",1
-"Risso's dolphin","Northern Gulf of Mexico",3
+"Risso's dolphin","Northern Gulf of Mexico",6
 "Risso's dolphin","Northern Gulf of Mexico Oceanic",6
 "Risso's dolphin","Western North Atlantic",28
 "Rough-toothed dolphin","Gulf of America",1
 "Rough-toothed dolphin","Gulf of Mexico",11
 "Rough-toothed dolphin","Gulf of Mexico (Outer continental shelf and Oceanic)",3
 "Rough-toothed dolphin","No. Gulf of Mexico",1
-"Rough-toothed dolphin","Northern Gulf of Mexico",4
+"Rough-toothed dolphin","Northern Gulf of Mexico",7
 "Rough-toothed dolphin","Northern Gulf of Mexico (Outer continental shelf and Oceanic)",5
 "Rough-toothed dolphin","Western North Atlantic",17
 "Sei whale","Nova Scotia",25
@@ -298,7 +298,7 @@
 "Short-finned pilot whale","Gulf of Mexico",11
 "Short-finned pilot whale","Gulf of Mexico Oceanic",3
 "Short-finned pilot whale","No. Gulf of Mexico",1
-"Short-finned pilot whale","Northern Gulf of Mexico",4
+"Short-finned pilot whale","Northern Gulf of Mexico",7
 "Short-finned pilot whale","Northern Gulf of Mexico Oceanic",5
 "Short-finned pilot whale","Puerto Rico and U.S. Virgin Islands",7
 "Short-finned pilot whale","Puerto Rico and US Virgin Islands",5
@@ -310,7 +310,7 @@
 "Sperm whale","Gulf of Mexico Oceanic",3
 "Sperm whale","No. Gulf of Mexico",1
 "Sperm whale","North Atlantic",25
-"Sperm whale","Northern Gulf of Mexico",4
+"Sperm whale","Northern Gulf of Mexico",7
 "Sperm whale","Northern Gulf of Mexico Oceanic",5
 "Sperm whale","Puerto Rico and U.S. Virgin Islands",7
 "Sperm whale","Puerto Rico and US Virgin Islands",5
@@ -320,7 +320,7 @@
 "Spinner dolphin","Gulf of Mexico",11
 "Spinner dolphin","Gulf of Mexico Oceanic",3
 "Spinner dolphin","No. Gulf of Mexico",1
-"Spinner dolphin","Northern Gulf of Mexico",4
+"Spinner dolphin","Northern Gulf of Mexico",7
 "Spinner dolphin","Northern Gulf of Mexico Oceanic",5
 "Spinner dolphin","Puerto Rico and U.S. Virgin Islands",7
 "Spinner dolphin","Puerto Rico and US Virgin Islands",5
@@ -330,7 +330,7 @@
 "Striped dolphin","Gulf of Mexico",11
 "Striped dolphin","Gulf of Mexico Oceanic",3
 "Striped dolphin","No. Gulf of Mexico",1
-"Striped dolphin","Northern Gulf of Mexico",4
+"Striped dolphin","Northern Gulf of Mexico",7
 "Striped dolphin","Northern Gulf of Mexico Oceanic",5
 "Striped dolphin","Western North Atlantic",28
 "True's beaked whale","Western North Atlantic",16

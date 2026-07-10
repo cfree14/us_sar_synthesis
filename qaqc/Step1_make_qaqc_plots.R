@@ -23,9 +23,9 @@ data <- readRDS(file=file.path(outdir, "US_sars_data.Rds")) %>%
 # Stocks
 stocks <- sort(unique(data$stock))
 stocks <- data %>% 
-  filter(region=="Pacific") %>% 
-  slice(1:5) %>% 
-  pull(stock)
+  filter(region=="Alaska") %>% 
+  # slice(1:5) %>% 
+  pull(stock) %>% unique()
 
 # Theme
 my_theme <-  theme(axis.text=element_text(size=8),
@@ -105,7 +105,7 @@ for(i in 1:length(stocks)){
     geom_line() + 
     geom_point(mapping=aes(fill=revised_yn), size=2, pch=21) + 
     # Axes
-    scale_y_continuous(lim=c(0.1, 1), breaks=seq(0.1, 1, 0.1)) +
+    scale_y_continuous(lim=c(0, 1), breaks=seq(0.1, 1, 0.1)) +
     scale_x_continuous(lim=c(1995,2025), breaks=seq(2000, 2020, 10)) +
     # Labels
     labs(x="Year", y=expression("Recovery factor (R"["F"]*")"), 

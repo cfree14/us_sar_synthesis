@@ -98,19 +98,32 @@ data <- bind_rows(pac, atl, ak) %>%
   mutate(revised_yn=recode(revised_yn, 
                            "Revised" = "yes",
                            "Same as previous" = "no")) %>% 
+  # Reassign ENP gray whale to Pacific region (in Alaska 1995-2011)
+  # Reassign ENP Transient killer whale to Alaska (in West Coast 1999-2001)
+  mutate(region=case_when(stock=="Gray whale (Eastern North Pacific)" ~ "Pacific",
+                          stock=="Killer whale (ENP Transient)" ~ "Alaska",
+                          T ~ region),
+         subregion=case_when(stock=="Gray whale (Eastern North Pacific)" ~ "West Coast",
+                             stock=="Killer whale (ENP Transient)" ~ "Alaska",
+                             T ~ subregion)) %>% 
   # Arrange
-  select(region:group, stock, everything())
+  select(region:group, stock, comm_name, species, area, revised_yn, everything())
 
 # Inspect
 str(data)
 freeR::complete(data)
+
+# Confirm 1 row per stock year
+data %>% 
+  group_by(stock, year) %>% 
+  summarize(n=n()) %>% filter(n>1)
 
 # Region
 table(data$region)
 table(data$subregion)
 
 # N_CV
-range(data$n_cv, na.rm = T)
+range(data$n_cv, na.rm = T) # CV=0 real?
 
 # RMAX - 0 values and 0.2 values real?
 table(data$r_max)

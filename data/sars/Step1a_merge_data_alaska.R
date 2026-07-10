@@ -93,7 +93,9 @@ data <- data_orig %>%
   # Convert numeric
   # Neet to format N_MIN, N_CV, PBR, survey_interval, n_cv, sim_fisheries, sim_native, etc
   mutate_at(vars(r_max, rf, n_est, n_cv, n_min, pbr,
-                 sim_total, sim_native, sim_fisheries), as.numeric) %>% #
+                 sim_total, sim_native, sim_fisheries), as.numeric) %>% 
+  # Fix Rmax
+  mutate(r_max=ifelse(year<=2005, r_max*2, r_max)) %>% 
   # Format areas
   mutate(area=gsub("\r", " ", area), 
          area=gsub("E. ", "Eastern ", area),
@@ -107,6 +109,7 @@ data <- data_orig %>%
          area=gsub("transient", "Transient", area),
          area=gsub("resident", "Resident", area),
          area=recode(area,
+                     "Norton Sound" = "Eastern Bering Sea",
                      "Unidentified stock"="Unidentified",
                      # Make longer
                      "Cook Inlet/Shelikof"="Cook Inlet/Shelikof Strait",
@@ -165,15 +168,35 @@ data <- data_orig %>%
                         comm_name=="Ringed seal" & area %in% c("Arctic", "Alaska") ~ "Arctic stock",
                         comm_name=="Bearded seal" & area %in% c("Beringia", "Alaska") ~ "Beringia stock",
                         T ~ area)) %>% 
+  # Check PBR
+  mutate(pbr_calc=n_min*r_max/2*rf,
+         pbr_diff=round(pbr-pbr_calc, 2)) %>% 
+  # Use calculated PBR when available?
+  # mutate(pbr=ifelse(is.na(pbr), round(pbr_calc, 1), pbr)) %>% 
   # Arrange
   select(filename, year, region, group, comm_name, species, area,
-         n_est, n_est_notes, n_cv, n_min, n_min_notes, r_max, rf, pbr, pbr_notes,
+         n_est, n_est_notes, n_cv, n_min, n_min_notes, r_max, rf, 
+         pbr, pbr_calc, pbr_diff, pbr_notes,
          sim_fisheries, sim_native, sim_total, sim_total_notes, strategic_yn, 
-         last_survey, survey_interval, updated_yn, revised, comments, everything())
+         last_survey, survey_interval, updated_yn, revised, comments, everything()) %>% 
+  # Remove records that aren't really stocks
+  filter(!grepl("feeding area|survey", area))
 
 # Inspect
 str(data)
 freeR::complete(data)
+
+# Check PBRs
+# The 2006 Eastern Steller sea lion PBR was calculated incorrectly (2000 instead of 2004)
+sum(abs(data$pbr_diff)>1, na.rm=T)
+
+# Inspect simple version
+data_simple <- data %>% select(filename:n_est, n_cv, n_min, r_max, rf, pbr, 
+                               sim_fisheries, sim_native, sim_total, strategic_yn, updated_yn)
+freeR::complete(data_simple)
+# 3 missing status are true: 1995, pending co-mgmt
+# 3 missing RFs are for the same stocks
+
 
 # Areas
 sort(unique(data$area))
@@ -234,6 +257,58 @@ ggplot(data, #%>% filter(group=="Small whales"),
   # Theme
   theme_bw() +
   theme(legend.position = "top")
+
+# PBR
+############
+ggplot(data, #%>% filter(group=="Small whales"), 
+       aes(x=year, 
+           y=paste(comm_name, area, sep="-"), fill=pbr/1000)) +
+  facet_grid(group~., scales="free_y", space="free_y") +
+  geom_tile() +
+  # Labels
+  labs(x="Year", y="", fill='Status') +
+  scale_x_continuous(breaks=seq(1992, 2026,2)) +
+  # Legend
+  scale_fill_gradientn(name="PBR", 
+                       colors=RColorBrewer::brewer.pal(9, "Spectral") %>% rev()) +
+  # Theme
+  theme_bw() +
+  theme(legend.position = "top")
+
+# SIM total
+############
+ggplot(data, #%>% filter(group=="Small whales"), 
+       aes(x=year, 
+           y=paste(comm_name, area, sep="-"), fill=sim_total)) +
+  facet_grid(group~., scales="free_y", space="free_y") +
+  geom_tile() +
+  # Labels
+  labs(x="Year", y="", fill='Status') +
+  scale_x_continuous(breaks=seq(1992, 2026,2)) +
+  # Legend
+  scale_fill_gradientn(name="M/SI total", 
+                       colors=RColorBrewer::brewer.pal(9, "Spectral") %>% rev()) +
+  # Theme
+  theme_bw() +
+  theme(legend.position = "top")
+
+# SIM native
+############
+ggplot(data, #%>% filter(group=="Small whales"), 
+       aes(x=year, 
+           y=paste(comm_name, area, sep="-"), fill=sim_native)) +
+  facet_grid(group~., scales="free_y", space="free_y") +
+  geom_tile() +
+  # Labels
+  labs(x="Year", y="", fill='Status') +
+  scale_x_continuous(breaks=seq(1992, 2026,2)) +
+  # Legend
+  scale_fill_gradientn(name="M/SI total", 
+                       colors=RColorBrewer::brewer.pal(9, "Spectral") %>% rev()) +
+  # Theme
+  theme_bw() +
+  theme(legend.position = "top")   
+
 
 
 # Export data
