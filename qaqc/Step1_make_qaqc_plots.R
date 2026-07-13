@@ -14,7 +14,8 @@ plotdir <- "qaqc"
 
 # Read data
 data <- readRDS(file=file.path(outdir, "US_sars_data.Rds")) %>% 
-  mutate(revised_yn=factor(revised_yn, levels=c("yes", "no")))
+  # Factor revised (yes/no)
+  mutate(revised_yn=factor(revised_yn, levels=c("yes", "no"))) 
 
 
 # Prep data
@@ -44,9 +45,12 @@ my_theme <-  theme(axis.text=element_text(size=8),
                    legend.key = element_rect(fill = NA, color=NA),
                    legend.background = element_rect(fill=alpha('blue', 0)))
 
+# Graphing parameter
+pt_size <- 2
+
 
 # Loop through
-i <- 1
+i <- 3
 for(i in 1:length(stocks)){
   
   # Stock do
@@ -61,8 +65,8 @@ for(i in 1:length(stocks)){
     select(year, revised_yn, n_est, n_min) %>% 
     gather(key="metric", value="n", 3:ncol(.)) %>% 
     mutate(metric=recode(metric,
-                         "n_est"="Estimated abundance",
-                         "n_min"="Minimum abundance"))
+                         "n_est"="Nest",
+                         "n_min"="Nmin"))
   
   # Prep SIM data
   sim <- sdata %>% 
@@ -74,6 +78,12 @@ for(i in 1:length(stocks)){
                                   "sim_fisheries"="Fisheries",
                                   "sim_nonfisheries"="Non-fisheries"))
   
+  # Prep strategic year
+  s_years <- sdata %>% 
+    filter(strategic_yn=="Strategic") %>% 
+    pull(year)
+  s_years_df <- tibble(year=s_years)
+  
   # Plot data
   ################################################################################
   
@@ -82,10 +92,10 @@ for(i in 1:length(stocks)){
   # Add MNPL if its available
   g1 <- ggplot(sdata1, aes(x=year, y=n, color=metric, group=metric, shape=revised_yn)) +
     geom_line() +
-    geom_point(size=2, fill="white", color="white", shape=16) + # this is just to make prettier 
-    geom_point(size=2) + 
+    geom_point(size=pt_size, fill="white", color="white", shape=16) + # this is just to make prettier 
+    geom_point(size=pt_size) + 
     # Labels
-    labs(x="Year", y=" \nNumber of animals",  tag="A", title=stock_do) +
+    labs(x="Year", y="Population size\n(number of animals)",  tag="A") +
     # Legend
     scale_color_manual(name="Abunance type", values=c("red", "blue")) +
     scale_shape_manual(name="SAR type", values=c(16, 21), guide="none") +
@@ -94,7 +104,7 @@ for(i in 1:length(stocks)){
     scale_x_continuous(lim=c(1995,2025), breaks=seq(1995, 2025, 5)) +
     # Theme
     theme_bw() + my_theme +
-    theme(legend.position = c(0.2, 0.8),
+    theme(legend.position = "top",
           legend.key.size = unit(0.3, "cm"),
           axis.title.x=element_blank())
   g1
@@ -103,31 +113,40 @@ for(i in 1:length(stocks)){
   g2 <- ggplot(sdata, aes(x=year, y=rf)) +
     geom_hline(yintercept=c(0.1, 0.5), color="grey80", linetype="dashed") +
     geom_line() + 
-    geom_point(mapping=aes(fill=revised_yn), size=2, pch=21) + 
+    geom_point(mapping=aes(fill=revised_yn), size=pt_size, pch=21) + 
     # Axes
     scale_y_continuous(lim=c(0, 1), breaks=seq(0.1, 1, 0.1)) +
     scale_x_continuous(lim=c(1995,2025), breaks=seq(2000, 2020, 10)) +
     # Labels
     labs(x="Year", y=expression("Recovery factor (R"["F"]*")"), 
-         tag="B", title=" ") +
+         tag="B") +
     # Legend
     scale_fill_manual(name="SAR revised?", values=c("black", "white")) +
     # Theme
     theme_bw() + my_theme + 
-    theme(legend.position = c(0.35, 0.8),
+    theme(legend.position = "top",
           legend.key.size = unit(0.3, "cm"),
           axis.title.x=element_blank())
   g2
   
   # PBR vs SI/M
-  # Add SI/M and strategic status
+  ymax <- max(c(sdata$pbr, sdata$sim_total), na.rm=T)*1.03
   g3 <- ggplot(sdata, aes(x=year, y=pbr)) +
+    # Mark strategic
+    geom_point(data=s_years_df, mapping=aes(x=year), y=ymax, 
+               pch=16, color="darkred", inherit.aes = F, size=pt_size) +
+    # geom_rect(data=s_years_df, 
+    #           mapping=aes(xmin=year-0.5, xmax=year+0.5), inherit.aes = F, 
+    #           ymin=0, ymax=ymax,
+    #           fill="darkred", alpha=0.2) +
+    # SI/M
     geom_bar(data=sim, mapping=aes(x=year, y=sim, fill=sim_type), stat="identity") +
+    # PBR
     geom_line() + 
     geom_point(size=2, fill="white", color="white", shape=16) + # this is just to make prettier 
-    geom_point(mapping=aes(shape=revised_yn), size=2) + 
+    geom_point(mapping=aes(shape=revised_yn), size=pt_size) + 
     # Axes
-    scale_y_continuous(lim=c(0, NA)) +
+    scale_y_continuous(lim=c(0, ymax)) +
     scale_x_continuous(lim=c(1995,2025), breaks=seq(1995, 2025, 5)) +
     # Labels
     labs(x="Year", 
@@ -138,7 +157,7 @@ for(i in 1:length(stocks)){
     scale_shape_manual(name="SAR revised?", values=c(16, 21), guide = "none") +
     # Theme
     theme_bw() + my_theme +
-    theme(legend.position = c(0.15, 0.8),
+    theme(legend.position = "top",
           legend.key.size = unit(0.3, "cm"))
   g3
   
@@ -146,12 +165,12 @@ for(i in 1:length(stocks)){
   g4 <- ggplot(sdata, aes(x=year, y=r_max)) +
     geom_hline(yintercept=c(0.04, 0.12), color="grey80", linetype="dashed") +
     geom_line() + 
-    geom_point(mapping=aes(fill=revised_yn), size=2, pch=21) + 
+    geom_point(mapping=aes(fill=revised_yn), size=pt_size, pch=21) + 
     # Axes
     scale_y_continuous(lim=c(0, 0.2)) +
     scale_x_continuous(lim=c(1995,2025), breaks=seq(2000, 2020, 10)) +
     # Labels
-    labs(x="Year", y=expression("R"["MAX"]), tag="D") +
+    labs(x="Year", y=expression("R"["MAX"]), tag="D", title="\n") +
     # Legend
     scale_fill_manual(name="SAR revised?", values=c("black", "white"), guide = "none") +
     # Theme

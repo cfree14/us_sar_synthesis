@@ -16,13 +16,13 @@ ui <- fluidPage(
         inputId = "region",
         label = "Region",
         choices = sort(unique(data$region)),
-        selected = sort(unique(data$region))[1]
+        selected = "Pacific", #sort(unique(data$region))[1]
       ),
       
       selectInput(
         inputId = "stock",
         label = "Stock",
-        choices = NULL
+        choices =  NULL # "Humpback whale (California-Oregon-Washington)" # NULL
       )
     ),
     
