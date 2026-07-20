@@ -16,23 +16,20 @@ outdir <- "data/sars/processed"
 # Species key
 species_key <- readxl::read_excel("data/species_key.xlsx")
 
-# Area key
-# area_key <- readxl::read_excel("data/area_key.xlsx")
-
-# Stock key
-# stock_key <- readxl::read_excel("data/stock_key_pacific.xlsx")
-# freeR::which_duplicated(stock_key$stock) # must have no duplicates
-
-# To do list
-# - Check for missing values in data_orig; fill in true NAs with N/A; expand workflow to confirm that only true NAs are present
-# - Record the SIM modifiers
-# - Derive non-fish SIM
-# - Mark revision years
-# - Extract survey years
-
 # Checks 
 # 1) Are PBR calculations aligned?
 # 2) Is total SIM larger than fisheries SIM?
+
+
+# Helper functions
+################################################################################
+
+# Function to calculate average of range
+avg_range <- function(x) {
+  x <- gsub(",", "", x)
+  mean(as.numeric(strsplit(x, "-")[[1]]))
+}
+avg_range("167,000-188,000")
 
 
 # Step 1. Merge
@@ -40,6 +37,7 @@ species_key <- readxl::read_excel("data/species_key.xlsx")
 
 # Loop through files
 files2merge <- list.files(indir, pattern=".xlsx")
+files2merge <- files2merge[!grepl("conflicted", files2merge)]
 data_orig <- purrr::map_df(files2merge, function(x){
   df <- readxl::read_excel(file.path(indir, x), na=c("N/A", "n/a", "N/a", "unk", "undet", "und"), col_types = "text") %>% 
     mutate(filename=x) %>% 
@@ -61,13 +59,6 @@ stats <- purrr::map_df(years, function(x){
 
 # Step 2. Basic cleaning
 ################################################################################
-
-# Function to calculate average of range
-avg_range <- function(x) {
-  x <- gsub(",", "", x)
-  mean(as.numeric(strsplit(x, "-")[[1]]))
-}
-avg_range("167,000-188,000")
 
 # Format
 data1 <- data_orig %>% 
@@ -210,7 +201,7 @@ data2 <- data1 %>%
   select(filename, year, 
          group, 
          stock, comm_name, species, 
-        # region, 
+         region, 
          area, area_orig, center, 
          n_est, n_cv, n_min, r_max, rf, 
          pbr, pbr_derived, pbr_check,
@@ -251,12 +242,28 @@ data3 <- bind_rows(data2, data99_not_updated) %>%
   arrange(year, region, group)
 
 
+# Step 4. Add 1997 stocks
+################################################################################
+
+# 1997
+data97 <- data3 |> 
+  # Reduce to 1996
+  filter(year==1996) |> 
+  # Update to 1997
+  mutate(year=1997, 
+         revised_yn="Same as previous")
+
+# Add in
+data4 <- bind_rows(data3, data97) |> 
+  arrange(group, comm_name, area, year)
+
+
 # Check 
 ################################################################################
 
 
 #
-ggplot(data3,#%>% filter(group=="Porpoises"), # Phocids, Otariids, Porpoises, Small whales, Large whales, Dolphins
+ggplot(data4,#%>% filter(group=="Porpoises"), # Phocids, Otariids, Porpoises, Small whales, Large whales, Dolphins
        aes(y=stock, x=year, fill=strategic_yn)) +
   facet_grid(group+region~., scale="free_y", space="free_y") +
   geom_tile() +
@@ -267,7 +274,7 @@ ggplot(data3,#%>% filter(group=="Porpoises"), # Phocids, Otariids, Porpoises, Sm
   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
 
 # 
-ggplot(data3 %>% filter(group=="Dolphins"), # Phocids, Otariids, Porpoises, Small whales, Large whales, Dolphins
+ggplot(data4 %>% filter(group=="Dolphins"), # Phocids, Otariids, Porpoises, Small whales, Large whales, Dolphins
        aes(y=stock, x=year, fill=strategic_yn)) +
   facet_grid(group+region~., scale="free_y", space="free_y") +
   geom_tile() +
@@ -282,5 +289,5 @@ ggplot(data3 %>% filter(group=="Dolphins"), # Phocids, Otariids, Porpoises, Smal
 ################################################################################
 
 # Export data
-saveRDS(data3, file=file.path(outdir, "Pacific_SARs_parameters.Rds"))
+saveRDS(data4, file=file.path(outdir, "Pacific_SARs_parameters.Rds"))
 

@@ -159,11 +159,11 @@
 "Common bottlenose dolphin","West Bayj",1
 "Common bottlenose dolphin","Western Gulf of Mexico",3
 "Common bottlenose dolphin","Western Gulf of Mexico coastal",2
-"Common bottlenose dolphin","Western North Atlantic, Central Florida Coastal",5
-"Common bottlenose dolphin","Western North Atlantic, Northern Florida Coastal",5
+"Common bottlenose dolphin","Western North Atlantic, Central Florida Coastal",4
+"Common bottlenose dolphin","Western North Atlantic, Northern Florida Coastal",4
 "Common bottlenose dolphin","Western North Atlantic, Northern Migratory Coastal",5
 "Common bottlenose dolphin","Western North Atlantic, Offshore",5
-"Common bottlenose dolphin","Western North Atlantic, S. Carolina, Georgia Coastal",5
+"Common bottlenose dolphin","Western North Atlantic, S. Carolina, Georgia Coastal",4
 "Common bottlenose dolphin","Western North Atlantic, S. Carolina/G eorgia coastal",1
 "Common bottlenose dolphin","Western North Atlantic, S. Carolina/Georgia coastal",6
 "Common bottlenose dolphin","Western North Atlantic, Southern Migratory Coastal",5
@@ -333,5 +333,8 @@
 "Striped dolphin","Northern Gulf of Mexico",7
 "Striped dolphin","Northern Gulf of Mexico Oceanic",5
 "Striped dolphin","Western North Atlantic",28
+"Tamanend's bottlenose dolphin","Western North Atlantic, Central Florida Coastal",1
+"Tamanend's bottlenose dolphin","Western North Atlantic, Northern Florida Coastal",1
+"Tamanend's bottlenose dolphin","Western North Atlantic, S. Carolina, Georgia Coastal",1
 "True's beaked whale","Western North Atlantic",16
 "White-beaked dolphin","Western North Atlantic",28

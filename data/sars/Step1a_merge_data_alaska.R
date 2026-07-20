@@ -197,7 +197,6 @@ freeR::complete(data_simple)
 # 3 missing status are true: 1995, pending co-mgmt
 # 3 missing RFs are for the same stocks
 
-
 # Areas
 sort(unique(data$area))
 
@@ -237,15 +236,40 @@ freeR::uniq(data$sim_native)
 freeR::uniq(data$sim_fisheries)
 
 
+# Add 1997 and 2004 stocks
+################################################################################
+
+
+# 1997 data
+data97 <- data |> 
+  # Reduce to 1996
+  filter(year==1996) |> 
+  # Make 1997 and not revised
+  mutate(year=1997,
+         updated_yn="no")
+
+# 2004 data
+data04 <- data |> 
+  # Reduce to 2003
+  filter(year==2003) |> 
+  # Make 2004 and not revised
+  mutate(year=2004,
+         udpated_yn="no")
+
+# Merge
+data1 <- bind_rows(data, data97, data04) |> 
+  arrange(group, comm_name, area, year)
+
+
 # Visualize stocks
 ################################################################################
 
 # Confirm 1 row per stock
-count(data, comm_name, area, year) %>% filter(n>1)
+count(data1, comm_name, area, year) %>% filter(n>1)
 
 # Done: Otariids, Porpoises, Dolphins, Phocids, Large whales
 # Working: Small whales
-ggplot(data, #%>% filter(group=="Small whales"), 
+ggplot(data1, #%>% filter(group=="Small whales"), 
        aes(x=year, 
            y=paste(comm_name, area, sep="-"), fill=strategic_yn)) +
   facet_grid(group~., scales="free_y", space="free_y") +
@@ -260,7 +284,7 @@ ggplot(data, #%>% filter(group=="Small whales"),
 
 # PBR
 ############
-ggplot(data, #%>% filter(group=="Small whales"), 
+ggplot(data1, #%>% filter(group=="Small whales"), 
        aes(x=year, 
            y=paste(comm_name, area, sep="-"), fill=pbr/1000)) +
   facet_grid(group~., scales="free_y", space="free_y") +
@@ -277,7 +301,7 @@ ggplot(data, #%>% filter(group=="Small whales"),
 
 # SIM total
 ############
-ggplot(data, #%>% filter(group=="Small whales"), 
+ggplot(data1, #%>% filter(group=="Small whales"), 
        aes(x=year, 
            y=paste(comm_name, area, sep="-"), fill=sim_total)) +
   facet_grid(group~., scales="free_y", space="free_y") +
@@ -294,7 +318,7 @@ ggplot(data, #%>% filter(group=="Small whales"),
 
 # SIM native
 ############
-ggplot(data, #%>% filter(group=="Small whales"), 
+ggplot(data1, #%>% filter(group=="Small whales"), 
        aes(x=year, 
            y=paste(comm_name, area, sep="-"), fill=sim_native)) +
   facet_grid(group~., scales="free_y", space="free_y") +
@@ -314,8 +338,8 @@ ggplot(data, #%>% filter(group=="Small whales"),
 # Export data
 ################################################################################
 
-# Export data
-saveRDS(data, file=file.path(outdir, "Alaska_SARs_parameters.Rds"))
+# Export data1
+saveRDS(data1, file=file.path(outdir, "Alaska_SARs_parameters.Rds"))
 
 
 

@@ -5,7 +5,7 @@ account: emlab-ucsb
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 17601751
-bundleId: 12251768
+bundleId: 12294819
 url: https://emlab-ucsb.shinyapps.io/us_sar_data_viewer/
 version: 1
 asMultiple: FALSE

@@ -15,7 +15,6 @@ plotdir <- "figures"
 # Read data
 data_orig <- readRDS(data, file=file.path(outdir, "US_sars_data.Rds"))
 
-# Remove non-stocks
 
 # Build data
 ################################################################################
