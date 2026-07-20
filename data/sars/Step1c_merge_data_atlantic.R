@@ -16,6 +16,9 @@ outdir <- "data/sars/processed"
 # Species key
 species_key <- readxl::read_excel("data/species_key.xlsx")
 
+# TO-DO LIST
+# Keep correcting errors revealed by PBR check
+
 
 # Helper functions
 ################################################################################
@@ -140,12 +143,9 @@ data <- data_orig %>%
          msi_total=ifelse(grepl("-", msi_total_orig), 
                               max_range(msi_total_orig), msi_total_orig)) %>% 
   mutate(msi_total=as.numeric(msi_total)) %>%
-  # mutate(msi_fisheries_cv=ifelse(grepl("\\(", msi_fisheries_orig), 
-  #                                extract_from_parentheses(msi_fisheries_orig), 
-  #                                msi_fisheries_cv)) %>% 
-  # mutate(msi_total = ifelse(grepl("-", msi_total_orig),
-  #                             sub(".*-", "", msi_total_orig),
-  #                             msi_total_orig) %>% as.numeric(.))
+  # Check PBR
+  mutate(pbr_calc=n_min*r_max/2*rf,
+         pbr_diff=abs(pbr-pbr_calc)) %>% 
   # Remove useless
   select(-c(id, region)) %>% 
   # Arrange
@@ -154,7 +154,8 @@ data <- data_orig %>%
          center, area,
          n, n_cv, 
          n_min,
-         r_max, rf, pbr, 
+         r_max, rf, 
+         pbr, pbr_calc, pbr_diff,
          msi_total_orig, msi_total,
          msi_fisheries_orig, msi_fisheries, msi_fisheries_cv,
          strategic_yn,
@@ -183,6 +184,11 @@ sort(unique(data$revised))
 data %>% 
   count(revised_yn, revised)
 
+# Check PBR
+# The 2009-10 GoM/BoF harbor porpoise PBR should be 703 and not 701 (arithmetic incorrect in SAR)
+pbr_check <- data %>% 
+  filter(pbr_diff>0.8)
+
 # Recovery factor (RF)
 # The Pygmy killer whale (Northern Gulf of Mexico) RF was 0.05 from 1995-2002
 # 0.16 RF is real: The recovery factor was set at 0.16 because of the stock's 
@@ -198,7 +204,7 @@ table(data$r_max)
 # N values
 sort(unique(data$n)) # N=0 appears to be true for some dolphin stocks
 sort(unique(data$n_min))
-sort(unique(data$n_cv)) # N_cv=0 appears to be true for NA right whale and Gulf of ME humpback whale
+sort(unique(data$n_cv)) # N_cv=0 appears to be true for NA right whale and Gulf of ME humpback whale, Spinner dolphin (Kauai/Niihau)
 
 # MSI
 sort(unique(data$msi_total))

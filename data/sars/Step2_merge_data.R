@@ -106,8 +106,20 @@ data <- bind_rows(pac, atl, ak) %>%
          subregion=case_when(stock=="Gray whale (Eastern North Pacific)" ~ "West Coast",
                              stock=="Killer whale (ENP Transient)" ~ "Alaska",
                              T ~ subregion)) %>% 
+  # Check PBR
+  mutate(pbr_calc=n_min*r_max/2*rf,
+         pbr_diff=abs(pbr-pbr_calc) %>% round(., 2)) %>% 
   # Arrange
-  select(region:group, stock, comm_name, species, area, revised_yn, everything())
+  select(region:group, stock, comm_name, species, area, revised_yn, 
+         n_est, n_cv, n_min, r_max, rf, 
+         pbr, pbr_calc, pbr_diff,
+         sim_total, sim_fisheries, strategic_yn, comments,
+         # 2024 ones
+         osp_status, esa_status, mnpl, everything())
+
+
+# Inspect
+################################################################################
 
 # Inspect
 str(data)
@@ -123,20 +135,35 @@ table(data$region)
 table(data$subregion)
 
 # N_CV
+# N_cv=0 appears to be true for NA right whale, Gulf of ME humpback whale, and 
 range(data$n_cv, na.rm = T) # CV=0 real?
+table(data$n_cv)
 
 # RMAX - 0 values and 0.2 values real?
+# The North Atlantic right whale Rmax was 0 from 2000-2009
+# The WA Northern sea otter has RMAX=0.2
 table(data$r_max)
 
 # RF
-table(data$rf) # 0 value real? 0.04 and 0.05 allowed?
+# All range from 0.1 - 1 as expected
+table(data$rf)
 
 # Check PBR calculations
+# The 2006 Eastern Steller sea lion PBR was calculated incorrectly (2000 instead of 2004)
+# The 2009-10 GoM/BoF harbor porpoise PBR should be 703 and not 701 (arithmetic incorrect in SAR)
+pbr_check <- data %>% 
+  filter(pbr_diff>1)
 
 # Confirm that SIM total is more than SIM fisheries
 # Ultimately, need SIM native in there
+sim_check <- data %>% 
+  mutate(fish_larger=sim_fisheries > sim_total) %>% 
+  filter(fish_larger==T)
 
 # Confirm that Nmin is less than Nest
+ncheck <- data %>% 
+  mutate(nmin_larger=n_min > n_est) %>% 
+  filter(nmin_larger==T)
 
 # Status
 table(data$strategic_yn)
