@@ -66,9 +66,9 @@ atl <- atl_orig %>%
          year, group, comm_name, species, area,
          n_est, n_cv, n_min, r_max, rf, pbr,
          sim_total, sim_fisheries, 
-         strategic_yn, revised_yn, comments)
+         strategic_yn, revised_yn, comments,
          # 2024 ones
-         # osp_status, esa_status, mnpl)
+         osp_status, esa_status, mnpl)
 
 # Alaska
 ak <- ak_orig %>% 
@@ -94,6 +94,10 @@ ak <- ak_orig %>%
 data <- bind_rows(pac, atl, ak) %>% 
   # Add stock
   mutate(stock=paste0(comm_name, " (", area, ")")) %>% 
+  # Format ESA status
+  mutate(esa_status=stringr::str_to_sentence(esa_status)) %>%
+  # Format OSP status
+  mutate(osp_status=stringr::str_to_sentence(osp_status)) %>% 
   # Format revised_yn
   mutate(revised_yn=recode(revised_yn, 
                            "Revised" = "yes",
@@ -149,8 +153,8 @@ table(data$r_max)
 table(data$rf)
 
 # Check PBR calculations
-# The 2006 Eastern Steller sea lion PBR was calculated incorrectly (2000 instead of 2004)
-# The 2009-10 GoM/BoF harbor porpoise PBR should be 703 and not 701 (arithmetic incorrect in SAR)
+# Alaska: The 2006 Eastern Steller sea lion PBR was calculated incorrectly (2000 instead of 2004)
+# Atlantic: The 2009-10 GoM/BoF harbor porpoise PBR should be 703 and not 701 (arithmetic incorrect in SAR)
 pbr_check <- data %>% 
   filter(pbr_diff>1)
 

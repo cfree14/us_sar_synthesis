@@ -62,7 +62,7 @@ stats1 <- stats %>%
 stats2 <- stats %>% 
   mutate(category="Taxanomic group", 
          subcategory=group)
-stats3 <- bind_rows(stats1, stats2)
+stats3 <- bind_rows(stats1, stats2) 
 
 # Quick plot
 ggplot(stats, aes(x=revision_yr_max)) +
@@ -90,20 +90,8 @@ my_theme <-  theme(axis.text=element_text(size=8),
                    legend.key = element_rect(fill = NA, color=NA),
                    legend.background = element_rect(fill=alpha('blue', 0)))
 
-# Max
-g1 <- ggplot(stats3, aes(y=subcategory, x=revision_yr_max)) +
-  facet_wrap(~category, scales="free_y", space="free_y") +
-  geom_violin() +
-  # Reference line
-  geom_vline(xintercept=3, color="red") +
-  # Labels
-  labs(x="Maximum number of years\nbetween SAR revisions", y="", tag="A") +
-  # Theme
-  theme_bw() + my_theme
-g1
-
 # Average
-g2 <- ggplot(stats3, aes(y=subcategory, x=revision_yr_avg)) +
+g1 <- ggplot(stats3, aes(y=subcategory, x=revision_yr_avg)) +
   facet_wrap(~category, scales="free_y", space="free_y") +
   geom_violin() +
   # Reference line
@@ -113,6 +101,18 @@ g2 <- ggplot(stats3, aes(y=subcategory, x=revision_yr_avg)) +
   # Theme
   theme_bw() + my_theme +
   theme(axis.text.y=element_blank())
+g1
+
+# Max
+g2 <- ggplot(stats3, aes(y=subcategory, x=revision_yr_max)) +
+  facet_wrap(~category, scales="free_y", space="free_y") +
+  geom_violin() +
+  # Reference line
+  geom_vline(xintercept=3, color="red") +
+  # Labels
+  labs(x="Maximum number of years\nbetween SAR revisions", y="", tag="A") +
+  # Theme
+  theme_bw() + my_theme
 g2
 
 # Merge

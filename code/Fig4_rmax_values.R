@@ -16,7 +16,7 @@ plotdir <- "figures"
 data_orig <- readRDS(data, file=file.path(outdir, "US_sars_data.Rds"))
 
 # Add a figure showing reported values when default selected to get bias in choice
-# Remove non-stocks
+
 
 # Build data
 ################################################################################
@@ -64,6 +64,30 @@ stats1 <- data %>%
 # Build reference lines
 ref_lines <- data %>% 
   select(group, rmax_default) %>% unique()
+
+
+# Prep stats for manuscript
+################################################################################
+
+# % non-default
+ndefault <- sum(data$rmax_default_yn=="Default")
+ntotal <- nrow(data)
+ndefault/ntotal
+ndefault
+ntotal
+
+# % higher when custom
+ncustom <- sum(data$rmax_default_yn=="Custom")
+nhigher <- sum(data$rmax_type=="Higher")
+nhigher / ncustom
+nhigher
+ncustom
+
+# Dolphin stocks
+ndolphin <- sum(data$group=="Dolphins")
+ndolphin_low <- sum(data$group=="Dolphins" & data$rmax_type=="Lower")
+data %>% 
+  filter(group=="Dolphins" & rmax_type=="Lower")
 
 
 # Plot data
@@ -134,4 +158,16 @@ g <- gridExtra::grid.arrange(g1, g2, nrow=1)
 # Export
 ggsave(g, filename=file.path(plotdir, "Fig4_rmax_values.png"), 
        width=6.5, height=6.5, units="in", dpi=600, bg="white")
+
+
+
+# Sensitivity of PBR/total MSI to RMAX choice
+################################################################################
+
+# Do this only for stocks at the default? 
+# Since others have good evidence and shouldn't be varied?
+
+
+
+
 

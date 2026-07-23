@@ -42,7 +42,9 @@ stats <- data %>%
             rf_change=rf2-rf1,
             pbr_change=(pbr2-pbr1)/pbr1,
             nmin_change=(nmin2-nmin1)/nmin1) %>% 
-  ungroup()
+  ungroup() %>% 
+  # Limit to finite
+  filter(is.finite(pbr_ratio) & is.finite(nmin_ratio))
 
 # Build data
 stats2 <- data %>% 
@@ -63,8 +65,13 @@ stats2 <- data %>%
             rf_change=rf2-rf1,
             pbr_change=(pbr2-pbr1)/pbr1,
             n_change=(n2-n1)/n1) %>% 
-  ungroup()
+  ungroup() %>% 
+  # Limit to finite
+  filter(is.finite(pbr_ratio) & is.finite(n_ratio))
 
+# Correlations
+cor(x=stats$nmin_ratio, y=stats$pbr_ratio, method="pearson")
+cor(x=stats2$n_ratio, y=stats2$pbr_ratio, method="pearson")
 
 # Plot data
 ################################################################################

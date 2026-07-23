@@ -35,12 +35,12 @@ atl <- atl_orig %>%
   # Filter
   filter(year==2024) %>% 
   # Rename
-  rename(n_est=n) %>% 
-  # FAKE SURVEY YEAR AND N METHOD
-  mutate(survey_yr=as.numeric(revised_yr),
-         n_method=NA) %>% 
+  rename(n_est=n, 
+         survey_yr_orig=survey_yr) %>% 
+  # Extract recent survey year
+  mutate(survey_yr=str_extract(survey_yr_orig, "\\d(?=(?:\\D*\\d){3}\\D*$)(?:\\D*\\d){3}") %>% as.numeric(.)) %>% 
   # Simplify
-  select(region, group, stock, comm_name, area, n_cv, n_est, n_method, survey_yr) 
+  select(region, group, stock, comm_name, area, n_cv, n_est, n_method, survey_yr, survey_yr_orig) 
 
 # Atlantic
 ak <- ak_orig %>% 
