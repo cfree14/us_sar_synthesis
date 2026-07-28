@@ -95,6 +95,8 @@ my_theme <-  theme(axis.text=element_text(size=8),
                    legend.background = element_rect(fill=alpha('blue', 0)))
 
 # N_min
+amin <- min(c(stats$nmin_ratio, stats$pbr_ratio))
+amax <- max(c(stats$nmin_ratio, stats$pbr_ratio))
 g1 <- ggplot(stats, aes(x=nmin_ratio, y=pbr_ratio, fill=rf_change)) +
   # Ref line
   geom_hline(yintercept=1, color="grey60", linetype="dotted") +
@@ -104,14 +106,16 @@ g1 <- ggplot(stats, aes(x=nmin_ratio, y=pbr_ratio, fill=rf_change)) +
   # geom_smooth(method="lm") +
   # 1:1 line
   geom_abline(slope=1) +
-  annotate(geom="text", x=0.1, y=100, label="PBR generous", size=2) +
+  annotate(geom="text", x=0.1, y=100, label="PBR liberal", size=2) +
   annotate(geom="text", x=100, y=0.1, label="PBR constrained", size=2) +
   # Axes
   # lims(x=c(0, 40), y=c(0, 40)) +
   scale_x_continuous(trans="log10", 
+                     lim=c(amin, amax),
                      breaks=c(0.01, 0.1, 1, 10, 100, 1000),
                      labels=c("0.01", "0.1", "1", "10", "100", "1000")) +
   scale_y_continuous(trans="log10", 
+                     lim=c(amin, amax),
                      breaks=c(0.01, 0.1, 1, 10, 100, 1000),
                      labels=c("0.01", "0.1", "1", "10", "100", "1000")) +
   # Labs
@@ -125,6 +129,8 @@ g1 <- ggplot(stats, aes(x=nmin_ratio, y=pbr_ratio, fill=rf_change)) +
 g1
 
 # N_est
+amin2 <- min(c(stats2$n_ratio, stats2$pbr_ratio))
+amax2 <- max(c(stats2$n_ratio, stats2$pbr_ratio))
 g2 <- ggplot(stats2, aes(x=n_ratio, y=pbr_ratio, fill=rf_change)) +
   # Ref line
   geom_hline(yintercept=1, color="grey60", linetype="dotted") +
@@ -134,14 +140,16 @@ g2 <- ggplot(stats2, aes(x=n_ratio, y=pbr_ratio, fill=rf_change)) +
   # geom_smooth(method="lm") +
   # 1:1 line
   geom_abline(slope=1) +
-  annotate(geom="text", x=0.1, y=100, label="PBR generous", size=2) +
+  annotate(geom="text", x=0.1, y=100, label="PBR liberal", size=2) +
   annotate(geom="text", x=10, y=0.1, label="PBR constrained", size=2) +
   # Axes
   # lims(x=c(0, 40), y=c(0, 40)) +
-  scale_x_continuous(trans="log10", 
+  scale_x_continuous(trans="log10",
+                     lim=c(amin2, amax2),
                      breaks=c(0.01, 0.1, 1, 10, 100, 1000),
                      labels=c("0.01", "0.1", "1", "10", "100", "1000")) +
   scale_y_continuous(trans="log10", 
+                     lim=c(amin2, amax2),
                      breaks=c(0.01, 0.1, 1, 10, 100, 1000),
                      labels=c("0.01", "0.1", "1", "10", "100", "1000")) +
   # Labs
@@ -160,7 +168,7 @@ g <- gridExtra::grid.arrange(g1, g2, nrow=1, widths=c(0.4, 0.6))
 
 
 # Export
-ggsave(g, filename=file.path(plotdir, "Fig6_change_in_pbr_vs_abundance.png"),
+ggsave(g, filename=file.path(plotdir, "Fig9_change_in_pbr_vs_abundance.png"),
        width=6.5, height=2.75, units="in", dpi=600, bg="white")
 
 

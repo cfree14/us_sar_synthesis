@@ -50,7 +50,7 @@ pac <- pac_orig %>%
          sim_total, sim_fisheries, 
          strategic_yn, revised_yn, comments,
          # 2024 ones
-         osp_status, esa_status, mnpl)
+         osp_status, esa_status, mnpl, n_method)
 
 # Atlantic
 atl <- atl_orig %>% 
@@ -68,7 +68,7 @@ atl <- atl_orig %>%
          sim_total, sim_fisheries, 
          strategic_yn, revised_yn, comments,
          # 2024 ones
-         osp_status, esa_status, mnpl)
+         osp_status, esa_status, mnpl, n_method)
 
 # Alaska
 ak <- ak_orig %>% 
@@ -83,7 +83,7 @@ ak <- ak_orig %>%
          n_est, n_cv, n_min, r_max, rf, pbr,
          sim_total, sim_fisheries, strategic_yn, revised_yn, comments,
          # 2024 ones
-         osp_status, esa_status, mnpl)
+         osp_status, esa_status, mnpl, n_method)
 
 
 
@@ -175,6 +175,11 @@ table(data$strategic_yn)
 # Revised
 table(data$revised_yn)
 
+# Methods
+methods <- data %>% 
+  select(n_method) %>% 
+  unique()
+write.csv(methods, file="data/sars/keys/methods_key_raw.csv")
 
 # Export
 ################################################################################

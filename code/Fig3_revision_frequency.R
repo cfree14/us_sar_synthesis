@@ -69,6 +69,19 @@ ggplot(stats, aes(x=revision_yr_max)) +
   facet_wrap(~region) +
   geom_histogram(binwidth = 1)
 
+# Summarize % above 3 by grous
+percs <- stats3 %>% 
+  group_by(category, subcategory) %>% 
+  summarize(n=n(),
+            nlong_avg=sum(revision_yr_avg>3),
+            nlong_max=sum(revision_yr_avg>3)) %>% 
+  ungroup() %>% 
+  mutate(plong_avg=nlong_avg/n,
+         plong_max=nlong_max/n,
+         plong_avg_label=paste0(round(plong_avg*100, 0), "%"),
+         plong_max_label=paste0(round(plong_max*100, 0), "%")) %>% 
+  arrange(category, desc(plong_avg_label))
+
 
 # Plot data
 ################################################################################
@@ -91,35 +104,45 @@ my_theme <-  theme(axis.text=element_text(size=8),
                    legend.background = element_rect(fill=alpha('blue', 0)))
 
 # Average
-g1 <- ggplot(stats3, aes(y=subcategory, x=revision_yr_avg)) +
+g1 <- ggplot(stats3, aes(y=factor(subcategory, levels=percs$subcategory), 
+                         x=revision_yr_avg)) +
   facet_wrap(~category, scales="free_y", space="free_y") +
-  geom_violin() +
+  geom_violin(fill="grey80", color=NA) +
+  # geom_jitter(height=0.2, width = 0, fill="grey40", size=1) +
   # Reference line
   geom_vline(xintercept=3, color="red") +
+  # % text
+  geom_text(data=percs, mapping=aes(y=subcategory, label=plong_avg_label), 
+            x=max(stats3$revision_yr_avg), color="red", size=2.4, hjust=1.5) +
   # Labels
-  labs(x="Average number of years\nbetween SAR revisions", y="", tag="B") +
+  labs(x="Average number of years\nbetween SAR revisions", y="", tag="A") +
   # Theme
-  theme_bw() + my_theme +
-  theme(axis.text.y=element_blank())
+  theme_bw() + my_theme
 g1
 
 # Max
-g2 <- ggplot(stats3, aes(y=subcategory, x=revision_yr_max)) +
+g2 <- ggplot(stats3, aes(y=factor(subcategory, levels=percs$subcategory),
+                         x=revision_yr_max)) +
   facet_wrap(~category, scales="free_y", space="free_y") +
-  geom_violin() +
+  geom_violin(fill="grey80", color=NA) +
+  # geom_jitter(height=0.2, width = 0, fill="grey40", size=1) +
   # Reference line
   geom_vline(xintercept=3, color="red") +
+  # % text
+  geom_text(data=percs, mapping=aes(y=subcategory, label=plong_max_label), 
+            x=max(stats3$revision_yr_max, na.rm=T), color="red", size=2.4, hjust=1.5) +
   # Labels
-  labs(x="Maximum number of years\nbetween SAR revisions", y="", tag="A") +
+  labs(x="Maximum number of years\nbetween SAR revisions", y="", tag="B") +
   # Theme
-  theme_bw() + my_theme
+  theme_bw() + my_theme + 
+  theme(axis.text.y=element_blank())
 g2
 
 # Merge
 g <- gridExtra::grid.arrange(g1, g2, nrow=1, widths=c(0.55, 0.45))
 
 # Export
-ggsave(g, filename=file.path(plotdir, "FigX_revision_frequency.png"), 
+ggsave(g, filename=file.path(plotdir, "Fig3_revision_frequency.png"), 
        width=6.5, height=6.5, units="in", dpi=600, bg="white")
 
 

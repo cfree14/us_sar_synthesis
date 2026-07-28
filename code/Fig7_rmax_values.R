@@ -98,7 +98,7 @@ my_theme <-  theme(axis.text=element_text(size=8),
                    axis.title=element_text(size=9),
                    legend.text=element_text(size=8),
                    legend.title=element_text(size=9),
-                   strip.text=element_text(size=8),
+                   strip.text=element_text(size=7),
                    plot.title=element_text(size=9),
                    plot.tag=element_text(size=9),
                    # Gridlines
@@ -122,7 +122,7 @@ g1 <- ggplot(stats, aes(y=region, x=prop, fill=rmax_type)) +
   labs(x="Percent of stocks", y="", tag="A") +
   scale_x_continuous(labels=scales::percent_format()) +
   # Legend
-  scale_fill_manual(name=expression("R"["max"]*" type"), 
+  scale_fill_manual(name=expression("R"["MAX"]*" type"), 
                      values=c("grey80", "red", "blue"),
                     guide = guide_legend(title.position = "top")) +
   # Theme
@@ -139,7 +139,7 @@ g2 <- ggplot(stats1, aes(y=region, x=r_max, size=prop)) +
   geom_vline(data=ref_lines, mapping=aes(xintercept = rmax_default), 
              color="grey30", linetype="dotted", inherit.aes = F) +
   # Labels
-  labs(x=expression("R"["max"]), y="", tag="B") +
+  labs(x=expression("R"["MAX"]), y="", tag="B") +
   scale_x_continuous(lim=c(0, NA), breaks=seq(0,0.2,0.02)) +
   # Legend
   scale_color_manual(name=expression("R"["max"]*" type"), 
@@ -156,8 +156,8 @@ g2
 g <- gridExtra::grid.arrange(g1, g2, nrow=1)
 
 # Export
-ggsave(g, filename=file.path(plotdir, "Fig4_rmax_values.png"), 
-       width=6.5, height=6.5, units="in", dpi=600, bg="white")
+ggsave(g, filename=file.path(plotdir, "Fig7_rmax_values.png"), 
+       width=6.5, height=5.5, units="in", dpi=600, bg="white")
 
 
 

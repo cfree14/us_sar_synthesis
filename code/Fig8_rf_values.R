@@ -177,7 +177,7 @@ g <- ggplot(data, aes(y=rf_group, x=rf)) +
 g
 
 # Export
-ggsave(g, filename=file.path(plotdir, "Fig5_rf_values.png"), 
+ggsave(g, filename=file.path(plotdir, "Fig8_rf_values.png"), 
        width=6.5, height=4.5, units="in", dpi=600, bg="white")
 
 

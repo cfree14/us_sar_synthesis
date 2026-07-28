@@ -17,6 +17,9 @@ pac_orig <- readRDS(data, file=file.path(outdir, "Pacific_SARs_parameters.Rds"))
 ak_orig <- readRDS(data, file=file.path(outdir, "Alaska_SARs_parameters.Rds"))
 atl_orig <- readRDS(data, file=file.path(outdir, "Atlantic_SARs_parameters.Rds"))
 
+# Methods key
+methods_key <- readxl::read_excel("data/sars/keys/methods_key_final.xlsx")
+
 
 # Build data
 ################################################################################
@@ -60,7 +63,11 @@ str(atl)
 
 # Merge
 data <- bind_rows(ak, atl, pac) %>% 
-  mutate(yrs_since_survey=2024-survey_yr)
+  # Calculate years since survey
+  mutate(yrs_since_survey=2024-survey_yr) %>% 
+  # Add cleaned method
+  rename(n_method_orig=n_method) %>% 
+  left_join(methods_key, by="n_method_orig")
 
 # Method type
 method_stats <- data %>% 
@@ -92,14 +99,15 @@ my_theme <-  theme(axis.text=element_text(size=8),
 
 # Nest method
 g1 <- ggplot(method_stats, aes(y=group, x=prop, fill=n_method)) +
-  facet_wrap(~region, ncol=1, scales="free_y", space="free_y") +
+  facet_wrap(~group, ncol=1, scales="free_y", space="free_y") +
   geom_bar(stat="identity") +
   # Labels
   labs(x="Percent of stocks", y="", tag="A") +
   scale_x_continuous(labels=scales::percent_format()) +
   # Theme
   theme_bw() + my_theme +
-  theme(legend.position = "none")
+  theme(legend.position = "right",
+        legend.key.size = unit(0.2, "cm"))
 g1
 
 # Nest CV
