@@ -166,7 +166,7 @@ g <- ggplot(data, aes(y=rf_group, x=rf)) +
   # ggrepel::geom_text_repel(data=wierd_df, mapping=aes(label=stock_label), 
   #                          min.segment.length=0.1, size=3) +
   # Labels
-  labs(x=expression("Recovery factor (R"["F"]*")"), y="") +
+  labs(x=expression("Recovery factor (F"["R"]*")"), y="") +
   # Legend
   scale_color_manual(name="Trend default", values=c("black", "red", "blue", "grey70")) +
   # Axes
@@ -181,6 +181,7 @@ ggsave(g, filename=file.path(plotdir, "Fig8_rf_values.png"),
        width=6.5, height=4.5, units="in", dpi=600, bg="white")
 
 
+# RF = 0.1: Killer whale (AT1 Transient)
 # RF = 0.7: Harbor seal (Bristol Bay), Harbor seal (South Kodiak)
 # RF = 0.3: Harbor seal (Aleutian Islands), Harbor seal (Glacier Bay/Icy Strait), Harbor seal (Lynn Canal/Stephens Passage)
 # RF = 1.0: 

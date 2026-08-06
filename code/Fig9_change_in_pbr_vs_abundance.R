@@ -15,6 +15,8 @@ plotdir <- "figures"
 # Read data
 data_orig <- readRDS(data, file=file.path(outdir, "US_sars_data.Rds"))
 
+# The Bryde's whale outlier will disappear when you treat the % in US waters
+
 
 # Build data
 ################################################################################

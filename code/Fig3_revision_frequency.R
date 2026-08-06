@@ -20,80 +20,114 @@ data_orig <- readRDS(data, file=file.path(outdir, "US_sars_data.Rds")) %>%
 # Build data
 ################################################################################
 
-# Calculate number of years between revisions
-rdata <- data_orig %>% 
-  # Simplify
-  select(region, subregion, group, comm_name, stock, year, revised_yn) %>% 
-  # Reduce to relevant years (revised years and last year)
-  group_by(region, group, stock) %>% 
-  filter(revised_yn=="yes" | year==max(year)) %>% 
-  # Arrange
-  arrange(region, subregion, group, comm_name, stock, year) %>% 
-  # Eliminate stocks that only existed for a year 
-  # (time since revision is not possible to calculate)
-  mutate(nrevisions=n()) %>% 
-  filter(nrevisions>1) %>% 
-  # Add time since revision
-  mutate(years_since_revision=c(0, year[2:n()]-year[1:(n()-1)])) %>% 
-  ungroup()
-
-# Identify the maximum number of years between revisions
-rdata_max <- rdata %>% 
-  group_by(region, group, stock) %>% 
-  summarize(revision_yr_max=max(years_since_revision)) %>% 
-  ungroup()
+# 2024 stocks
+stocks_do <- data_orig %>% 
+  filter(year==2024) %>% pull(stock)
 
 # Build data
-stats <- data_orig %>% 
-  group_by(region, group, stock) %>% 
-  summarize(yr1=min(year),
-            yr2=max(year),
-            nyrs=length(yr1:yr2),
-            nrevisions=sum(revised_yn=="yes")-1, # Minus 1 b/c first SAR doesn't count
-            revision_yr_avg=nyrs/nrevisions) %>% 
+data <- data_orig %>% 
+  # Extant stocks
+  filter(stock %in% stocks_do) %>% 
+  # Reduce to revisions
+  filter(revised_yn=="yes" | year==2024) %>% 
+  # Get last two revisions
+  arrange(stock, desc(year)) %>% 
+  group_by(stock) %>% 
+  slice(1:2) %>% 
   ungroup() %>% 
-  # Add max time since revision
-  left_join(rdata_max)
-
-# Build data for facet plottings
-stats1 <- stats %>% 
-  mutate(category="Region",
-         subcategory=region)
-stats2 <- stats %>% 
-  mutate(category="Taxanomic group", 
-         subcategory=group)
-stats3 <- bind_rows(stats1, stats2) 
-
-# Quick plot
-ggplot(stats, aes(x=revision_yr_max)) +
-  facet_wrap(~region) +
-  geom_histogram(binwidth = 1)
-
-# Summarize % above 3 by grous
-percs <- stats3 %>% 
-  group_by(category, subcategory) %>% 
-  summarize(n=n(),
-            nlong_avg=sum(revision_yr_avg>3),
-            nlong_max=sum(revision_yr_avg>3)) %>% 
+  # Summarize
+  group_by(region, subregion, comm_name, group, stock) %>% 
+  summarize(nyr=n(), 
+            status=strategic_yn[year==min(year)],
+            interval_yr=max(year)-min(year)) %>% 
   ungroup() %>% 
-  mutate(plong_avg=nlong_avg/n,
-         plong_max=nlong_max/n,
-         plong_avg_label=paste0(round(plong_avg*100, 0), "%"),
-         plong_max_label=paste0(round(plong_max*100, 0), "%")) %>% 
-  arrange(category, desc(plong_avg_label))
+  # Recode status
+  mutate(status=ifelse(is.na(status), "Unknown", status) %>% factor(., levels=c("Strategic", "Non-strategic", "Unknown"))) %>% 
+  # Add target year
+  mutate(target_yr=ifelse(status=="Strategic", 1, 3)) %>% 
+  # Old?
+  mutate(old_yn=ifelse(interval_yr>target_yr, "yes", "no"))
+
+# % of all that are old
+sum(data$old_yn=="yes") / nrow(data) *100
+  
+# By status
+table(data$status)
+data %>% 
+  count(status, old_yn) %>% 
+  group_by(status) %>% 
+  mutate(prop=n/sum(n)*100)
+
+# By region
+data %>% 
+  count(subregion, old_yn) %>% 
+  group_by(subregion) %>% 
+  mutate(prop=n/sum(n)*100) %>% 
+  filter(old_yn=="yes") %>% 
+  arrange(desc(prop))
+
+# Build stats
+stats <- data %>% 
+  # Summarize
+  count(group, status, target_yr, interval_yr) %>% 
+  # Compue
+  group_by(group, status) %>% 
+  mutate(prop=n/sum(n)) %>% 
+  ungroup() %>% 
+  # Build status labels
+  group_by(status) %>%
+  mutate(nstatus=sum(n),
+         nstatus_above=sum(n[interval_yr>target_yr]),
+         pstatus_above=nstatus_above/nstatus,
+         status_label=paste0(status, " (", round(pstatus_above*100, 0), "%)")) %>%
+  ungroup() %>%
+  # Build group labels
+  group_by(group, status) %>% 
+  mutate(ncatg=sum(n),
+         ncatg_above=sum(n[interval_yr>target_yr]),
+         pcatg_above=ncatg_above/ncatg,
+         group_label=paste0(group, " (", round(pcatg_above*100, 0), "%)")) %>% 
+  ungroup() 
+
+# Build stats by region
+stats2 <- data %>% 
+  # Summarize
+  count(subregion, status, target_yr, interval_yr) %>% 
+  # Compue
+  group_by(subregion, status) %>% 
+  mutate(prop=n/sum(n)) %>% 
+  ungroup() %>% 
+# Build status labels
+  group_by(status) %>%
+  mutate(nstatus=sum(n),
+         nstatus_above=sum(n[interval_yr>target_yr]),
+         pstatus_above=nstatus_above/nstatus,
+         status_label=paste0(status, " (", round(pstatus_above*100, 0), "%)")) %>%
+  ungroup() %>%
+  # Build subregion labels
+  group_by(subregion, status) %>% 
+  mutate(ncatg=sum(n),
+         ncatg_above=sum(n[interval_yr>target_yr]),
+         pcatg_above=ncatg_above/ncatg,
+         subregion_label=paste0(subregion, " (", round(pcatg_above*100, 0), "%)")) %>% 
+  ungroup() 
 
 
 # Plot data
 ################################################################################
 
+# Ref lines
+ref_lines <- tibble(status=c("Strategic", "Non-strategic", "Unknown") %>% factor(., levels=levels(stats$status)),
+                    interval_yr=c(1, 3, 3))
+
 # Theme
-my_theme <-  theme(axis.text=element_text(size=8),
-                   axis.title=element_text(size=9),
-                   legend.text=element_text(size=8),
-                   legend.title=element_text(size=9),
-                   strip.text=element_text(size=8),
-                   plot.title=element_text(size=9),
-                   plot.tag=element_text(size=10),
+my_theme <-  theme(axis.text=element_text(size=7),
+                   axis.title=element_text(size=8),
+                   legend.text=element_text(size=7),
+                   legend.title=element_text(size=7),
+                   strip.text=element_text(size=7),
+                   plot.title=element_text(size=8),
+                   plot.tag=element_text(size=9),
                    # Gridlines
                    panel.grid.major.x = element_blank(), 
                    panel.grid.minor = element_blank(),
@@ -103,48 +137,70 @@ my_theme <-  theme(axis.text=element_text(size=8),
                    legend.key = element_rect(fill = NA, color=NA),
                    legend.background = element_rect(fill=alpha('blue', 0)))
 
-# Average
-g1 <- ggplot(stats3, aes(y=factor(subcategory, levels=percs$subcategory), 
-                         x=revision_yr_avg)) +
-  facet_wrap(~category, scales="free_y", space="free_y") +
-  geom_violin(fill="grey80", color=NA) +
-  # geom_jitter(height=0.2, width = 0, fill="grey40", size=1) +
-  # Reference line
-  geom_vline(xintercept=3, color="red") +
-  # % text
-  geom_text(data=percs, mapping=aes(y=subcategory, label=plong_avg_label), 
-            x=max(stats3$revision_yr_avg), color="red", size=2.4, hjust=1.5) +
+# Plot by group
+g1 <- ggplot(stats, aes(x=interval_yr, 
+                        fill=prop, 
+                        y=tidytext::reorder_within(group_label, pcatg_above, status), 
+                        size=prop)) +
+  facet_wrap(~status, ncol=1, space="free_y", scales="free_y") +
+  # Reference lines
+  geom_vline(data=ref_lines, mapping=aes(xintercept=interval_yr), 
+             linetype="dashed", color="grey30", inherit.aes = F) +
+  # Data
+  geom_point(pch=21) +
   # Labels
-  labs(x="Average number of years\nbetween SAR revisions", y="", tag="A") +
+  labs(x="Years since last revision", y="", tag="A") +
+  # Axes
+  tidytext::scale_y_reordered() +
+  scale_x_continuous(lim=c(0, NA), breaks=c(1, 3, seq(0, 16, 2))) +
+  # Legends
+  scale_size_continuous(name="% of stocks", 
+                        labels=scales::percent_format(),
+                        lim=c(0.01, 1)) +
+  scale_fill_gradientn(name="% of stocks", 
+                       colors=RColorBrewer::brewer.pal(9, "Spectral") %>% rev(),
+                       labels=scales::percent_format(),
+                       lim=c(0.0, 1)) +
+  guides(fill = guide_colorbar(ticks.colour = "black", frame.colour = "black", frame.linewidth = 0.2)) +
   # Theme
-  theme_bw() + my_theme
+  theme_bw() + my_theme +
+  theme(legend.position="none")
 g1
 
-# Max
-g2 <- ggplot(stats3, aes(y=factor(subcategory, levels=percs$subcategory),
-                         x=revision_yr_max)) +
-  facet_wrap(~category, scales="free_y", space="free_y") +
-  geom_violin(fill="grey80", color=NA) +
-  # geom_jitter(height=0.2, width = 0, fill="grey40", size=1) +
-  # Reference line
-  geom_vline(xintercept=3, color="red") +
-  # % text
-  geom_text(data=percs, mapping=aes(y=subcategory, label=plong_max_label), 
-            x=max(stats3$revision_yr_max, na.rm=T), color="red", size=2.4, hjust=1.5) +
+g2 <- ggplot(stats2, aes(x=interval_yr, 
+                        fill=prop, 
+                        y=tidytext::reorder_within(subregion_label, pcatg_above, status), 
+                        size=prop)) +
+  facet_wrap(~status, ncol=1, space="free_y", scales="free_y") +
+  # Reference lines
+  geom_vline(data=ref_lines, mapping=aes(xintercept=interval_yr), 
+             linetype="dashed", color="grey30", inherit.aes = F) +
+  # Data
+  geom_point(pch=21) +
   # Labels
-  labs(x="Maximum number of years\nbetween SAR revisions", y="", tag="B") +
+  labs(x="Years since last revision", y="", tag="B") +
+  # Axes
+  tidytext::scale_y_reordered() +
+  scale_x_continuous(lim=c(0, NA), breaks=c(1, 3, seq(0, 16, 2))) +
+  # Legends
+  scale_size_continuous(name="% of stocks", 
+                        labels=scales::percent_format(),
+                        lim=c(0.01, 1)) +
+  scale_fill_gradientn(name="% of stocks", 
+                       colors=RColorBrewer::brewer.pal(9, "Spectral") %>% rev(),
+                       labels=scales::percent_format(),
+                       lim=c(0.0, 1)) +
+  guides(fill = guide_colorbar(ticks.colour = "black", frame.colour = "black", frame.linewidth = 0.2)) +
   # Theme
-  theme_bw() + my_theme + 
-  theme(axis.text.y=element_blank())
+  theme_bw() + my_theme +
+  theme(legend.key.size = unit(0.5, "cm"))
 g2
 
+
 # Merge
-g <- gridExtra::grid.arrange(g1, g2, nrow=1, widths=c(0.55, 0.45))
+g <- gridExtra::grid.arrange(g1, g2, nrow=1, widths=c(0.42, 0.58))
 
 # Export
 ggsave(g, filename=file.path(plotdir, "Fig3_revision_frequency.png"), 
-       width=6.5, height=6.5, units="in", dpi=600, bg="white")
-
-
-
+       width=6.5, height=4.25, units="in", dpi=600, bg="white")
 
