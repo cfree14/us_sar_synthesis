@@ -40,8 +40,8 @@ stats <- data %>%
                                 "r_max"="Rmax",
                                 "rf"="Recovery factor",
                                 "pbr"="PBR",
-                                "sim_total"="Total SI/M",
-                                "sim_fisheries"="Fisheries SI/M",
+                                "sim_total"="Total M/SI",
+                                "sim_fisheries"="Fisheries M/SI",
                                 "strategic_yn"="Status"))
 
 

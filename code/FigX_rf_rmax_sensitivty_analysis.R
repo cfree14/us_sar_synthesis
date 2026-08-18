@@ -62,7 +62,7 @@ g1 <- ggplot(stats_rmax, aes(x=rmax_sim, y=pstrategic, color=group)) +
              mapping=aes(fill=group), pch=21, color="black", size=2) +
   # Labels
   labs(x=expression("R"["MAX"]*" value"), 
-       y="Percentage of stocks with\nfisheries SI/M exceeding the PBR",
+       y="Percentage of stocks with\nfisheries M/SI exceeding the PBR",
        tag="A") +
   scale_x_continuous(lim=c(0, NA), breaks=seq(0, 0.2, 0.02)) +
   # scale_y_continuous(lim=c(-0.007, 0.35), labels=scales::percent_format(), breaks=seq(0, 0.14, 0.02)) +
@@ -82,8 +82,8 @@ g2 <- ggplot(stats_rf, aes(x=rf_sim, y=pstrategic, color=group, linetype=osp_sta
   geom_point(data=pts_rf,  size=1.5, show.legend = F) + # mapping=aes(shape=osp_status), 
   geom_text(data=pts_rf, mapping=aes(label=rf_sim), show.legend = F, vjust=1.8, size=2) +
   # Labels
-  labs(x=expression("R"["F"]*" value"), 
-       y="Percentage of stocks with\nfisheries SI/M exceeding the PBR",
+  labs(x=expression("F"["R"]*" value"), 
+       y="Percentage of stocks with\nfisheries M/SI exceeding the PBR",
        tag="B") +
   # scale_x_continuous(lim=c(0, NA), breaks=seq(0,0.2, 0.02)) +
   scale_y_continuous(lim=c(-0.007, 0.35), labels=scales::percent_format(), breaks=seq(0, 0.4, 0.05)) +

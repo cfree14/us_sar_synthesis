@@ -87,7 +87,7 @@ plot_sar_stock <- function(data, stock_do) {
     scale_y_continuous(lim=c(0, 1), breaks=seq(0.1, 1, 0.1)) +
     scale_x_continuous(lim=c(1995,2025), breaks=seq(2000, 2020, 10)) +
     # Labels
-    labs(x="Year", y=expression("Recovery factor (R"["F"]*")"), 
+    labs(x="Year", y=expression("Recovery factor (F"["R"]*")"), 
          tag="B") +
     # Legend
     scale_fill_manual(name="SAR revised?", values=c("black", "white")) +
@@ -98,7 +98,7 @@ plot_sar_stock <- function(data, stock_do) {
           axis.title.x=element_blank())
   g2
   
-  # PBR vs SI/M
+  # PBR vs M/SI
   ymax <- max(c(sdata$pbr, sdata$sim_total), na.rm=T)*1.03
   g3 <- ggplot(sdata, aes(x=year, y=pbr)) +
     # Mark strategic
@@ -108,7 +108,7 @@ plot_sar_stock <- function(data, stock_do) {
     #           mapping=aes(xmin=year-0.5, xmax=year+0.5), inherit.aes = F, 
     #           ymin=0, ymax=ymax,
     #           fill="darkred", alpha=0.2) +
-    # SI/M
+    # M/SI
     geom_bar(data=sim, mapping=aes(x=year, y=sim, fill=sim_type), stat="identity") +
     # PBR
     geom_line() + 
@@ -119,7 +119,7 @@ plot_sar_stock <- function(data, stock_do) {
     scale_x_continuous(lim=c(1995,2025), breaks=seq(1995, 2025, 5)) +
     # Labels
     labs(x="Year", 
-         y="Potential biological removal (PBR)\n& mortality/serious injury (M/SI)", 
+         y="Potential biological removal (PBR)\n& mortality and serious injury (M/SI)", 
          tag="C") +
     # Legend
     scale_fill_manual(name="M/SI source", values=c("grey30", "grey90")) +
