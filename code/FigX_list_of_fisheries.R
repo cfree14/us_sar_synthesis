@@ -1,4 +1,5 @@
 
+
 # Clear workspace
 rm(list = ls())
 
@@ -14,106 +15,8 @@ outdir <- "data/sars/processed"
 plotdir <- "figures"
 
 # Read data
-data_orig <- readxl::read_excel(file.path(indir, "database_final_version.xlsx"))
-
-# Species orig
-spp_orig <- readxl::read_excel(file.path(indir, "database_final_version.xlsx"), sheet=2)
-
-
-# Format data
-################################################################################
-
-# Read fishery key
-fishery_key <- readxl::read_excel("data/sars/keys/fishery_key_raw.xlsx")
-
-# Handle XXX (XXX AK) thing
-# Assign real region?
-
-# Format data
-data <- data_orig %>% 
-  # Format region
-  rename(region_orig=region) %>% 
-  mutate(region_orig=recode(region_orig,
-                            "Atlantic ocean, Gulf of Mexico, and Caribbean"="Atlantic",
-                            "High Seas"="High seas")) %>% 
-  # Add region
-  left_join(fishery_key %>% select(region, fishery)) %>% 
-  # Format n vessels
-  rename(nvessels_orig=nvessels) %>% 
-  mutate(nvessels_orig=gsub("< ", "<", nvessels_orig),
-         nvessels_orig=gsub("> ", ">", nvessels_orig),
-         nvessels_orig=gsub("fewer than |less than |Less than ", "<", nvessels_orig),
-         nvessels_orig=ifelse(nvessels_orig %in% c("N/A", "unknown", "Unknown", "None recorded"), NA, nvessels_orig)) %>% 
-  # Convert to number
-  mutate(nvessels=gsub("<|>", "", nvessels_orig) %>% as.numeric(.)) %>% 
-  # Recode fishery type
-  mutate(fishery_type=stringr::str_squish(fishery_type), 
-         fishery_type=gsub(" fisheries", "", fishery_type),
-         fishery_type=recode(fishery_type,
-                             "commercial passenger fishing vessel (Charter Boat)"="Charter boat",
-                             "dive, handline/mechanical collection"="dive, hand/mechanical collection",
-                             "haul seine"="haul/beach seine")) %>% 
-  # Arrange
-  select(year, region_orig, region, category, fishery_type, fishery,
-         nvessels_orig, nvessels, everything())
-
-# Inspect
-str(data)
-freeR::complete(data)
-
-# Regions
-table(data$region_orig)
-
-# Fishery key
-fishery_key_orig <- data %>% 
-  count(region_orig, fishery)
-write.csv(fishery_key_orig, file=file.path("data/sars/keys/fishery_key_raw.csv"), row.names=F)
-
-# Fishery types
-sort(unique(data$fishery_type))
-
-# Number of vessels
-sort(unique(data$nvessels_orig))
-
-# Export
-saveRDS(data, file=file.path(outdir, "1995_2024_list_of_fisheries.Rds"))
-
-
-# Format species
-################################################################################
-
-# TO-DO LIST
-# Harmonize common names against data (remove dangling periods)
-# Harmonize areas against data (remove dangling periods)
-# Merge into a new stock name
-# Make fishery match other dataset
-# Add in category of fishery
-# Assign real region?
-# Plot number of stocks over time
-
-# Format species
-spp <- spp_orig %>% 
-  # Reduce
-  select(year:species) %>% 
-  # Split stock
-  rename(stock=species) %>% 
-  separate(stock, into=c("comm_name", "area"), sep=",", remove=F) %>% 
-  # Format common name
-  mutate(comm_name=stringr::str_to_sentence(comm_name)) %>% 
-  # Format area
-  mutate(area=stringr::str_squish(area)) %>% 
-  # Format region
-  mutate(region=recode(region, 
-                       "Atlantic ocean, Gulf of Mexico, and Caribbean"="Atlantic"))
-
-# Common names
-freeR::uniq(spp$comm_name)
-
-# Areas
-freeR::uniq(spp$area)
-
-# Export
-saveRDS(spp, file=file.path(outdir, "1995_2024_list_of_fisheries_stocks.Rds"))
+spp <- readRDS(file=file.path(outdir, "1995_2024_list_of_fisheries_stocks.Rds"))
+data <- readRDS(file=file.path(outdir, "1995_2024_list_of_fisheries.Rds"))
 
 
 # Summarize data
@@ -189,9 +92,6 @@ g3
 g <- gridExtra::grid.arrange(g1, g2, g3, nrow=1)
 
 # Export
-ggsave(g, filename=file.path(plotdir, "FigX_list_of_fisheries.png"), 
+ggsave(g, filename=file.path(plotdir, "FigX_list_of_fisheries.png"),
        width=6.5, height=2.5, units="in", dpi=600, bg="white")
-
-
-
 
