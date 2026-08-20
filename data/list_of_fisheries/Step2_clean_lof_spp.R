@@ -13,14 +13,15 @@ indir <- "/Users/cfree/Dropbox/Whales/us_sar_synthesis_data/list_of_fisheries/"
 outdir <- "data/sars/processed"
 plotdir <- "figures"
 
-# Read data
-data_orig <- readxl::read_excel(file.path(indir, "database_final_version.xlsx"))
-
 # Species orig
 spp_orig <- readxl::read_excel(file.path(indir, "database_final_version.xlsx"), sheet=2)
 
 # Read taxa key (reference key from SARS database)
 taxa_key <- readxl::read_excel("data/species_key.xlsx")
+
+# Read LOF data
+data <- readRDS(file=file.path(outdir, "1995_2024_list_of_fisheries.Rds"))
+
 
 
 # Format species
@@ -113,7 +114,9 @@ spp <- spp_orig %>%
                        "Atlantic ocean, Gulf of Mexico, and Caribbean"="Atlantic")) %>% 
   # Arrange
   select(year, region, fishery, stock, 
-         group, comm_name, species, area, everything())
+         group, comm_name, species, area, everything()) %>% 
+  # Remove duplicates
+  unique()
 
 # Inspect
 freeR::complete(spp)
@@ -125,7 +128,31 @@ cnames[!cnames %in% taxa_key$comm_name]
 # Areas
 freeR::uniq(spp$area)
 
+
+# Add category
+################################################################################
+
+# Add cateogry
+spp2 <- spp %>%
+  left_join(
+    data %>% select(year, fishery, category),
+    by = "year",
+    suffix = c("", "_data"),
+    relationship = "many-to-many"
+  ) %>%
+  mutate(
+    fishery_dist = stringdist::stringdist(fishery, fishery_data)
+  ) %>%
+  group_by(across(all_of(names(spp)))) %>%
+  slice_min(fishery_dist, n = 1, with_ties = FALSE) %>%
+  ungroup()
+
+
+
 # Export
-saveRDS(spp, file=file.path(outdir, "1995_2024_list_of_fisheries_stocks.Rds"))
+################################################################################
+
+# Export
+saveRDS(spp2, file=file.path(outdir, "1995_2024_list_of_fisheries_stocks.Rds"))
 
 
