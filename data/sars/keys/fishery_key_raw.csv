@@ -224,12 +224,12 @@
 "High seas","Northwest Atlantic bottom longline",1
 "High seas","Northwest Atlantic permits",1
 "High seas","Pacific Highly Migratory Species",98
-"High seas","Pacific highly migratory species",5
+"High seas","Pacific highly migratory species",10
 "High seas","South Pacific Albacore Troll",67
 "High seas","South Pacific Tuna Fisheries",41
 "High seas","South Pacific albacore troll",3
 "High seas","South Pacific tuna fisheries",1
-"High seas","Unspecified",6
+"High seas","Unspecified",12
 "High seas","Wester Pacific Pelagic",1
 "High seas","Western Pacific Pelagic",73
 "High seas","Western Pacific Pelagic (Deep-set component)",3
@@ -420,11 +420,11 @@
 "Pacific","American Samoa tuna troll",28
 "Pacific","BAIT PENS: WA/OR/CA bait pens",1
 "Pacific","Bering Sea, Aleutian Islands rockfish trawl",1
-"Pacific","CA Dungeness crab pot",15
-"Pacific","CA Tanner crab pot",1
+"Pacific","CA Dungeness crab pot",30
+"Pacific","CA Tanner crab pot",2
 "Pacific","CA Tanner crab pot fishery",2
 "Pacific","CA abalone",18
-"Pacific","CA anchovy, mackerel, sardine purse seine",17
+"Pacific","CA anchovy, mackerel, sardine purse seine",51
 "Pacific","CA anchovy, mackerel, tuna purse seine",10
 "Pacific","CA anchovy, mackerel,sardine purse seine",1
 "Pacific","CA angel shark/halibut and other (>3.5in) species large mesh set gillnet fishery",1
@@ -444,7 +444,7 @@
 "Pacific","CA halibut bottom trawl",18
 "Pacific","CA halibut hook and line/handline",6
 "Pacific","CA halibut, white seabass, and yellowtail hook and line/ handline",1
-"Pacific","CA halibut, white seabass, and yellowtail hook and line/handline",1
+"Pacific","CA halibut, white seabass, and yellowtail hook and line/handline",4
 "Pacific","CA halibut/white seabass and other species (≤3.5 set gillnet in mesh)",1
 "Pacific","CA halibut/white seabass and other species set gillnet (>3.5 in mesh)",11
 "Pacific","CA halibut/white seabass and other species set gillnet (>3.5 in. mesh)",1
@@ -459,9 +459,9 @@
 "Pacific","CA offshore longline",1
 "Pacific","CA pelagic longline",20
 "Pacific","CA rock crab pot",10
-"Pacific","CA salmon enhancement rearing pen",25
+"Pacific","CA salmon enhancement rearing pen",50
 "Pacific","CA sardine purse",1
-"Pacific","CA sardine purse seine",9
+"Pacific","CA sardine purse seine",18
 "Pacific","CA sea cucumber trawl",9
 "Pacific","CA sea urchin",19
 "Pacific","CA set and drift gillnet fisheries that use a stretched mesh size of 3.5 in or less",9
@@ -570,14 +570,14 @@
 "Pacific","Hi inshore handline",2
 "Pacific","Miscellaneous finfish/groundfish longline/set line",4
 "Pacific","OR Dungeness crab pot",16
-"Pacific","OR blue shark floating longline",9
+"Pacific","OR blue shark floating longline",18
 "Pacific","OR blue shark floating longline fishery",1
 "Pacific","OR salmon ranch",17
-"Pacific","OR swordfish floating longline",9
+"Pacific","OR swordfish floating longline",18
 "Pacific","OR swordfish floating longline fishery",1
 "Pacific","OR swordfish/blue shark surface longline fishery",1
 "Pacific","OR, CA hagfish pot or trap",11
-"Pacific","OR/CA hagfish pot or trap",7
+"Pacific","OR/CA hagfish pot or trap",14
 "Pacific","OR/CA sea urchin, sea cucumber hand, dive, or mechanical collection",6
 "Pacific","Prince William Sound salmon drift gillnet",1
 "Pacific","Southeast Alaska salmon drift gillnet",1
@@ -588,7 +588,7 @@
 "Pacific","WA Grays Harbor salmon drift gillnet (excluding treaty Tribal fishing)",27
 "Pacific","WA Grays Harbor salmon drift gillnet (excluding treaty Tribal fishing).",1
 "Pacific","WA Puget Sound Dungeness crab pot/trap",14
-"Pacific","WA Puget Sound Region salmon dirft gillnet",1
+"Pacific","WA Puget Sound Region salmon dirft gillnet",13
 "Pacific","WA Puget Sound Region salmon drift gillnet (includes all included)",1
 "Pacific","WA Puget Sound Region salmon drift gillnet (includes all inland waters south of U.S.-Canada border and eastward of the Bonilla-Tatoosh line-Treaty Indian fishing is excluded)",2
 "Pacific","WA Puget Sound Region salmon drift gillnet (includes all inland waters south of US-Canada border and eastward of the Bonilla- Tatoosh line treaty Indian fishing is excluded)",2
@@ -609,7 +609,7 @@
 "Pacific","WA herring brush weir",16
 "Pacific","WA herring spawn on kelp",14
 "Pacific","WA herring spawn-on-kelp",4
-"Pacific","WA salmon net pen",1
+"Pacific","WA salmon net pen",2
 "Pacific","WA salmon net pens",8
 "Pacific","WA salmon purse seine",24
 "Pacific","WA salmon reef net",27
@@ -668,5 +668,5 @@
 "Pacific","WA/OR/CA shrimp trawl",17
 "Pacific","WA/ORICA bait pens",1
 "Pacific","West Coast pelagic longline",2
-"Pacific","Western Pacific squid jig",17
+"Pacific","Western Pacific squid jig",34
 "Pacific","Western Pacific. squid jig",1
