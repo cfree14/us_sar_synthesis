@@ -65,6 +65,8 @@ data_orig <- purrr::map_df(files2merge, function(x){
 
 # Format data
 data <- data_orig %>% 
+  # Rename
+  rename(trend=population_trend) %>% 
   # Add year
   mutate(year = str_split(filename, "_", simplify = TRUE)[, 2] %>% as.numeric(.)) %>% 
   # Format strategic

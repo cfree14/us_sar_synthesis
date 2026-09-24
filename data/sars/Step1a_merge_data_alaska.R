@@ -47,7 +47,8 @@ data_orig <- purrr::map_df(files2merge, function(x){
 data <- data_orig %>%
   # Rename
   rename(comm_name=species,
-         area=stock) %>% 
+         area=stock, 
+         trend=population_trend) %>% 
   # Add region
   mutate(region="Alaska") %>% 
   # Add year
@@ -192,7 +193,7 @@ sum(abs(data$pbr_diff)>1, na.rm=T)
 
 # Inspect simple version
 data_simple <- data %>% select(filename:n_est, n_cv, n_min, r_max, rf, pbr, 
-                               sim_fisheries, sim_native, sim_total, strategic_yn, updated_yn)
+                               sim_fisheries, sim_native, sim_total, strategic_yn, updated_yn, trend)
 freeR::complete(data_simple)
 # 3 missing status are true: 1995, pending co-mgmt
 # 3 missing RFs are for the same stocks

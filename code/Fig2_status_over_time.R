@@ -24,6 +24,12 @@ data_orig <- readRDS(data, file=file.path(outdir, "US_sars_data.Rds"))
 data <- data_orig %>% 
   filter(group!="USFWS marine mammals")
 
+# 2024 stats for manuscript
+data %>% 
+  filter(year==2024) %>% 
+  count(strategic_yn) %>% 
+  mutate(prop=n/sum(n))
+
 # Status by region
 stats_region <- data %>% 
   group_by(region, year) %>% 

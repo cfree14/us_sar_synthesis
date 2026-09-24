@@ -65,7 +65,8 @@ data1 <- data_orig %>%
   # Rename
   rename(comm_name=species, 
          sim_tot_orig=sim_total,
-         sim_fish_orig=sim_fisheries) %>% 
+         sim_fish_orig=sim_fisheries, 
+         trend=population_trend) %>% 
   # Add year
   mutate(year = str_split(filename, "_", simplify = TRUE)[, 2] %>% as.numeric(.)) %>% 
   # Format Nest that is a range

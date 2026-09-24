@@ -50,7 +50,7 @@ pac <- pac_orig %>%
          sim_total, sim_fisheries, 
          strategic_yn, revised_yn, comments,
          # 2024 ones
-         osp_status, esa_status, mnpl, n_method)
+         osp_status, esa_status, mnpl, n_method, trend)
 
 # Atlantic
 atl <- atl_orig %>% 
@@ -68,7 +68,7 @@ atl <- atl_orig %>%
          sim_total, sim_fisheries, 
          strategic_yn, revised_yn, comments,
          # 2024 ones
-         osp_status, esa_status, mnpl, n_method)
+         osp_status, esa_status, mnpl, n_method, trend)
 
 # Alaska
 ak <- ak_orig %>% 
@@ -83,7 +83,7 @@ ak <- ak_orig %>%
          n_est, n_cv, n_min, r_max, rf, pbr,
          sim_total, sim_fisheries, strategic_yn, revised_yn, comments,
          # 2024 ones
-         osp_status, esa_status, mnpl, n_method)
+         osp_status, esa_status, mnpl, n_method, trend)
 
 
 
@@ -113,13 +113,17 @@ data <- bind_rows(pac, atl, ak) %>%
   # Check PBR
   mutate(pbr_calc=n_min*r_max/2*rf,
          pbr_diff=abs(pbr-pbr_calc) %>% round(., 2)) %>% 
+  # Format trend
+  mutate(trend=gsub("\\s*\\([^)]*\\)", "", trend) %>% 
+           stringr::str_trim(.) %>% stringr::str_to_sentence(.),
+         trend=recode(trend, "Increase; unknown"="Unknown")) %>% 
   # Arrange
   select(region:group, stock, comm_name, species, area, revised_yn, 
          n_est, n_cv, n_min, r_max, rf, 
          pbr, pbr_calc, pbr_diff,
          sim_total, sim_fisheries, strategic_yn, comments,
          # 2024 ones
-         osp_status, esa_status, mnpl, everything())
+         osp_status, esa_status, mnpl, n_method, trend, everything())
 
 
 # Inspect
@@ -174,6 +178,9 @@ table(data$strategic_yn)
 
 # Revised
 table(data$revised_yn)
+
+# Trend
+table(data$trend)
 
 # Methods
 methods <- data %>% 

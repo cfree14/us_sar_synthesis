@@ -13,10 +13,7 @@ outdir <- "data/sars/processed"
 plotdir <- "figures"
 
 # Read data
-data_orig <- readRDS(data, file=file.path(outdir, "US_sars_data.Rds")) %>% 
-  # Add random trend data
-  mutate(trend=sample(x=c("Unknown", "Increasing", "Stable", "Decreasing"),
-                      size=n(), prob=c(0.5, 0.25, 0.125, 0.125), replace=T))
+data_orig <- readRDS(data, file=file.path(outdir, "US_sars_data.Rds")) 
 
 
 # Format data
@@ -27,7 +24,16 @@ data <- data_orig %>%
   # Reduce to 2024
   filter(year==2024) %>% 
   # Factor trend
+  mutate(trend=recode(trend, "Increase"="Increasing", "Decrease"="Decreasing")) %>% 
   mutate(trend=factor(trend, levels=c("Unknown", "Increasing", "Stable", "Decreasing")))
+
+# Any missing trends?
+sum(is.na(data$trend))
+
+# Stats overall for intro text
+data %>% 
+  count(trend) %>% 
+  mutate(prop=n/sum(n)*100)
 
 # Prep stats
 stats <- data %>% 
