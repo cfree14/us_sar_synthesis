@@ -7,6 +7,7 @@ rm(list = ls())
 
 # Packages
 library(tidyverse)
+library(patchwork)
 
 # Directories
 outdir <- "data/sars/processed"
@@ -34,6 +35,14 @@ sum(is.na(data$trend))
 data %>% 
   count(trend) %>% 
   mutate(prop=n/sum(n)*100)
+nrow(data)
+
+# % trend when available for results
+data %>% 
+  count(trend) %>% 
+  filter(trend!="Unknown") %>% 
+  mutate(prop=n/sum(n)*100)
+nrow(data)
 
 # Prep stats
 stats <- data %>% 
@@ -115,8 +124,17 @@ g2 <- ggplot(stats, aes(y=subregion, x=prop, fill=trend)) +
   theme(legend.position = "top")
 g2
 
-# Merge
-g <- gridExtra::grid.arrange(g1, g2, nrow=1)
+# The guides area spans both plots; heights controls the legend row
+g <- (guide_area() / (g1 + g2)) +
+  plot_layout(
+    guides = "collect",
+    heights = c(0.08, 1)
+  ) &
+  theme(
+    legend.position = "top",
+    legend.direction = "horizontal"
+  )
+g
 
 # Export
 ggsave(g, filename=file.path(plotdir, "Fig5_trend_info.png"), 

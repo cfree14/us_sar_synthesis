@@ -195,4 +195,17 @@ write.csv(methods, file="data/sars/keys/methods_key_raw.csv")
 saveRDS(data, file=file.path(outdir, "US_sars_data.Rds"))
 
 
+# Build stock key
+################################################################################
+
+# Identify stocks
+stocks <- data %>% 
+  group_by(region, subregion, area, group, comm_name, species, stock) %>% 
+  summarize(yr1=min(year),
+            yr2=max(year)) %>% 
+  ungroup()
+
+# Export
+saveRDS(stocks, file=file.path(outdir, "US_sars_stocks.Rds"))
+
 

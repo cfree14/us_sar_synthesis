@@ -18,8 +18,13 @@ data_orig <- readxl::read_excel(file.path(indir, "species_abundance.xlsx"), shee
 # Read species key
 spp_key <- readxl::read_excel("data/species_key.xlsx")
 
+# Get official stock key
+stock_key <- readRDS(file="data/sars/processed/US_sars_stocks.Rds")
+
+
 # Tell Yutian to fix years
 # Tell Yutian to fix harbor porpoise spelling mistake
+
 
 # Format data
 ################################################################################
@@ -49,6 +54,37 @@ data <- data_orig %>%
          survey_method=gsub("counts", "count", survey_method),
          survey_method=recode(survey_method, 
                               "Photo mark-recapture"="Photo mark recapture")) %>% 
+  # Format units
+  mutate(n_units=recode(n_units, 
+                        "Non-pup"="Non-pups",
+                        "Total Number"="Total number",
+                        "Total Number (Females)" = "Total number of females",
+                        "Total Number (Females)**" = "Total number of females",
+                        "Total Number (Males)" = "Total number of males",    
+                        "Total Number (Males)**" = "Total number of males",
+                        "Total Number (raw)" = "Total number (raw)",     
+                        "Total Number**"="Total number",           
+                        "Total Numbers" ="Total number")) %>% 
+  # FORMAT AREA
+  # Remove "Alaska - " prefix
+  mutate(area=gsub("Alaska - ", "", area)) %>% 
+  # Fix some
+  mutate(area=recode(area, 
+                     "Aleutians" = "Aleutian Islands",
+                     "Eastern North Pacific Southern resident" = "ENP Southern Resident",
+                     "US West Coast" = "United States",
+                     "Hawaii Islands"="Hawaii",
+                     "Eastern U.S. (Eastern Stock)" = "Eastern U.S.",
+                     "Western U.S. (Alaska)" = "Western U.S.",
+                     "Eastern Pacific (Overall)"="Eastern North Pacific",
+                     "California-Oregon-Washignton"="California-Oregon-Washington",
+                     "California (Channel Islands)"="California", 
+                     "Washington (Inland)"="Washington Inland",
+                     "Northern California/Southern Oregon"="Northern California-Southern Oregon")) %>% 
+  # Fix specific areas
+  mutate(area=case_when(comm_name=="Cuvier's beaked whale" & area=="California-Oregon-Washington" ~ "California-Oregon-Washington Offshore",
+                        comm_name=="North Atlantic right whale" & area=="Western Atlantic" ~ "Western Stock",
+                        T ~ area)) %>% 
   # Arrange
   select(reference, country, stock_id, area, group, comm_name, species, 
          survey_method, n_units, source_type, 
@@ -85,6 +121,27 @@ freeR::uniq(data$survey_method)
 
 # Source type
 freeR::uniq(data$source_type)
+
+# Abundance units
+freeR::uniq(data$n_units)
+
+# Harmonize with SARS stock areas / stock ids
+################################################################################
+
+# 
+stocks <- data %>% 
+  select(comm_name, area) %>% 
+  unique() %>% 
+  left_join(stock_key) %>% 
+  filter(is.na(region))
+
+
+# Export
+################################################################################
+
+# Export
+saveRDS(data, file=file.path(outdir, "abundance_time_series_database_yutian.Rds"))
+
 
 
 # Examine frequency
