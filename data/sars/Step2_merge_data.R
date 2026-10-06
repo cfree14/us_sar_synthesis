@@ -50,7 +50,7 @@ pac <- pac_orig %>%
          sim_total, sim_fisheries, 
          strategic_yn, revised_yn, comments,
          # 2024 ones
-         osp_status, esa_status, mnpl, n_method, trend)
+         osp_status, esa_status, mnpl, n_method, trend, unused_r)
 
 # Atlantic
 atl <- atl_orig %>% 
@@ -68,7 +68,7 @@ atl <- atl_orig %>%
          sim_total, sim_fisheries, 
          strategic_yn, revised_yn, comments,
          # 2024 ones
-         osp_status, esa_status, mnpl, n_method, trend)
+         osp_status, esa_status, mnpl, n_method, trend, unused_r)
 
 # Alaska
 ak <- ak_orig %>% 
@@ -83,7 +83,7 @@ ak <- ak_orig %>%
          n_est, n_cv, n_min, r_max, rf, pbr,
          sim_total, sim_fisheries, strategic_yn, revised_yn, comments,
          # 2024 ones
-         osp_status, esa_status, mnpl, n_method, trend)
+         osp_status, esa_status, mnpl, n_method, trend, unused_r)
 
 
 
@@ -123,7 +123,7 @@ data <- bind_rows(pac, atl, ak) %>%
          pbr, pbr_calc, pbr_diff,
          sim_total, sim_fisheries, strategic_yn, comments,
          # 2024 ones
-         osp_status, esa_status, mnpl, n_method, trend, everything())
+         osp_status, esa_status, mnpl, n_method, trend, unused_r, everything())
 
 
 # Inspect
