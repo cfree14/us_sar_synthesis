@@ -15,8 +15,6 @@ plotdir <- "figures"
 # Read data
 data_orig <- readRDS(data, file=file.path(outdir, "US_sars_data.Rds"))
 
-# Add a figure showing reported values when default selected to get bias in choice
-
 
 # Build data
 ################################################################################
