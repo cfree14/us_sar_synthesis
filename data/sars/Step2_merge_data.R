@@ -26,7 +26,7 @@ atl_orig <- readRDS(file.path(outdir, "Atlantic_SARs_parameters.Rds"))
 
 # Columns
 colnames(pac_orig)
-colnames(atl_orig)
+colnames(atl_orig) # msi_fisheries_cv
 colnames(ak_orig)
 
 # Ultimate goal:

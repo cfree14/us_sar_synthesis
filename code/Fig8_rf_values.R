@@ -53,10 +53,15 @@ data <- data_orig %>%
                             T ~ osp_status)) %>% 
   # Order groups
   mutate(rf_group=factor(rf_group, levels=rf_groups)) %>% 
+  # Order trends
+  mutate(trend=recode(trend,
+                      "Decrease"="Decreasing", 
+                      "Increase"="Increasing"),
+         trend=factor(trend, levels=c("Any trend", "Decreasing", "Stable", "Increasing", "Unknown"))) %>% 
   # Simplify
   select(region, subregion, group, stock, n_min, n_cv, 
         rf, 
-        esa_listed, esa_status, osp_status, 
+        esa_listed, esa_status, osp_status, trend, 
         rf_group_esa, rf_group) 
 
 
@@ -67,7 +72,9 @@ freeR::complete(data)
 rf_guidelines_plot <- rf_guidelines %>% 
   mutate(pop_size=factor(pop_size, levels=rf_groups)) %>% 
   mutate(esa_status="Endangered",
-         esa_status=factor(esa_status, levels=levels(data$esa_status)))
+         esa_status=factor(esa_status, levels=levels(data$esa_status))) %>% 
+  # Factor trend
+  mutate(trend=factor(trend, levels=c("Any trend", "Decreasing", "Stable", "Increasing", "Unknown")))
 
 
 # Inspect the outliers
@@ -149,7 +156,7 @@ my_theme <-  theme(axis.text=element_text(size=8),
                    legend.background = element_rect(fill=alpha('blue', 0)))
 
 # Plot data
-g <- ggplot(data, aes(y=rf_group, x=rf)) +
+g <- ggplot(data, aes(y=rf_group, x=rf, fill=trend)) +
   # Facet
   facet_wrap(~esa_status, scales="free_y", space="free_y", strip.position="right") +
   # Ref lines
@@ -161,19 +168,20 @@ g <- ggplot(data, aes(y=rf_group, x=rf)) +
                          x=rf_not_vulnerable, 
                          color=trend), pch=16, size=7) +
   # Points
-  geom_jitter(pch=21, size=3, height=0.2, width=0, fill="white") +
+  geom_jitter(pch=21, size=3, height=0.2, width=0) +
   # Label wierd ones
   # ggrepel::geom_text_repel(data=wierd_df, mapping=aes(label=stock_label), 
   #                          min.segment.length=0.1, size=3) +
   # Labels
   labs(x=expression("Recovery factor (F"["R"]*")"), y="") +
   # Legend
-  scale_color_manual(name="Trend default", values=c("black", "red", "blue", "grey70")) +
+  scale_color_manual(name="Abundance trend", values=c("black", "red", "white", "blue", "grey70"), drop=F) +
+  scale_fill_manual(name="Abundance trend", values=c("black", "red", "white", "blue", "grey70"), drop=F) +
   # Axes
   scale_x_continuous(breaks=seq(0, 1, 0.1)) +
   # Theme
   theme_bw() + my_theme +
-  theme(legend.position = c(0.8, 0.8))
+  theme(legend.position = c(0.8, 0.75))
 g
 
 # Export
