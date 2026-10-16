@@ -38,7 +38,16 @@ data <- data_orig %>%
   mutate(year=substr(filename, 1, 4) %>% as.numeric()) %>% 
   # Rename a few areas
   mutate(area=recode(area, 
-                     "Mississippi Sound, Lake Borgne, Bay Boudreau" = "Bay Boudreau, Mississippi Sound, Lake Borgne"))
+                     "Mississippi Sound, Lake Borgne, Bay Boudreau" = "Bay Boudreau, Mississippi Sound, Lake Borgne")) %>% 
+  # Add species
+  rename(comm_name=species) %>% 
+  mutate(species="Tursiops truncatus",
+         group="Dolphins",
+         region="Gulf of Mexico",
+         center="SEC",
+         stock=paste0(comm_name, "(", area, ")")) %>% 
+  # Arrange
+  select(filename, year, group, stock, comm_name, species, center, region, area, everything())
 
 # Inspect
 str(data)
@@ -56,16 +65,8 @@ table(data$strategic_yn)
 # Revised
 table(data$revised_yn)
 
-# Export data
-saveRDS(data, file.path(outdir, "Atlantic_NGOM_bdolphin_SARs_parameters.Rds"))
-
-
 # Plot data
 ################################################################################
-
-ggplot(data, aes(x=year, y=area, fill=strategic_yn)) +
-  geom_tile() +
-  theme_bw()
 
 ggplot(data, aes(x=year, y=area, fill=revised_yn)) +
   geom_tile() +
@@ -73,6 +74,44 @@ ggplot(data, aes(x=year, y=area, fill=revised_yn)) +
   scale_fill_manual(name="Revised?", values=c("grey70", "darkred")) +
   # Theme
   theme_bw()
+
+
+# Expand data
+################################################################################
+
+# Use 1996 data for 1997 and 1998
+data96 <- data %>% 
+  filter(year==1996)
+data97 <- data96 %>% 
+  mutate(year=1997)
+data98 <- data96 %>% 
+  mutate(year=1998)
+
+# Use 2003 data for 2004
+data03 <- data %>% 
+  filter(year==2003)
+data04 <- data03 %>% 
+  mutate(year=2004)
+
+# Merge
+data_expanded <- bind_rows(data, data97, data98, data04) %>% 
+  arrange(year, area)
+
+ggplot(data_expanded, aes(x=year, y=area, fill=revised_yn)) +
+  geom_tile() +
+  # Legend
+  scale_fill_manual(name="Revised?", values=c("grey70", "darkred")) +
+  # Theme
+  theme_bw()
+
+# Export data
+################################################################################
+
+# Export data
+saveRDS(data_expanded, file.path(outdir, "Atlantic_NGOM_bdolphin_SARs_parameters.Rds"))
+
+
+
 
 
 
