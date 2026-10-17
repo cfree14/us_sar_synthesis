@@ -30,6 +30,11 @@ data1 <- data_orig %>%
   # Format a few stock areas for merge
   mutate(area=gsub(", ", "/", area)) %>% 
   mutate(area=recode(area, 
+                     # Fix old
+                     # "Northern Gulf of Mexico Coastal" = "Gulf of Mexico Northern Coastal",
+                     "Western Gulf of Mexico Coastal" = "Gulf of Mexico Western Coastal",
+                     "Eastern Gulf of Mexico Coastal" = "Gulf of Mexico Eastern Coastal",
+                     # Align with new
                      "Mississippi Sound/Lake Borgne/Bay Boudreau" = "Bay Boudreau/Mississippi Sound/Lake Borgne",
                      "Neuces Bay/Corpus Christi Bay" = "Nueces Bay/Corpus Christi Bay",
                      "Florida Keys (Bahia Honda to Key West)" = "Florida Keys (Bahia Honda Key to Key West)"))
