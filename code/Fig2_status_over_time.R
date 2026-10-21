@@ -21,8 +21,7 @@ data_orig <- readRDS(data, file=file.path(outdir, "US_sars_data.Rds"))
 ################################################################################
 
 # Prep data
-data <- data_orig %>% 
-  filter(group!="USFWS marine mammals")
+data <- data_orig
 
 # 2024 stats for manuscript
 data %>% 

@@ -20,6 +20,9 @@ ak_orig <- readRDS(file.path(outdir, "Alaska_SARs_parameters.Rds"))
 # Read Atlantic
 atl_orig <- readRDS(file.path(outdir, "Atlantic_SARs_parameters.Rds"))
 
+# Read USFWS
+usfws_orig <- readRDS(file.path(outdir, "USFWS_SARs_parameters.Rds"))
+
 
 # Format
 ################################################################################
@@ -28,6 +31,7 @@ atl_orig <- readRDS(file.path(outdir, "Atlantic_SARs_parameters.Rds"))
 colnames(pac_orig)
 colnames(atl_orig) # msi_fisheries_cv
 colnames(ak_orig)
+colnames(usfws_orig)
 
 # Ultimate goal:
 # region, subregion, year, group, comm_name, species, area,
@@ -50,7 +54,9 @@ pac <- pac_orig %>%
          sim_total, sim_fisheries, 
          strategic_yn, revised_yn, comments,
          # 2024 ones
-         osp_status, esa_status, mnpl, n_method, trend, unused_r)
+         osp_status, esa_status, mnpl, n_method, trend, unused_r) %>% 
+  # Remove USFWS
+  filter(!grepl("USFWS", group))
 
 # Atlantic
 atl <- atl_orig %>% 
@@ -68,7 +74,9 @@ atl <- atl_orig %>%
          sim_total, sim_fisheries, 
          strategic_yn, revised_yn, comments,
          # 2024 ones
-         osp_status, esa_status, mnpl, n_method, trend, unused_r)
+         osp_status, esa_status, mnpl, n_method, trend, unused_r) %>% 
+  # Remove USFWS
+  filter(!grepl("USFWS", group))
 
 # Alaska
 ak <- ak_orig %>% 
@@ -83,15 +91,44 @@ ak <- ak_orig %>%
          n_est, n_cv, n_min, r_max, rf, pbr,
          sim_total, sim_fisheries, strategic_yn, revised_yn, comments,
          # 2024 ones
-         osp_status, esa_status, mnpl, n_method, trend, unused_r)
+         osp_status, esa_status, mnpl, n_method, trend, unused_r) %>% 
+  # Remove USFWS
+  filter(!grepl("USFWS", group))
 
+# USFWS 
+usfws <- usfws_orig %>% 
+  # Rename
+  rename(comments=notes,
+         subregion=region,
+         osp_status=mmpa_status) %>% 
+  # Region
+  mutate(region=recode(subregion,
+                       "Gulf of Mexico"="Atlantic",
+                       "West Coast"="Pacific")) %>% 
+  # Format group
+  mutate(group="USFWS") %>% 
+  # Format strategic
+  mutate(strategic_yn=stringr::str_to_sentence(strategic_yn)) %>% 
+  # Format trend
+  mutate(trend=recode(trend, 
+                      "decreasing"="decrease", 
+                      "increasing"="increase")) %>% 
+  # Simplify
+  select(region, subregion, filename, 
+         year, group, comm_name, species, area,
+         n_est, n_cv, n_min, r_max, rf, pbr,
+         sim_total, sim_fisheries, strategic_yn, revised_yn, comments,
+         # 2024 ones
+         osp_status, esa_status,# mnpl, n_method, 
+         trend)
+         #unused_r)
 
 
 # Merge
 ################################################################################
 
 # Merge
-data <- bind_rows(pac, atl, ak) %>% 
+data <- bind_rows(pac, atl, ak, usfws) %>% 
   # Add stock
   mutate(stock=paste0(comm_name, " (", area, ")")) %>% 
   # Format ESA status
@@ -141,6 +178,7 @@ data %>%
 # Region
 table(data$region)
 table(data$subregion)
+count(data, region, subregion)
 
 # N_CV
 # N_cv=0 appears to be true for NA right whale, Gulf of ME humpback whale, and 

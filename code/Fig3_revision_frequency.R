@@ -13,8 +13,7 @@ outdir <- "data/sars/processed"
 plotdir <- "figures"
 
 # Read data
-data_orig <- readRDS(data, file=file.path(outdir, "US_sars_data.Rds")) %>% 
-  filter(group!="USFWS marine mammals")
+data_orig <- readRDS(data, file=file.path(outdir, "US_sars_data.Rds"))
 
 
 # Build data

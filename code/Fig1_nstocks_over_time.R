@@ -24,7 +24,6 @@ data <- readRDS(file=file.path(outdir, "US_sars_data.Rds"))
 
 # Build
 nstocks <- data %>% 
-  filter(group!="USFWS marine mammals") %>% 
   group_by(region, group, year) %>% 
   summarize(nstocks=n()) %>% 
   ungroup()
@@ -112,7 +111,7 @@ my_theme <-  theme(axis.text=element_text(size=8),
 
 # Plot number of stocks over time
 g <- ggplot(nstocks_ord, aes(x=year, y=nstocks, color=region)) +
-  facet_wrap(~group_label, ncol=3, scales="free_y") +
+  facet_wrap(~group_label, ncol=4, scales="free_y") +
   geom_line() +
   geom_point(data=nstocks_labels_org) +
   geom_text(data=nstocks_labels_org, mapping=aes(hjust=0, label=nstocks), x=2025, size=2.2) +
