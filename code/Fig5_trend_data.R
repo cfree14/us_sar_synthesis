@@ -128,7 +128,7 @@ g2
 g <- (guide_area() / (g1 + g2)) +
   plot_layout(
     guides = "collect",
-    heights = c(0.08, 1)
+    heights = c(0.01, 1)
   ) &
   theme(
     legend.position = "top",
@@ -139,7 +139,7 @@ g
 # Export
 ggsave(g, filename=file.path(plotdir, "Fig5_trend_info.png"), 
        width=6.5, height=6, units="in", dpi=600, bg="white")
-
+ 
 
 
 

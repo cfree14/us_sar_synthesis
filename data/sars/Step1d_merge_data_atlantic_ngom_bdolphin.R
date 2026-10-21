@@ -104,6 +104,11 @@ ggplot(data_expanded, aes(x=year, y=area, fill=revised_yn)) +
   # Theme
   theme_bw()
 
+# Confirm 1 row per stock year
+data_expanded %>% 
+  group_by(stock, year) %>% 
+  summarize(n=n()) %>% filter(n>1)
+
 # Export data
 ################################################################################
 

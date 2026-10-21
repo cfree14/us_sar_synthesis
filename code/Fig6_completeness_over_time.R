@@ -44,9 +44,27 @@ stats <- data %>%
                                 "sim_fisheries"="Fisheries M/SI",
                                 "strategic_yn"="Status"))
 
+# Facet labels
+facet_labels <- c(
+  "Nest" = 'N["EST"]',
+  "CVn" = 'CV["N"]',
+  "Nmin" = 'N["MIN"]',
+  "Rmax" = 'R["MAX"]',
+  "Recovery factor" = '"Recovery factor"',
+  "PBR" = '"PBR"',
+  "Total M/SI" = '"Total M/SI"',
+  "Fisheries M/SI" = '"Fisheries M/SI"',
+  "Status" = '"Status"'
+)
 
 # Plot data
 ################################################################################
+
+# Subregion order
+subregions <- c("Atlantic", "Gulf of Mexico", "West Coast", "Hawaii", "Alaska")
+subregion_colors <- c(RColorBrewer::brewer.pal(9, "Blues")[c(5, 7)],
+                      RColorBrewer::brewer.pal(9, "Greens")[c(5, 7)],
+                      RColorBrewer::brewer.pal(9, "Purples")[7])
 
 # Theme
 my_theme <-  theme(axis.text=element_text(size=8),
@@ -66,14 +84,16 @@ my_theme <-  theme(axis.text=element_text(size=8),
 
 
 # Plot completeness over time
-g <- ggplot(stats, aes(x=year, y=p_complete, color=subregion)) +
-  facet_wrap(~variable, ncol=3) +
+g <- ggplot(stats, aes(x=year, y=p_complete, color=factor(subregion, subregions))) +
+  facet_wrap(~variable, ncol=3, 
+             labeller = as_labeller(facet_labels, default = label_parsed)) +
   geom_line() +
   # Labels
   labs(x="Year", y="Percent of SARs with value") +
   scale_y_continuous(labels=scales::percent_format()) +
   # Legend
-  scale_color_discrete(name="Region") +
+  scale_color_manual(name="Region",
+                     values=subregion_colors) +
   # Theme
   theme_bw() +
   theme(legend.position = "top") + my_theme

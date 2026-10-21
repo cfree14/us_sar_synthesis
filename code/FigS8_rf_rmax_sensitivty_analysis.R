@@ -100,7 +100,7 @@ g2
 g <- gridExtra::grid.arrange(g1, g2, nrow=1, widths=c(0.43, 0.57))
 
 # Export
-ggsave(g, filename=file.path(plotdir, "FigSX_rf_rmax_sensitivity_analysis.png"), 
+ggsave(g, filename=file.path(plotdir, "FigS8_rf_rmax_sensitivity_analysis.png"), 
        width=6.5, height=3, units="in", dpi=600, bg="white")
 
 

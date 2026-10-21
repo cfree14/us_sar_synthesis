@@ -123,6 +123,6 @@ g3
 g <- gridExtra::grid.arrange(g1, g2, g3, nrow=1)
 
 # Export
-ggsave(g, filename=file.path(plotdir, "FigX_list_of_fisheries.png"),
+ggsave(g, filename=file.path(plotdir, "Fig11_list_of_fisheries.png"),
        width=6.5, height=2.5, units="in", dpi=600, bg="white")
 

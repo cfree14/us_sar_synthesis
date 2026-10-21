@@ -15,18 +15,28 @@ plotdir <- "figures"
 # Read data
 data <- readRDS(file=file.path(outdir, "US_sars_data.Rds"))
 
-
 # To do:
 # Remove not stocks
+
 
 # Build data
 ################################################################################
 
-# Build
-nstocks <- data %>% 
-  group_by(region, group, year) %>% 
+# By region and group
+nstocks_grp <- data %>% 
+  group_by(subregion, group, year) %>% 
   summarize(nstocks=n()) %>% 
   ungroup()
+
+# By region
+nstocks_tot <- data %>% 
+  group_by(subregion, year) %>% 
+  summarize(nstocks=n()) %>% 
+  ungroup() %>% 
+  mutate(group="Overall")
+
+# Merge
+nstocks <- bind_rows(nstocks_tot, nstocks_grp)
 
 # Final year total by group and region
 max_year <- max(data$year)
@@ -41,11 +51,17 @@ nstocks_group <-nstocks_labels %>%
   arrange(desc(nstocks)) %>% 
   mutate(group_label=paste0(group, " (n=", nstocks, ")") %>% factor(., levels=.))
 
+# Subregion order
+subregions <- c("Atlantic", "Gulf of Mexico", "West Coast", "Hawaii", "Alaska")
+
 # Order data and labels
 nstocks_ord <- nstocks %>% 
-  left_join(nstocks_group %>% select(group, group_label))
+  left_join(nstocks_group %>% select(group, group_label)) %>% 
+  mutate(subregion=factor(subregion, levels=subregions))
 nstocks_labels_org <- nstocks_labels %>% 
-  left_join(nstocks_group %>% select(group, group_label))
+  left_join(nstocks_group %>% select(group, group_label)) %>% 
+  mutate(subregion=factor(subregion, levels=subregions))
+
 
 
 # Stats for manuscript
@@ -61,7 +77,7 @@ n_tot <- nstocks %>%
 
 # Change by region
 n_reg <- nstocks %>% 
-  group_by(region, year) %>% 
+  group_by(subregion, year) %>% 
   summarize(nstocks=sum(nstocks)) %>% 
   ungroup() %>% 
   filter(year %in% c(1995, 2024)) %>% 
@@ -71,7 +87,7 @@ n_reg <- nstocks %>%
 
 # Change by region and group
 n_reg_group <- nstocks %>% 
-  group_by(region, group, year) %>% 
+  group_by(subregion, group, year) %>% 
   summarize(nstocks=sum(nstocks)) %>% 
   ungroup() %>% 
   filter(year %in% c(1995, 2024)) %>% 
@@ -95,6 +111,7 @@ n_group <- nstocks %>%
 
 # Theme
 my_theme <-  theme(axis.text=element_text(size=8),
+                   axis.text.x = element_text(angle = 45, vjust = 1, hjust=1),
                    axis.title=element_text(size=9),
                    legend.text=element_text(size=8),
                    legend.title=element_text(size=9),
@@ -109,22 +126,31 @@ my_theme <-  theme(axis.text=element_text(size=8),
                    legend.key = element_rect(fill = NA, color=NA),
                    legend.background = element_rect(fill=alpha('blue', 0)))
 
+# Subregion colors 
+subregion_colors <- c(RColorBrewer::brewer.pal(9, "Blues")[c(5, 7)],
+                      RColorBrewer::brewer.pal(9, "Greens")[c(5, 7)],
+                      RColorBrewer::brewer.pal(9, "Purples")[7])
+
 # Plot number of stocks over time
-g <- ggplot(nstocks_ord, aes(x=year, y=nstocks, color=region)) +
+g <- ggplot(nstocks_ord, aes(x=year, y=nstocks, color=subregion)) +
   facet_wrap(~group_label, ncol=4, scales="free_y") +
   geom_line() +
   geom_point(data=nstocks_labels_org) +
-  geom_text(data=nstocks_labels_org, mapping=aes(hjust=0, label=nstocks), x=2025, size=2.2) +
+  geom_text(data=nstocks_labels_org, mapping=aes(hjust=0, label=nstocks), 
+            x=2025, size=2.2, show.legend = F) +
   # Labels
   labs(x="Year", y="Number of stocks") +
   # Legend
-  scale_color_discrete(name="Region") +
+  scale_color_manual(name="Region",
+                     values=subregion_colors) +
   # Axes
   scale_y_continuous(lim=c(0, NA)) +
-  scale_x_continuous(lim=c(1995, 2026), breaks = seq(1995, 2025, 5)) +
+  scale_x_continuous(lim=c(1995, 2027), breaks = seq(1995, 2025, 5)) +
   # Theme
   theme_bw() + my_theme +
-  theme(legend.position = "top")
+  theme(legend.position = "top",
+        legend.box.spacing = grid::unit(0, "pt"),
+        legend.margin = margin(t = 0, r = 0, b = 5, l = 0))
 g
 
 # Export

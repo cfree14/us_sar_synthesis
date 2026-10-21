@@ -22,8 +22,7 @@ data_orig <- readRDS(data, file=file.path(outdir, "US_sars_data.Rds"))
 ################################################################################
 
 # Format
-data <- data_orig %>% 
-  filter(group!="USFWS marine mammals")
+data <- data_orig
 
 # Build data
 stats <- data %>% 
@@ -108,8 +107,8 @@ g1 <- ggplot(stats, aes(x=nmin_ratio, y=pbr_ratio, fill=rf_change)) +
   # geom_smooth(method="lm") +
   # 1:1 line
   geom_abline(slope=1) +
-  annotate(geom="text", x=0.1, y=100, label="PBR liberal", size=2) +
-  annotate(geom="text", x=100, y=0.1, label="PBR constrained", size=2) +
+  annotate(geom="text", x=0.1, y=100, label="PBR outpaces\npopulation change", size=2) +
+  annotate(geom="text", x=100, y=0.1, label="PBR lags\npopulation change", size=2) +
   # Axes
   # lims(x=c(0, 40), y=c(0, 40)) +
   scale_x_continuous(trans="log10", 
@@ -121,13 +120,15 @@ g1 <- ggplot(stats, aes(x=nmin_ratio, y=pbr_ratio, fill=rf_change)) +
                      breaks=c(0.01, 0.1, 1, 10, 100, 1000),
                      labels=c("0.01", "0.1", "1", "10", "100", "1000")) +
   # Labs
-  labs(x="Nmin ratio\n(final / initial)", y="PBR ratio\n(final / initial)", 
+  labs(x="N<sub>MIN</sub> ratio<br>(final / initial)", 
+       y="PBR ratio\n(final / initial)", 
        tag="A", subtitle=paste(nrow(stats), "stocks")) +
   # Legend
   scale_fill_gradient2(mid="white", high="navy", low="darkred") +
   # Theme
   theme_bw() + my_theme +
-  theme(legend.position = "none")
+  theme(legend.position = "none",
+        axis.title.x = ggtext::element_markdown(lineheight = 1.3)) # add space between two lines
 g1
 
 # N_est
@@ -142,8 +143,8 @@ g2 <- ggplot(stats2, aes(x=n_ratio, y=pbr_ratio, fill=rf_change)) +
   # geom_smooth(method="lm") +
   # 1:1 line
   geom_abline(slope=1) +
-  annotate(geom="text", x=0.1, y=100, label="PBR liberal", size=2) +
-  annotate(geom="text", x=10, y=0.1, label="PBR constrained", size=2) +
+  annotate(geom="text", x=0.1, y=100, label="PBR outpaces\npopulation change", size=2) +
+  annotate(geom="text", x=10, y=0.1, label="PBR lags\npopulation change", size=2) +
   # Axes
   # lims(x=c(0, 40), y=c(0, 40)) +
   scale_x_continuous(trans="log10",
@@ -155,19 +156,20 @@ g2 <- ggplot(stats2, aes(x=n_ratio, y=pbr_ratio, fill=rf_change)) +
                      breaks=c(0.01, 0.1, 1, 10, 100, 1000),
                      labels=c("0.01", "0.1", "1", "10", "100", "1000")) +
   # Labs
-  labs(x="Nest ratio\n(final / initial)", y="PBR ratio\n(final / initial)", 
+  labs(x="N<sub>EST</sub> ratio<br>(final / initial)", 
+       y="PBR ratio\n(final / initial)", 
        tag="B", subtitle=paste(nrow(stats2), "stocks")) +
   # Legend
   scale_fill_gradient2(name="ΔRecovery factor\n(final - initial)", mid="white", high="navy", low="darkred") +
   guides(fill = guide_colorbar(ticks.colour = "black", frame.colour = "black", frame.linewidth = 0.2)) +
   # Theme
   theme_bw() + my_theme +
-  theme(legend.key.size = unit(0.5, "cm"))
+  theme(legend.key.size = unit(0.5, "cm"),
+        axis.title.x = ggtext::element_markdown(lineheight = 1.3)) # add space between two lines
 g2
 
 # Merge
 g <- gridExtra::grid.arrange(g1, g2, nrow=1, widths=c(0.4, 0.6))
-
 
 # Export
 ggsave(g, filename=file.path(plotdir, "Fig9_change_in_pbr_vs_abundance.png"),

@@ -26,12 +26,15 @@ colnames(data_orig)
 
 # Remove composite NGOM bottlenose dolphin stocks
 data1 <- data_orig %>% 
+  # Rename
+  rename(n_est=n) %>% 
+  # Filter
   filter(!grepl("Stocks", stock)) %>% 
   # Format a few stock areas for merge
   mutate(area=gsub(", ", "/", area)) %>% 
   mutate(area=recode(area, 
                      # Fix old
-                     # "Northern Gulf of Mexico Coastal" = "Gulf of Mexico Northern Coastal",
+                     "Northern Gulf of Mexico Coastal" = "Gulf of Mexico Northern Coastal",
                      "Western Gulf of Mexico Coastal" = "Gulf of Mexico Western Coastal",
                      "Eastern Gulf of Mexico Coastal" = "Gulf of Mexico Eastern Coastal",
                      # Align with new
@@ -70,7 +73,10 @@ data <- bind_rows(data1, data_ngom1) %>%
   # Arrange
   arrange(group, comm_name, area, year)
 
-
+# Confirm 1 row per stock year
+data %>% 
+  group_by(stock, year) %>% 
+  summarize(n=n()) %>% filter(n>1)
 
 # Inspect dolphin stocks
 
@@ -83,5 +89,8 @@ ggplot(data %>% filter(comm_name=="Common bottlenose dolphin" & region=="Gulf of
   theme_bw()
 
 
+# Export
+################################################################################
 
+saveRDS(data, file.path(outdir, "Atlantic_SARs_parameters_final.Rds"))
 

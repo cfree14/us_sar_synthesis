@@ -31,14 +31,14 @@ data %>%
 
 # Status by region
 stats_region <- data %>% 
-  group_by(region, year) %>% 
+  group_by(subregion, year) %>% 
   summarize(n=n(),
             n_ns=sum(!is.na(strategic_yn) & strategic_yn=="Non-strategic"), 
             prop_ns = n_ns / n) %>% 
   ungroup() %>% 
   mutate(label=paste0(round(prop_ns*100,0), "%"))
 
-# Status by region
+# Status by group
 stats_group <- data %>% 
   group_by(group, year) %>% 
   summarize(n=n(),
@@ -49,6 +49,12 @@ stats_group <- data %>%
 
 # Plot data
 ################################################################################
+
+# Subregion order
+subregions <- c("Atlantic", "Gulf of Mexico", "West Coast", "Hawaii", "Alaska")
+subregion_colors <- c(RColorBrewer::brewer.pal(9, "Blues")[c(5, 7)],
+                      RColorBrewer::brewer.pal(9, "Greens")[c(5, 7)],
+                      RColorBrewer::brewer.pal(9, "Purples")[7])
 
 # Theme
 my_theme <-  theme(axis.text=element_text(size=8),
@@ -69,7 +75,7 @@ my_theme <-  theme(axis.text=element_text(size=8),
 
 
 # Plot status by region
-g1 <- ggplot(stats_region, aes(x=year, y=prop_ns, color=region)) +
+g1 <- ggplot(stats_region, aes(x=year, y=prop_ns, color=factor(subregion, subregions))) +
   geom_line() +
   geom_point(data=stats_region %>% filter(year==max(year))) +
   geom_text(data=stats_region %>% filter(year==max(year)), 
@@ -79,10 +85,10 @@ g1 <- ggplot(stats_region, aes(x=year, y=prop_ns, color=region)) +
   scale_x_continuous(breaks=seq(1995, 2025, 5), lim=c(1995, 2027)) +
   scale_y_continuous(labels=scales::percent_format(), lim=c(0,1)) +
   # Legend
-  scale_color_discrete(name="Region") +
+  scale_color_manual(name="", values=subregion_colors) +
   # Theme
   theme_bw() + my_theme + 
-  theme(legend.position = c(0.8, 0.2),
+  theme(legend.position = c(0.7, 0.22),
         legend.key.size=unit(0.3, "cm")) 
 g1
 
@@ -97,7 +103,8 @@ g2 <- ggplot(stats_group, aes(x=year, y=prop_ns, color=group)) +
   scale_x_continuous(breaks=seq(1995, 2025, 5), lim=c(1995, 2027)) +
   scale_y_continuous(labels=scales::percent_format(), lim=c(0,1)) +
   # Legend
-  scale_color_discrete(name="Group") +
+  scale_color_manual(name="Group",
+                       values=RColorBrewer::brewer.pal(7, "Set2")) +
   # Theme
   theme_bw() + my_theme +
   theme(legend.position = "right", 
@@ -106,12 +113,12 @@ g2 <- ggplot(stats_group, aes(x=year, y=prop_ns, color=group)) +
 g2
 
 # Merge
-g <- gridExtra::grid.arrange(g1, g2, nrow=1, widths=c(0.4, 0.6))
+g <- gridExtra::grid.arrange(g1, g2, nrow=1, widths=c(0.42, 0.58))
 
 # Export
 ggsave(g, filename=file.path(plotdir, "Fig2_status_over_time.png"), 
        width=6.5, height=3, units="in", dpi=600, bg="white")
-
+ 
 
 
 

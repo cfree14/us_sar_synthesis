@@ -17,12 +17,10 @@ data_orig <- readRDS(data, file=file.path(outdir, "US_sars_data.Rds"))
 
 # Format data
 data <- data_orig %>% 
-  # Remove US FWS
-  filter(group!="USFWS marine mammals") %>% 
   # Big class
   mutate(group_catg=ifelse(group %in% c("Large whales", "Small whales", "Dolphins", "Porpoises"), "Cetaceans", "Non-cetaceans")) %>% 
   # Factor group
-  mutate(group=factor(group, levels=c("Large whales", "Small whales", "Dolphins", "Porpoises", "Phocids", "Otariids")))
+  mutate(group=factor(group, levels=c("Large whales", "Small whales", "Dolphins", "Porpoises", "Phocids", "Otariids", "USFWS")))
 
 # Theme
 my_theme <-  theme(axis.text=element_text(size=6),

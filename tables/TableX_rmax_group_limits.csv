@@ -1,8 +1,10 @@
 "rmax_group","group","rmax_default","r_max_lo","r_max_hi"
 "High productivity","Phocids",0.12,0.06,0.128
 "High productivity","Otariids",0.12,0.086,0.137
+"High productivity","Sea otters",0.12,0.06,0.29
 "Low productivity","Dolphins",0.04,0.03,0.04
 "Low productivity","Small whales",0.04,0.029,0.048
+"Low productivity","Manatees",0.04,0.04,0.062
 "Low productivity","Dolphins/porpoises",0.04,0.03,0.097
 "Low productivity","Porpoises",0.04,0.04,0.097
 "Low productivity","Large whales",0.04,0.02,0.106

@@ -18,7 +18,7 @@ pac_orig <- readRDS(file.path(outdir, "Pacific_SARs_parameters.Rds"))
 ak_orig <- readRDS(file.path(outdir, "Alaska_SARs_parameters.Rds"))
 
 # Read Atlantic
-atl_orig <- readRDS(file.path(outdir, "Atlantic_SARs_parameters.Rds"))
+atl_orig <- readRDS(file.path(outdir, "Atlantic_SARs_parameters_final.Rds"))
 
 # Read USFWS
 usfws_orig <- readRDS(file.path(outdir, "USFWS_SARs_parameters.Rds"))
@@ -64,8 +64,7 @@ atl <- atl_orig %>%
   rename(subregion=region) %>% 
   mutate(region="Atlantic") %>% 
   # Rename
-  rename(n_est=n,
-         sim_total=msi_total,
+  rename(sim_total=msi_total,
          sim_fisheries=msi_fisheries) %>% 
   # Simplify
   select(region, subregion, filename, 
@@ -135,6 +134,8 @@ data <- bind_rows(pac, atl, ak, usfws) %>%
   mutate(esa_status=stringr::str_to_sentence(esa_status)) %>%
   # Format OSP status
   mutate(osp_status=stringr::str_to_sentence(osp_status)) %>% 
+  # Format strategic
+  mutate(strategic_yn=recode(strategic_yn, "yes"="Strategic")) %>% 
   # Format revised_yn
   mutate(revised_yn=recode(revised_yn, 
                            "Revised" = "yes",

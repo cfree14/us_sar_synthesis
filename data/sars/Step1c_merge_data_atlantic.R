@@ -293,23 +293,76 @@ data2 <- bind_rows(data1, data97, data04) |>
   arrange(group, comm_name, area, year)
 
 
+# Add 1998, 1999, 2000 for Easter
+################################################################################
+
+areas_with_gap <- c("Gulf of Mexico Western Coastal", 
+                    "Gulf of Mexico Eastern Coastal",
+                    "Gulf of Mexico Northern Coastal",
+                    "Northern Gulf of Mexico Continental Shelf outer",
+                    "Northern Gulf of Mexico Continental Shelf edge and slope")
+stocks_with_gap <- paste0("Common bottlenose dolphin (", areas_with_gap, ")")
+
+data97a <- data2 %>% 
+  filter(year==1997 & stock %in% stocks_with_gap)
+data9800 <- purrr::map_df(1998:2000, function(x){
+  df <- data97a %>% 
+    mutate(year=x,
+           revised_yn="no",
+           revised="nothing")
+})
+
+# Also GOM-N 2003-2004
+data0304 <- purrr::map_df(2003:2004, function(x){
+  df <- data2 %>% 
+    filter(year==2002 & stock=="Common bottlenose dolphin (Gulf of Mexico Northern Coastal)") %>% 
+    mutate(year=x,
+           revised_yn="no",
+           revised="nothing")
+})
+
+# Also GOM-E/W 2005-2009
+data0509 <- purrr::map_df(2005:2009, function(x){
+  df <- data2 %>% 
+    filter(year==2004 & stock %in% c("Common bottlenose dolphin (Gulf of Mexico Eastern Coastal)",
+                                     "Common bottlenose dolphin (Gulf of Mexico Western Coastal)")) %>% 
+    mutate(year=x,
+           revised_yn="no",
+           revised="nothing")
+})
+
+# Add in plugged bottlenose data
+data3 <- bind_rows(data2, data9800, data0304, data0509) %>% 
+  arrange(group, comm_name, area, year)
+
+# Confirm only one value per 1 year per stock
+data3 %>% count(comm_name, area, year) %>% 
+  filter(n>1)
+
 # Visual time series checks
 ################################################################################
 
 # Check non-dolphins
-ggplot(data2 %>% filter(group!="Dolphins"), aes(y=stock, x=year, fill=strategic_yn)) +
+ggplot(data3 %>% filter(group!="Dolphins"), aes(y=stock, x=year, fill=strategic_yn)) +
   facet_wrap(~group, scales="free_y", space="free_y") +
   geom_tile() +
   theme_bw()
 
 # Check GOM dolphins
-ggplot(data2 %>% filter(group=="Dolphins" & region=="Gulf of Mexico"), aes(y=area, x=year, fill=strategic_yn)) +
+ggplot(data3 %>% filter(group=="Dolphins" & region=="Gulf of Mexico"), aes(y=area, x=year, fill=strategic_yn)) +
+  facet_wrap(~comm_name, scales="free_y", space="free_y") +
+  geom_tile() +
+  theme_bw()
+
+# Check GOM bottlenose dolphins
+ggplot(data3 %>% filter(group=="Dolphins" & region=="Gulf of Mexico" & comm_name=="Common bottlenose dolphin"), 
+       aes(y=area, x=year, fill=strategic_yn)) +
   facet_wrap(~comm_name, scales="free_y", space="free_y") +
   geom_tile() +
   theme_bw()
 
 # Check ATL dolphins
-ggplot(data2 %>% filter(group=="Dolphins" & region=="Atlantic"), aes(y=area, x=year, fill=strategic_yn)) +
+ggplot(data3 %>% filter(group=="Dolphins" & region=="Atlantic"), aes(y=area, x=year, fill=strategic_yn)) +
   facet_wrap(~comm_name, scales="free_y", space="free_y") +
   geom_tile() +
   theme_bw()
@@ -319,7 +372,7 @@ ggplot(data2 %>% filter(group=="Dolphins" & region=="Atlantic"), aes(y=area, x=y
 ################################################################################
 
 # Export data
-saveRDS(data2, file=file.path(outdir, "Atlantic_SARs_parameters.Rds"))
+saveRDS(data3, file=file.path(outdir, "Atlantic_SARs_parameters.Rds"))
 
 
 
