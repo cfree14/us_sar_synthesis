@@ -16,7 +16,6 @@ plotdir <- "figures"
 data_orig <- readRDS(data, file=file.path(outdir, "US_sars_data.Rds"))
 
 
-
 # Build data
 ################################################################################
 

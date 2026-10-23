@@ -19,11 +19,11 @@ data_orig <- readRDS(data, file=file.path(outdir, "US_sars_data.Rds"))
 # Build data
 ################################################################################
 
-usfws_remove <- c("Polar bear", "Pacific walrus") # "West Indian manatee")
+usfws_remove <- c("Polar bear", "Pacific walrus")
 
 # Build ids
 data <- data_orig %>% 
-  # Remove non-otter USFWS
+  # Remove non-otter/manatee USFWS
   filter(!comm_name %in% usfws_remove) %>% 
   mutate(group=case_when(grepl("otter", comm_name) ~ "Sea otters", 
                          grepl("manatee", comm_name) ~ "Manatees",

@@ -26,9 +26,14 @@ rmax_limits <- read.csv(file=file.path("tables/TableX_rmax_group_limits.csv"))
 data1 <- data_orig %>% 
   # Reduce to 2024
   filter(year==2024) %>% 
+  # Handle USFWS
+  filter(!comm_name %in% c("Polar bear", "Pacific walrus")) %>% 
+  mutate(group=case_when(grepl("otter", comm_name) ~ "Sea otters", 
+                         grepl("manatee", comm_name) ~ "Manatees",
+                         T ~ group)) %>% 
   # Mark whether using Rmax default
-  mutate(rmax_default=case_when(group %in% c("Otariids", "Phocids") ~ 0.12,
-                                group %in% c("Small whales", "Porpoises", "Large whales", "Dolphins") ~ 0.04,
+  mutate(rmax_default=case_when(group %in% c("Otariids", "Phocids", "Sea otters") ~ 0.12,
+                                group %in% c("Small whales", "Porpoises", "Large whales", "Dolphins", "Manatees") ~ 0.04,
                                 T ~ NA)) %>% 
   # Mark whether Rmax is default
   mutate(rmax_default_yn=ifelse(r_max==rmax_default, "Default", "Custom"))
@@ -101,8 +106,8 @@ stats <- output %>%
             pstrategic=nstrategic/nstocks) %>% 
   ungroup() %>% 
   # Mark whether using Rmax default
-  mutate(rmax_default=case_when(group %in% c("Otariids", "Phocids") ~ 0.12,
-                                group %in% c("Small whales", "Dolphins/porpoises", "Large whales") ~ 0.04,
+  mutate(rmax_default=case_when(group %in% c("Otariids", "Phocids", "Sea otters") ~ 0.12,
+                                group %in% c("Small whales", "Dolphins/porpoises", "Large whales", "Manatees") ~ 0.04,
                                 T ~ NA))
 
 # Export

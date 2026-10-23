@@ -64,7 +64,7 @@ g1 <- ggplot(stats_rmax, aes(x=rmax_sim, y=pstrategic, color=group)) +
   labs(x=expression("R"["MAX"]*" value"), 
        y="Percentage of stocks with\nfisheries M/SI exceeding the PBR",
        tag="A") +
-  scale_x_continuous(lim=c(0, NA), breaks=seq(0, 0.2, 0.02)) +
+  scale_x_continuous(lim=c(0, NA), breaks=seq(0, 0.3, 0.05)) +
   # scale_y_continuous(lim=c(-0.007, 0.35), labels=scales::percent_format(), breaks=seq(0, 0.14, 0.02)) +
   scale_y_continuous(lim=c(-0.007, 0.35), labels=scales::percent_format(), breaks=seq(0, 0.4, 0.05)) +
   # Legend
