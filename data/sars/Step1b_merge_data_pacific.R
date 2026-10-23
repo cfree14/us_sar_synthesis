@@ -75,7 +75,7 @@ data1 <- data_orig %>%
   # Convert to numeric
   mutate_at(vars( n_est, n_cv, 
                   n_min, r_max, rf, pbr, #n_est,
-                 survey1, survey2, survey3, revision_yr), .funs=as.numeric) %>% 
+                 survey1, survey2, survey3, revision_yr, sim_fisheries_cv), .funs=as.numeric) %>% 
   # Fix strategic (yes/no) 
   mutate(strategic_yn=recode(strategic_yn,
                              "Y"="Strategic",
@@ -136,7 +136,7 @@ data1 <- data_orig %>%
          n_est, n_cv, n_min, r_max, rf, 
          pbr, pbr_derived, pbr_check,
          sim_tot_orig, sim_tot,
-         sim_fish_orig, sim_fish,
+         sim_fish_orig, sim_fish, sim_fisheries_cv,
          strategic_yn,
          survey1, survey2, survey3, revision_yr, revised_yn, notes,
          everything())

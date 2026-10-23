@@ -94,7 +94,7 @@ data <- data_orig %>%
   # Convert numeric
   # Neet to format N_MIN, N_CV, PBR, survey_interval, n_cv, sim_fisheries, sim_native, etc
   mutate_at(vars(r_max, rf, n_est, n_cv, n_min, pbr,
-                 sim_total, sim_native, sim_fisheries), as.numeric) %>% 
+                 sim_total, sim_native, sim_fisheries, sim_fisheries_cv), as.numeric) %>% 
   # Fix Rmax
   mutate(r_max=ifelse(year<=2005, r_max*2, r_max)) %>% 
   # Format areas
@@ -178,7 +178,7 @@ data <- data_orig %>%
   select(filename, year, region, group, comm_name, species, area,
          n_est, n_est_notes, n_cv, n_min, n_min_notes, r_max, rf, 
          pbr, pbr_calc, pbr_diff, pbr_notes,
-         sim_fisheries, sim_native, sim_total, sim_total_notes, strategic_yn, 
+         sim_fisheries, sim_fisheries_cv, sim_native, sim_total, sim_total_notes, strategic_yn, 
          last_survey, survey_interval, updated_yn, revised, comments, everything()) %>% 
   # Remove records that aren't really stocks
   filter(!grepl("feeding area|survey", area))

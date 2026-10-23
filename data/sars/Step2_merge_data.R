@@ -28,9 +28,9 @@ usfws_orig <- readRDS(file.path(outdir, "USFWS_SARs_parameters.Rds"))
 ################################################################################
 
 # Columns
-colnames(pac_orig)
+colnames(pac_orig) # sim_fisheries_cv
 colnames(atl_orig) # msi_fisheries_cv
-colnames(ak_orig)
+colnames(ak_orig) # sim_fisheries_cv
 colnames(usfws_orig)
 
 # Ultimate goal:
@@ -51,7 +51,7 @@ pac <- pac_orig %>%
   select(region, subregion, filename, 
          year, group, comm_name, species, area,
          n_est, n_cv, n_min, r_max, rf, pbr,
-         sim_total, sim_fisheries, 
+         sim_total, sim_fisheries, sim_fisheries_cv,
          strategic_yn, revised_yn, comments,
          # 2024 ones
          osp_status, esa_status, mnpl, n_method, trend, unused_r) %>% 
@@ -61,7 +61,8 @@ pac <- pac_orig %>%
 # Atlantic
 atl <- atl_orig %>% 
   # Region
-  rename(subregion=region) %>% 
+  rename(subregion=region,
+         sim_fisheries_cv=msi_fisheries_cv) %>% 
   mutate(region="Atlantic") %>% 
   # Rename
   rename(sim_total=msi_total,
@@ -70,7 +71,7 @@ atl <- atl_orig %>%
   select(region, subregion, filename, 
          year, group, comm_name, species, area,
          n_est, n_cv, n_min, r_max, rf, pbr,
-         sim_total, sim_fisheries, 
+         sim_total, sim_fisheries, sim_fisheries_cv,
          strategic_yn, revised_yn, comments,
          # 2024 ones
          osp_status, esa_status, mnpl, n_method, trend, unused_r) %>% 
@@ -88,7 +89,7 @@ ak <- ak_orig %>%
   select(region, subregion, filename, 
          year, group, comm_name, species, area,
          n_est, n_cv, n_min, r_max, rf, pbr,
-         sim_total, sim_fisheries, strategic_yn, revised_yn, comments,
+         sim_total, sim_fisheries, sim_fisheries_cv, strategic_yn, revised_yn, comments,
          # 2024 ones
          osp_status, esa_status, mnpl, n_method, trend, unused_r) %>% 
   # Remove USFWS
@@ -118,7 +119,7 @@ usfws <- usfws_orig %>%
          n_est, n_cv, n_min, r_max, rf, pbr,
          sim_total, sim_fisheries, strategic_yn, revised_yn, comments,
          # 2024 ones
-         osp_status, esa_status,# mnpl, n_method, 
+         osp_status, esa_status, n_method, # mnpl,
          trend)
          #unused_r)
 
@@ -133,7 +134,8 @@ data <- bind_rows(pac, atl, ak, usfws) %>%
   # Format ESA status
   mutate(esa_status=stringr::str_to_sentence(esa_status)) %>%
   # Format OSP status
-  mutate(osp_status=stringr::str_to_sentence(osp_status)) %>% 
+  mutate(osp_status=stringr::str_to_sentence(osp_status),
+         osp_status=recode(osp_status, "Not depleted"="Non-depleted")) %>% 
   # Format strategic
   mutate(strategic_yn=recode(strategic_yn, "yes"="Strategic")) %>% 
   # Format revised_yn
@@ -159,7 +161,7 @@ data <- bind_rows(pac, atl, ak, usfws) %>%
   select(region:group, stock, comm_name, species, area, revised_yn, 
          n_est, n_cv, n_min, r_max, rf, 
          pbr, pbr_calc, pbr_diff,
-         sim_total, sim_fisheries, strategic_yn, comments,
+         sim_total, sim_fisheries, sim_fisheries_cv, strategic_yn, comments,
          # 2024 ones
          osp_status, esa_status, mnpl, n_method, trend, unused_r, everything())
 
@@ -214,6 +216,8 @@ ncheck <- data %>%
 
 # Status
 table(data$strategic_yn)
+table(data$osp_status)
+table(data$esa_status)
 
 # Revised
 table(data$revised_yn)
