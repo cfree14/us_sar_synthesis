@@ -38,6 +38,7 @@ data_orig <- purrr::map_df(files2merge, function(x){
                     "rf" = "fr",
                     "strategic_yn" = "stragetig_yn",
                     "survey_interval" = "years_since",
+                    "last_survey_yr" = "last_survey",
                     "updated_yn"="revised_yn")))
   
 })
@@ -179,7 +180,7 @@ data <- data_orig %>%
          n_est, n_est_notes, n_cv, n_min, n_min_notes, r_max, rf, 
          pbr, pbr_calc, pbr_diff, pbr_notes,
          sim_fisheries, sim_fisheries_cv, sim_native, sim_total, sim_total_notes, strategic_yn, 
-         last_survey, survey_interval, updated_yn, revised, comments, everything()) %>% 
+         last_survey_yr, survey_interval, updated_yn, revised, comments, everything()) %>% 
   # Remove records that aren't really stocks
   filter(!grepl("feeding area|survey", area))
 

@@ -37,7 +37,7 @@ rf_groups <- c(rev(c("Size unknown",
 # Prep data
 data <- data_orig %>% 
   # Filter
-  filter(group!="USFWS marine mammals" & year==2024) %>% 
+  filter(year==2024) %>% 
   # Order ESA status
   mutate(esa_status=factor(esa_status, levels=c("Endangered", "Threatened", "Not listed"))) %>% 
   # Add RF group
@@ -58,8 +58,16 @@ data <- data_orig %>%
                       "Decrease"="Decreasing", 
                       "Increase"="Increasing"),
          trend=factor(trend, levels=c("Any trend", "Decreasing", "Stable", "Increasing", "Unknown"))) %>% 
+  # Add sim fisheries category
+  mutate(sim_fisheries_cv_catg=case_when(sim_fisheries_cv<=0.3 ~ "<0.3",
+                                         sim_fisheries_cv>0.3 & sim_fisheries_cv<=0.6 ~ "0.3-0.6",
+                                         sim_fisheries_cv>0.6 & sim_fisheries_cv<=0.8 ~ "0.6-0.8",
+                                         sim_fisheries_cv>0.8 ~ ">0.8",
+                                         T ~ NA),
+         sim_fisheries_cv_catg=factor(sim_fisheries_cv_catg, c("<0.3", "0.3-0.6", "0.6-0.8", ">0.8"))) %>% 
   # Simplify
   select(region, subregion, group, stock, n_min, n_cv, 
+         sim_fisheries_cv, sim_fisheries_cv_catg,
         rf, 
         esa_listed, esa_status, osp_status, trend, 
         rf_group_esa, rf_group) 
@@ -137,7 +145,14 @@ ref_lines_end <- tibble(esa_status="Endangered",
 ref_lines_other <- expand.grid(esa_status=c("Threatened", "Not listed"),
                                rf=c(0.4, 0.45, 0.48, 0.5))
 ref_lines <- bind_rows(ref_lines_end, ref_lines_other) %>% 
-  mutate(esa_status=factor(esa_status, levels=levels(data$esa_status)))
+  # Factor ESA status
+  mutate(esa_status=factor(esa_status, levels=levels(data$esa_status))) %>% 
+  # Add 
+  mutate(msi_cv=case_when(rf==0.5 & esa_status!= "Endangered" ~ "<0.3",
+                          rf==0.48 & esa_status!= "Endangered" ~ "0.3-0.6",
+                          rf==0.45 & esa_status!= "Endangered" ~ "0.6-0.8",
+                          rf=0.40 & esa_status!= "Endangered" ~ ">0.8",
+                          T ~ NA) %>% factor(., c("<0.3", "0.3-0.6", "0.6-0.8", ">0.8")))
 
 # Theme
 my_theme <-  theme(axis.text=element_text(size=8),
@@ -156,14 +171,14 @@ my_theme <-  theme(axis.text=element_text(size=8),
                    legend.background = element_rect(fill=alpha('blue', 0)))
 
 # Plot data
-g <- ggplot(data, aes(y=rf_group, x=rf, fill=trend)) +
+g1 <- ggplot(data %>% filter(esa_status=="Endangered"), aes(y=rf_group, x=rf, fill=trend)) +
   # Facet
   facet_wrap(~esa_status, scales="free_y", space="free_y", strip.position="right") +
   # Ref lines
-  geom_vline(data=ref_lines, mapping=aes(xintercept=rf), 
+  geom_vline(data=ref_lines %>% filter(esa_status=="Endangered"), mapping=aes(xintercept=rf), 
              color="black", linetype="dotted", inherit.aes = F, linewidth=0.5) +
   # Guidelines
-  geom_point(data=rf_guidelines_plot, inherit.aes = F,
+  geom_point(data=rf_guidelines_plot %>% filter(esa_status=="Endangered"), inherit.aes = F,
              mapping=aes(y=pop_size, 
                          x=rf_not_vulnerable, 
                          color=trend), pch=16, size=7) +
@@ -174,18 +189,44 @@ g <- ggplot(data, aes(y=rf_group, x=rf, fill=trend)) +
   #                          min.segment.length=0.1, size=3) +
   # Labels
   labs(x=expression("Recovery factor (F"["R"]*")"), y="") +
+  scale_x_continuous(breaks=seq(0.1, 1, 0.1), lim=c(0.1, 1)) +
   # Legend
   scale_color_manual(name="Abundance trend", values=c("black", "red", "white", "blue", "grey70"), drop=F) +
   scale_fill_manual(name="Abundance trend", values=c("black", "red", "white", "blue", "grey70"), drop=F) +
-  # Axes
-  scale_x_continuous(breaks=seq(0, 1, 0.1)) +
   # Theme
   theme_bw() + my_theme +
-  theme(legend.position = c(0.8, 0.75))
-g
+  theme(axis.title=element_blank(),
+        axis.text.x=element_blank())
+g1
+
+g2 <- ggplot(data %>% filter(esa_status!="Endangered"), 
+             aes(y=rf_group, x=rf, fill=sim_fisheries_cv_catg)) +
+  # Facet
+  facet_wrap(~esa_status, scales="free_y", space="free_y", strip.position="right") +
+  # Ref lines
+  geom_vline(data=ref_lines %>% filter(esa_status!="Endangered"), mapping=aes(xintercept=rf, color=msi_cv), 
+             linetype="dashed", inherit.aes = F, linewidth=0.5) +
+  # Points
+  geom_jitter(pch=21, size=3, height=0.2, width=0) +
+  # Label wierd ones
+  # ggrepel::geom_text_repel(data=wierd_df, mapping=aes(label=stock_label), 
+  #                          min.segment.length=0.1, size=3) +
+  # Labels
+  labs(x=expression("Recovery factor (F"["R"]*")"), y=" \n \n \n \n \n") +
+  scale_x_continuous(breaks=seq(0.1, 1, 0.1), lim=c(0.1, 1)) +
+  # Legend
+  scale_color_manual(name="", values=RColorBrewer::brewer.pal(4, "RdBu") %>% rev(), na.value = "grey80", guide="none") +
+  scale_fill_manual(name="M/SI CV             ", values=RColorBrewer::brewer.pal(4, "RdBu") %>% rev(), na.value = "grey90") +
+  # Theme
+  theme_bw() + my_theme
+g2
+
+# Merge
+g <- gridExtra::grid.arrange(g1, g2, ncol=1, heights=c(0.52, 0.48))
+
 
 # Export
-ggsave(g, filename=file.path(plotdir, "Fig8_rf_values.png"), 
+ggsave(g, filename=file.path(plotdir, "Fig8_rf_values_new.png"), 
        width=6.5, height=4.5, units="in", dpi=600, bg="white")
 
 

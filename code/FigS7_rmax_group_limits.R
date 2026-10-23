@@ -126,7 +126,7 @@ g <- ggplot(data2, aes(y=group, x=r_max, color=rmax_type)) +
   labs(x=expression("R"["MAX"]), y="") +
   scale_x_continuous(lim=c(0, NA), breaks=seq(0,0.3,0.02)) +
   # Legend
-  scale_color_manual(name=expression("R"["max"]*" type"), 
+  scale_color_manual(name=expression("R"["MAX"]*" type"), 
                      values=c("grey30", "red", "blue")) +
   # Theme
   theme_bw() + my_theme

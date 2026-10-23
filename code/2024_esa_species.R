@@ -27,7 +27,7 @@ data <- data_orig %>%
 # Count
 table(data$esa_status)
 
-# Examine moree
+# Examine more
 esa_spp <- data %>% 
   filter(esa_status!="Not listed")
 

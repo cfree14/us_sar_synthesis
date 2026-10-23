@@ -71,7 +71,9 @@ data <- bind_rows(data1, data_ngom1) %>%
   # Remake stock name
   mutate(stock=paste0(comm_name, "(", area, ")")) %>% 
   # Arrange
-  arrange(group, comm_name, area, year)
+  arrange(group, comm_name, area, year) %>% 
+  # Format last survey year
+  mutate(last_survey_yr=stringr::str_sub(last_survey_yr, -4) %>% as.numeric())
 
 # Confirm 1 row per stock year
 data %>% 

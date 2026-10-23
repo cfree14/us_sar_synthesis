@@ -51,7 +51,7 @@ data <- data_orig %>%
          stock, group, comm_name, species, region, area, 
          revised_yn, year, n_est, n_cv, n_min, r_max, rf, pbr,
          sim_total, sim_fisheries, sim_native, sim_other,
-         strategic_yn, mmpa_status, esa_status, trend, notes, 
+         strategic_yn, mmpa_status, esa_status, trend, notes, last_survey_yr,
          everything())
 
 # Inspect

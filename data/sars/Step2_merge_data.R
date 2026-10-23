@@ -28,14 +28,14 @@ usfws_orig <- readRDS(file.path(outdir, "USFWS_SARs_parameters.Rds"))
 ################################################################################
 
 # Columns
-colnames(pac_orig) # sim_fisheries_cv
-colnames(atl_orig) # msi_fisheries_cv
-colnames(ak_orig) # sim_fisheries_cv
+colnames(pac_orig) # sim_fisheries_cv, last_survey_yr
+colnames(atl_orig) # msi_fisheries_cv, last_survey_yr
+colnames(ak_orig) # sim_fisheries_cv, last_survey_yr
 colnames(usfws_orig)
 
 # Ultimate goal:
 # region, subregion, year, group, comm_name, species, area,
-# n_est, n_vc, n_min, r_max, rf, pbr,
+# last_survey_yr, n_est, n_vc, n_min, r_max, rf, pbr,
 # sim_total, sim_fisheries, strategic_yn, revised_yn, comments
 
 # Pacific
@@ -50,13 +50,15 @@ pac <- pac_orig %>%
   # Simplify
   select(region, subregion, filename, 
          year, group, comm_name, species, area,
-         n_est, n_cv, n_min, r_max, rf, pbr,
+         last_survey_yr, n_est, n_cv, n_min, r_max, rf, pbr,
          sim_total, sim_fisheries, sim_fisheries_cv,
          strategic_yn, revised_yn, comments,
          # 2024 ones
          osp_status, esa_status, mnpl, n_method, trend, unused_r) %>% 
   # Remove USFWS
   filter(!grepl("USFWS", group))
+
+str(pac)
 
 # Atlantic
 atl <- atl_orig %>% 
@@ -70,13 +72,15 @@ atl <- atl_orig %>%
   # Simplify
   select(region, subregion, filename, 
          year, group, comm_name, species, area,
-         n_est, n_cv, n_min, r_max, rf, pbr,
+         last_survey_yr, n_est, n_cv, n_min, r_max, rf, pbr,
          sim_total, sim_fisheries, sim_fisheries_cv,
          strategic_yn, revised_yn, comments,
          # 2024 ones
          osp_status, esa_status, mnpl, n_method, trend, unused_r) %>% 
   # Remove USFWS
   filter(!grepl("USFWS", group))
+
+str(atl)
 
 # Alaska
 ak <- ak_orig %>% 
@@ -85,15 +89,19 @@ ak <- ak_orig %>%
          subregion=region) %>% 
   # Rename
   rename(revised_yn=updated_yn) %>% 
+  # Format last survey year
+  mutate(last_survey_yr=stringr::str_sub(last_survey_yr, -4) %>% as.numeric()) %>% 
   # Simplify
   select(region, subregion, filename, 
          year, group, comm_name, species, area,
-         n_est, n_cv, n_min, r_max, rf, pbr,
+         last_survey_yr, n_est, n_cv, n_min, r_max, rf, pbr,
          sim_total, sim_fisheries, sim_fisheries_cv, strategic_yn, revised_yn, comments,
          # 2024 ones
          osp_status, esa_status, mnpl, n_method, trend, unused_r) %>% 
   # Remove USFWS
   filter(!grepl("USFWS", group))
+
+str(ak)
 
 # USFWS 
 usfws <- usfws_orig %>% 
@@ -116,12 +124,14 @@ usfws <- usfws_orig %>%
   # Simplify
   select(region, subregion, filename, 
          year, group, comm_name, species, area,
-         n_est, n_cv, n_min, r_max, rf, pbr,
+         last_survey_yr, n_est, n_cv, n_min, r_max, rf, pbr,
          sim_total, sim_fisheries, strategic_yn, revised_yn, comments,
          # 2024 ones
          osp_status, esa_status, n_method, # mnpl,
          trend)
          #unused_r)
+
+str(usfws)
 
 
 # Merge
@@ -159,7 +169,7 @@ data <- bind_rows(pac, atl, ak, usfws) %>%
          trend=recode(trend, "Increase; unknown"="Unknown")) %>% 
   # Arrange
   select(region:group, stock, comm_name, species, area, revised_yn, 
-         n_est, n_cv, n_min, r_max, rf, 
+         last_survey_yr, n_est, n_cv, n_min, r_max, rf, 
          pbr, pbr_calc, pbr_diff,
          sim_total, sim_fisheries, sim_fisheries_cv, strategic_yn, comments,
          # 2024 ones

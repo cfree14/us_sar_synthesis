@@ -39,7 +39,7 @@ avg_range("167,000-188,000")
 files2merge <- list.files(indir, pattern=".xlsx")
 files2merge <- files2merge[!grepl("conflicted", files2merge)]
 data_orig <- purrr::map_df(files2merge, function(x){
-  df <- readxl::read_excel(file.path(indir, x), na=c("N/A", "n/a", "N/a", "unk", "undet", "und"), col_types = "text") %>% 
+  df <- readxl::read_excel(file.path(indir, x), na=c("N/A", "n/a", "N/a", "unk", "undet", "und", "NA"), col_types = "text") %>% 
     mutate(filename=x) %>% 
     # Fix typos in names
     rename(any_of(c("notes" = "comments")))
@@ -75,7 +75,7 @@ data1 <- data_orig %>%
   # Convert to numeric
   mutate_at(vars( n_est, n_cv, 
                   n_min, r_max, rf, pbr, #n_est,
-                 survey1, survey2, survey3, revision_yr, sim_fisheries_cv), .funs=as.numeric) %>% 
+                  last_survey_yr, survey1, survey2, survey3, revision_yr, sim_fisheries_cv), .funs=as.numeric) %>% 
   # Fix strategic (yes/no) 
   mutate(strategic_yn=recode(strategic_yn,
                              "Y"="Strategic",
