@@ -172,7 +172,7 @@ g2
 g <- gridExtra::grid.arrange(g1, g2, nrow=1, widths=c(0.4, 0.6))
 
 # Export
-ggsave(g, filename=file.path(plotdir, "Fig9_change_in_pbr_vs_abundance.png"),
+ggsave(g, filename=file.path(plotdir, "FigS14_change_in_pbr_vs_abundance.png"),
        width=6.5, height=2.75, units="in", dpi=600, bg="white")
 
 

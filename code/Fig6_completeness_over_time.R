@@ -46,12 +46,12 @@ stats <- data %>%
 
 # Facet labels
 facet_labels <- c(
-  "Nest" = 'N["EST"]',
-  "CVn" = 'CV["N"]',
-  "Nmin" = 'N["MIN"]',
-  "Rmax" = 'R["MAX"]',
-  "Recovery factor" = '"Recovery factor"',
-  "PBR" = '"PBR"',
+  "Nest" = '"Estimated population size" ~ (N["EST"])', # 'N["EST"]',
+  "CVn" = '"CV of N"["EST"]',
+  "Nmin" = '"Minimum population size" ~ (N["MIN"])', # 'N["MIN"]',
+  "Rmax" = '"Population growth rate" ~ (R["MAX"])', # 'R["MAX"]',
+  "Recovery factor" = '"Recovery factor" ~ (F["R"])',
+  "PBR" = '"Potential biological removal (PBR)"',
   "Total M/SI" = '"Total M/SI"',
   "Fisheries M/SI" = '"Fisheries M/SI"',
   "Status" = '"Status"'

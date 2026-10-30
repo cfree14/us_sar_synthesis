@@ -34,14 +34,22 @@ stats_all <- data_orig %>%
   ungroup() %>% 
   mutate(group="All stocks")
 
+# Order groups
+groups <- stats_group %>% 
+  filter(year==2024) %>% 
+  arrange(desc(msi_total)) %>% 
+  pull(group)
+
 # Merge
-stats <- bind_rows(stats_group) %>% 
+stats <- bind_rows(stats_group, stats_all) %>% 
   # Gather
   gather(key="metric", value="msi", 3:ncol(.)) %>% 
   # Format metric
   mutate(metric=recode_factor(metric,
                               "msi_fisheries" = "Fisheries",
-                              "msi_total" = "Total"))
+                              "msi_total" = "Total")) %>% 
+  # Order groups
+  mutate(group=factor(group, levels=c("All stocks", groups)))
 
 
 # Plot data
@@ -50,8 +58,11 @@ stats <- bind_rows(stats_group) %>%
 # Theme
 my_theme <-  theme(axis.text=element_text(size=8),
                    axis.text.x = element_text(angle = 45, vjust = 1, hjust=1),
+                   axis.text.y = element_text(angle = 90, hjust = 0.5), 
                    axis.title=element_text(size=9),
                    plot.tag = element_text(size=9),
+                   legend.text = element_text(size=8),
+                   legend.title = element_text(size=9),
                    # Gridlines
                    panel.grid.major = element_blank(), 
                    panel.grid.minor = element_blank(),
@@ -66,20 +77,22 @@ my_theme <-  theme(axis.text=element_text(size=8),
 
 
 # Plot data
-g <- ggplot(stats, aes(x=year, y=msi, color=metric)) +
+g <- ggplot(stats, aes(x=year, y=msi/1e3, color=metric)) +
   facet_wrap(~group, ncol=4, scales="free_y") +
   geom_line() +
+  # Axes
+  lims(y=c(0, NA)) +
   # Labels
-  labs(x="Year", y="Mortality and\nserious injury (M/SI)") +
-  scale_x_continuous(breaks=seq(1995, 2025, 5), lim=c(1995, 2028)) +
+  labs(x="Year", y="Thousands of mortalities and\nserious injuries (M/SI)") +
+  scale_x_continuous(breaks=seq(1995, 2025, 5), lim=c(1995, 2025)) +
   # Legend
-  scale_color_manual(name="", values=c("red", "black")) +
+  scale_color_manual(name="M/SI source", values=c("red", "black")) +
   # Theme
   theme_bw() + my_theme
 g
 
 # Export
-ggsave(g, filename=file.path(plotdir, "FigX_msi_over_time.png"), 
+ggsave(g, filename=file.path(plotdir, "Fig3_msi_over_time.png"), 
        width=6.5, height=4.25, units="in", dpi=600, bg="white")
 
 

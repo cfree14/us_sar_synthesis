@@ -200,6 +200,6 @@ g2
 g <- gridExtra::grid.arrange(g1, g2, nrow=1, widths=c(0.42, 0.58))
 
 # Export
-ggsave(g, filename=file.path(plotdir, "Fig3_revision_frequency.png"), 
+ggsave(g, filename=file.path(plotdir, "FigS12_revision_frequency.png"), 
        width=6.5, height=4.25, units="in", dpi=600, bg="white")
 

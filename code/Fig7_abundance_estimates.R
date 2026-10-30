@@ -151,7 +151,7 @@ g2 <- ggplot(stats_cv, aes(x=p_no_cv, y=group, fill=n_method)) +
   facet_wrap(~region_label, ncol=1, scales="free_y", space="free_y") +
   geom_bar(stat="identity") +
   # Labels 
-  labs(x="% of Nest without CV", y="", tag="B") +
+  labs(x=expression("% of stocks without CV of N"["EST"]), y="", tag="B") +
   scale_x_continuous(labels=scales::percent_format()) +
   # Theme
   theme_bw() + my_theme +
@@ -165,7 +165,7 @@ g3 <- ggplot(data1, aes(x=n_cv, y=group)) +
   # Reference line
   geom_vline(xintercept=0.3, color="red") +
   # Labels
-  labs(x="CV of Nest", y="", tag="C") +
+  labs(x=expression("CV of N"["EST"]), y="", tag="C") +
   scale_x_continuous(breaks=c(0.3, seq(0,1.5, 0.5))) +
   # Theme
   theme_bw() + my_theme +
@@ -180,7 +180,7 @@ g4 <- ggplot(data1, aes(x=yrs_since_survey, y=group)) +
   geom_vline(xintercept=5, color="red") +
   geom_vline(xintercept=8, color="red", linetype="dashed") +
   # Labels
-  labs(x="Years since last survey (yr)", y="", tag="D") +
+  labs(x=expression("Years since last survey (yr)"[""]), y="", tag="D") +
   scale_x_continuous(breaks=c(8, seq(0, 35, 5))) +
   # Theme
   theme_bw() + my_theme +
@@ -194,7 +194,7 @@ g234 <- gridExtra::grid.arrange(g2, g3, g4, nrow=1, widths=c(0.38, 0.31, 0.31))
 g <- gridExtra::grid.arrange(g1, g234, nrow=2, heights=c(0.32, 0.68))
 
 # Export
-ggsave(g, filename=file.path(plotdir, "Fig4_abundance_estimates.png"), 
+ggsave(g, filename=file.path(plotdir, "Fig7_abundance_estimates.png"), 
        width=6.5, height=6.5, units="in", dpi=600, bg="white")
 
 

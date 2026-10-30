@@ -211,7 +211,7 @@ g <- gridExtra::grid.arrange(g1, g2, g3, layout_matrix=layout_matrix,
                              widths=c(0.5, 0.5), heights=c(0.8, 0.2))
 
 # Export
-ggsave(g, filename=file.path(plotdir, "Fig7_rmax_values_new.png"), 
+ggsave(g, filename=file.path(plotdir, "Fig9_rmax_values_new.png"), 
        width=6.5, height=7.5, units="in", dpi=600, bg="white")
 
 

@@ -77,6 +77,8 @@ my_theme <-  theme(axis.text=element_text(size=8),
                    axis.text.x = element_text(angle = 45, vjust = 1, hjust=1),
                    axis.title=element_text(size=9),
                    plot.tag = element_text(size=9),
+                   legend.text = element_text(size=8),
+                   legend.title = element_text(size=9),
                    # Gridlines
                    panel.grid.major = element_blank(), 
                    panel.grid.minor = element_blank(),
@@ -101,13 +103,13 @@ g <- ggplot(stats, aes(x=year, y=prop, color=metric)) +
   scale_x_continuous(breaks=seq(1995, 2025, 5), lim=c(1995, 2028)) +
   scale_y_continuous(label=scales::percent_format()) +
   # Legend
-  scale_color_discrete(name="") +
+  scale_color_manual(name="Fisheries M/SI target", values=RColorBrewer::brewer.pal(9, "Blues")[c(9, 7, 5)]) +
   # Theme
   theme_bw() + my_theme
 g
 
 # Export
-ggsave(g, filename=file.path(plotdir, "FigX_msi_stats_over_time.png"), 
+ggsave(g, filename=file.path(plotdir, "Fig4_msi_stats_over_time.png"), 
        width=6.5, height=4.25, units="in", dpi=600, bg="white")
 
 

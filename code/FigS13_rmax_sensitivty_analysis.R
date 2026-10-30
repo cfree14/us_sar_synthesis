@@ -153,6 +153,6 @@ g <- ggplot(stats, aes(x=rmax_sim, y=pstrategic, color=group)) +
 g 
 
 # Export
-ggsave(g, filename=file.path(plotdir, "FigSX_rmax_sensitivity_analysis.png"), 
+ggsave(g, filename=file.path(plotdir, "FigS13_rmax_sensitivity_analysis.png"), 
        width=5.5, height=3.5, units="in", dpi=600, bg="white")
 

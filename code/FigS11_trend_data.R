@@ -137,7 +137,7 @@ g <- (guide_area() / (g1 + g2)) +
 g
 
 # Export
-ggsave(g, filename=file.path(plotdir, "Fig5_trend_info.png"), 
+ggsave(g, filename=file.path(plotdir, "FigS11_trend_info.png"), 
        width=6.5, height=6, units="in", dpi=600, bg="white")
  
 

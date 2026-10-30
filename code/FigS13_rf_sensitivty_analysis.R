@@ -130,6 +130,6 @@ g <- ggplot(stats, aes(x=rf_sim, y=pstrategic, color=group, linetype=osp_status)
   theme_bw() + my_theme
 g 
 
-ggsave(g, filename=file.path(plotdir, "FigSX_rf_sensitivity_analysis.png"), 
+ggsave(g, filename=file.path(plotdir, "FigS13_rf_sensitivity_analysis.png"), 
        width=5.5, height=3.5, units="in", dpi=600, bg="white")
 

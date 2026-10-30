@@ -15,47 +15,28 @@ plotdir <- "figures"
 # Read data
 data_orig <- readRDS(data, file=file.path(outdir, "US_sars_data.Rds"))
 
+# Remove non-stocks
 
 # Build data
 ################################################################################
 
 # Prep data
-data <- data_orig %>% 
-  filter(group!="USFWS marine mammals")
+data <- data_orig
+
+# 2024 stats for manuscript
+data %>% 
+  filter(year==2024) %>% 
+  count(strategic_yn) %>% 
+  mutate(prop=n/sum(n))
 
 # Status by region
 stats_region <- data %>% 
-  # Must have PBR and fisheries SI/M
-  filter(!is.na(pbr) & !is.na(sim_fisheries)) %>% 
-  # Summarize
-  group_by(region, year) %>% 
+  group_by(subregion, year) %>% 
   summarize(n=n(),
-            n_below_pbr=sum(sim_fisheries<pbr, na.rm = T),
-            n_below_zmrg=sum(sim_fisheries<(pbr*0.1), na.rm = T)) %>% 
+            n_ns=sum(!is.na(strategic_yn) & strategic_yn=="Non-strategic"), 
+            prop_ns = n_ns / n) %>% 
   ungroup() %>% 
-  # Calculate proportions
-  mutate(prop_below_pbr = n_below_pbr / n,
-         prop_below_zmrg = n_below_zmrg / n) %>% 
-  # Simplify
-  select(region, year, prop_below_pbr:prop_below_zmrg) %>% 
-  gather(key="metric", value="prop", 3:ncol(.)) %>% 
-  # Rename and order metrics
-  mutate(metric=recode_factor(metric,
-                              "prop_below_pbr"="Fisheries SI/M less than the PBR",
-                              "prop_below_zmrg"="Fisheries SI/M less than the ZMRG"))
-
-
-ggplot(stats_region, aes(x=year, y=prop, color=region)) +
-  facet_wrap(~metric, ncol=1) +
-  geom_line() +
-  # Labels
-  labs(x="Year", y="Percent of stocks") + 
-  scale_y_continuous(lim=c(0,1), labels=scales::percent_format()) +
-  # Theme
-  theme_bw() +
-  theme(legend.position="none")
-
-
+  mutate(label=paste0(round(prop_ns*100,0), "%"))
 
 # Status by group
 stats_group <- data %>% 
@@ -68,6 +49,12 @@ stats_group <- data %>%
 
 # Plot data
 ################################################################################
+
+# Subregion order
+subregions <- c("Atlantic", "Gulf of Mexico", "West Coast", "Hawaii", "Alaska")
+subregion_colors <- c(RColorBrewer::brewer.pal(9, "Blues")[c(5, 7)],
+                      RColorBrewer::brewer.pal(9, "Greens")[c(5, 7)],
+                      RColorBrewer::brewer.pal(9, "Purples")[7])
 
 # Theme
 my_theme <-  theme(axis.text=element_text(size=8),
@@ -88,7 +75,7 @@ my_theme <-  theme(axis.text=element_text(size=8),
 
 
 # Plot status by region
-g1 <- ggplot(stats_region, aes(x=year, y=prop_ns, color=region)) +
+g1 <- ggplot(stats_region, aes(x=year, y=prop_ns, color=factor(subregion, subregions))) +
   geom_line() +
   geom_point(data=stats_region %>% filter(year==max(year))) +
   geom_text(data=stats_region %>% filter(year==max(year)), 
@@ -98,10 +85,10 @@ g1 <- ggplot(stats_region, aes(x=year, y=prop_ns, color=region)) +
   scale_x_continuous(breaks=seq(1995, 2025, 5), lim=c(1995, 2027)) +
   scale_y_continuous(labels=scales::percent_format(), lim=c(0,1)) +
   # Legend
-  scale_color_discrete(name="Region") +
+  scale_color_manual(name="", values=subregion_colors) +
   # Theme
   theme_bw() + my_theme + 
-  theme(legend.position = c(0.8, 0.2),
+  theme(legend.position = c(0.7, 0.22),
         legend.key.size=unit(0.3, "cm")) 
 g1
 
@@ -116,7 +103,8 @@ g2 <- ggplot(stats_group, aes(x=year, y=prop_ns, color=group)) +
   scale_x_continuous(breaks=seq(1995, 2025, 5), lim=c(1995, 2027)) +
   scale_y_continuous(labels=scales::percent_format(), lim=c(0,1)) +
   # Legend
-  scale_color_discrete(name="Group") +
+  scale_color_manual(name="Group",
+                       values=RColorBrewer::brewer.pal(7, "Set2")) +
   # Theme
   theme_bw() + my_theme +
   theme(legend.position = "right", 
@@ -125,12 +113,12 @@ g2 <- ggplot(stats_group, aes(x=year, y=prop_ns, color=group)) +
 g2
 
 # Merge
-g <- gridExtra::grid.arrange(g1, g2, nrow=1, widths=c(0.4, 0.6))
+g <- gridExtra::grid.arrange(g1, g2, nrow=1, widths=c(0.42, 0.58))
 
 # Export
-ggsave(g, filename=file.path(plotdir, "Fig2_status_over_time.png"), 
+ggsave(g, filename=file.path(plotdir, "Fig5_status_over_time.png"), 
        width=6.5, height=3, units="in", dpi=600, bg="white")
-
+ 
 
 
 

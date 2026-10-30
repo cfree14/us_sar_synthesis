@@ -21,6 +21,7 @@ nts_orig <- readRDS(data, file="data/abundance/processed/abundance_time_series_d
   mutate(stock=paste0(comm_name, " (", area, ")"))
 stock_key <- readxl::read_excel("data/abundance/processed/stock_crosswalk.xlsx")
 
+
 # Format Yutian data
 ################################################################################
 
@@ -48,7 +49,7 @@ stats_yutian <- nts_orig %>%
   rename(nsurveys_yutian=nsurveys,
          interval_yr_yutian=interval_yr)
   
-freeR::which_duplicated(nts$stock)
+freeR::which_duplicated(nts_orig$stock)
 
 # Build data
 ################################################################################
@@ -95,9 +96,17 @@ stats_group <- stats_use %>%
   group_by(group) %>% 
   summarize(nstocks=n(),
             nstocks_7yr=sum(nsurveys>=7),
-            pstocks_7yr=nstocks_7yr/nstocks) %>% 
+            pstocks_7yr=nstocks_7yr/nstocks,
+            nstocks_5yr_int=sum(interval_yr<=5),
+            pstocks_5yr_int=nstocks_5yr_int/nstocks,
+            nstocks_8yr_int=sum(interval_yr<=8),
+            pstocks_8yr_int=nstocks_8yr_int/nstocks) %>% 
   ungroup() %>% 
-  arrange(desc(pstocks_7yr))
+  arrange(desc(pstocks_7yr)) %>% 
+  # Build interval label
+  mutate(int_label=paste0(round(pstocks_5yr_int*100, 0), "/", round(pstocks_8yr_int*100, 0), "%"))
+
+
 
 # Plot data
 ################################################################################
@@ -118,12 +127,16 @@ my_theme <-  theme(axis.text=element_text(size=8),
 # Plot data
 g1 <- ggplot(stats_use, aes(x=nsurveys, y=factor(group, stats_group$group))) +
   # Datae
-  geom_boxplot() +
+  geom_boxplot(fill="grey90", color="grey40") +
+  # Label
+  geom_text(data=stats_group, 
+            mapping=aes(label=paste0(round(pstocks_7yr*100,0), "%")), 
+            x=max(stats_use$nsurveys), color="red", hjust=-0.1, size=2) +
   # Reference line
   geom_vline(xintercept=7, linetype="dashed", color="red") +
   # Labels
   labs(x="Number of years\nwith abundace estimates", y="", tag="A") +
-  scale_x_continuous(breaks=seq(0,50,10)) +
+  scale_x_continuous(breaks=seq(0,50,10), lim=c(0, max(stats_use$nsurveys)*1.05)) +
   # Theme
   theme_bw() + my_theme
 g1
@@ -131,13 +144,17 @@ g1
 # Plot data
 g2 <- ggplot(stats_use, aes(x=interval_yr, y=factor(group, stats_group$group))) +
   # Datae
-  geom_boxplot() +
+  geom_boxplot(fill="grey90", color="grey40") +
+  # Label
+  geom_text(data=stats_group, 
+            mapping=aes(label=int_label), 
+            x=max(stats_use$interval_yr), color="red", hjust=-0.25, size=2) +
   # Reference line
   geom_vline(xintercept=5, linetype="solid", color="red") +
   geom_vline(xintercept=8, linetype="dashed", color="red") +
   # Labels
   labs(x="Average interval\nbetween surveys (yr)", y="", tag="B") +
-  scale_x_continuous(breaks=seq(0, 30, 5)) +
+  scale_x_continuous(breaks=seq(0, 30, 5), lim=c(0, max(stats_use$interval_yr)*1.15)) +
   # Theme
   theme_bw() + my_theme +
   theme(axis.text.y=element_blank())
@@ -147,7 +164,7 @@ g2
 g <- gridExtra::grid.arrange(g1, g2, nrow=1, widths=c(0.55, 0.45))
 
 # Export
-ggsave(g, filename=file.path(plotdir, "FigX_survey_frequency.png"), 
+ggsave(g, filename=file.path(plotdir, "Fig8_survey_frequency.png"), 
        width=6.5, height=3, units="in", dpi=600, bg="white")
 
 

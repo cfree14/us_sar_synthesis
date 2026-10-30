@@ -226,7 +226,7 @@ g <- gridExtra::grid.arrange(g1, g2, ncol=1, heights=c(0.52, 0.48))
 
 
 # Export
-ggsave(g, filename=file.path(plotdir, "Fig8_rf_values_new.png"), 
+ggsave(g, filename=file.path(plotdir, "Fig10_rf_values_new.png"), 
        width=6.5, height=4.5, units="in", dpi=600, bg="white")
 
 

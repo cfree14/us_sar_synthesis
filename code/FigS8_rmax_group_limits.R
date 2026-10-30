@@ -133,7 +133,7 @@ g <- ggplot(data2, aes(y=group, x=r_max, color=rmax_type)) +
 g
 
 # Export
-ggsave(g, filename=file.path(plotdir, "FigS7_rmax_group_limits.png"), 
+ggsave(g, filename=file.path(plotdir, "FigS8_rmax_group_limits.png"), 
        width=6.5, height=3.5, units="in", dpi=600, bg="white")
 
 
