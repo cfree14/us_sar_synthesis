@@ -69,6 +69,7 @@ nstocks_labels_org <- nstocks_labels %>%
 
 # Total Number of stocks over time
 n_tot <- nstocks %>% 
+  filter(group!="Overall") %>% 
   group_by(year) %>% 
   summarize(nstocks=sum(nstocks)) %>% 
   ungroup() %>% 
@@ -77,13 +78,17 @@ n_tot <- nstocks %>%
 
 # Change by region
 n_reg <- nstocks %>% 
+  filter(group!="Overall") %>% 
   group_by(subregion, year) %>% 
   summarize(nstocks=sum(nstocks)) %>% 
   ungroup() %>% 
   filter(year %in% c(1995, 2024)) %>% 
   mutate(year=paste0("n", year)) %>% 
   spread(key="year", value="nstocks") %>% 
-  mutate(added=n2024-n1995)
+  mutate(added=n2024-n1995, 
+         pchange=(n2024-n1995)/n1995) %>% 
+  arrange(desc(added))
+n_reg
 
 # Change by region and group
 n_reg_group <- nstocks %>% 
@@ -94,6 +99,7 @@ n_reg_group <- nstocks %>%
   mutate(year=paste0("n", year)) %>% 
   spread(key="year", value="nstocks") %>% 
   mutate(added=n2024-n1995)
+n_reg_group
 
 # Change by group
 n_group <- nstocks %>% 
@@ -103,8 +109,9 @@ n_group <- nstocks %>%
   filter(year %in% c(1995, 2024)) %>% 
   mutate(year=paste0("n", year)) %>% 
   spread(key="year", value="nstocks") %>% 
-  mutate(added=n2024-n1995)
-  
+  mutate(added=n2024-n1995, 
+         pchange=(n2024-n1995)/n1995)
+n_group
 
 # Plot data
 ################################################################################

@@ -11,6 +11,7 @@ library(tidyverse)
 # Directories
 outdir <- "data/sars/processed"
 plotdir <- "figures"
+tabledir <- "tables"
 
 # Read data
 data_orig <- readRDS(data, file=file.path(outdir, "US_sars_data.Rds"))
@@ -193,15 +194,31 @@ ggsave(g, filename=file.path(plotdir, "FigS10_strategic_reasons_wide.png"),
        width=6.5, height=6.5, units="in", dpi=600, bg="white")
 
 
-# Dep
+# Reason for depleted
 ################################################################################
 
 # Most depleted stocks are depleted because Endangered/Threatened
 # The rest are depleted based on expert judgement; a lot are really old
 # Big declines, small population sizes
 
-# Prep data
+# Number of depleted stocks
 data_orig %>% 
   # Reduce to 2024
+  filter(year==2024) %>% 
+  count(osp_status) 
+
+# Number of depleted stocks by ESA status
+data_orig %>% 
+  # Reduce to 2024
+  filter(year==2024) %>% 
+  count(osp_status, esa_status) 
+
+# Prep data
+dep_stocks <- data_orig %>% 
+  # Reduce to 2024
   filter(year==2024 & osp_status=="Depleted" & esa_status=="Not listed") %>% 
-  pull(stock)
+  # Simplify
+  select(subregion, stock, n_est, n_min)
+
+# Export
+write.csv(dep_stocks, file=file.path(tabledir, "TableS4_depleted_stocks_not_on_esa.csv"), row.names=F)

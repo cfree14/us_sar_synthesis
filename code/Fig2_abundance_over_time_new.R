@@ -89,6 +89,15 @@ data1 <- stats %>%
 data2 <- stats %>% 
   filter(!group %in% levels(stats$group)[1:4])
 
+# % change 1995 to 2024
+stats %>% 
+  filter(year %in% c(1995, 2024)) %>% 
+  select(catg, group, everything()) %>% 
+  spread(key="year", value="n_use") %>% 
+  rename("yr2024"="2024", "yr1995"="1995") %>% 
+  mutate(pchange=(yr2024-yr1995)/yr1995*100) %>% 
+  arrange(catg, desc(pchange))
+
 
 # Build trend data
 ################################################################################

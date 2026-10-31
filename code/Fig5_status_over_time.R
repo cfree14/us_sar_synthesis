@@ -47,6 +47,15 @@ stats_group <- data %>%
   ungroup() %>% 
   mutate(label=paste0(round(prop_ns*100,0), "%"))
 
+# Status by group
+stats_reg_group <- data %>% 
+  group_by(subregion, group, year) %>% 
+  summarize(n=n(),
+            n_ns=sum(!is.na(strategic_yn) & strategic_yn=="Non-strategic"), 
+            prop_ns = n_ns / n) %>% 
+  ungroup() %>% 
+  mutate(label=paste0(round(prop_ns*100,0), "%"))
+
 # Plot data
 ################################################################################
 
@@ -122,4 +131,7 @@ ggsave(g, filename=file.path(plotdir, "Fig5_status_over_time.png"),
 
 
 
-
+ggplot(stats_reg_group, aes(x=year, y=prop_ns, color=group)) +
+  facet_wrap(~subregion, ncol=3) +
+  geom_line() +
+  theme_bw()
