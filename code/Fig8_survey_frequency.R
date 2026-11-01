@@ -106,7 +106,9 @@ stats_group <- stats_use %>%
   # Build interval label
   mutate(int_label=paste0(round(pstocks_5yr_int*100, 0), "/", round(pstocks_8yr_int*100, 0), "%"))
 
-
+sum(stats_use$nsurveys >= 20)
+sum(stats_use$nsurveys >= 30)
+sum(stats_use$nsurveys >= 40)
 
 # Plot data
 ################################################################################

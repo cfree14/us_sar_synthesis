@@ -85,7 +85,14 @@ stock_key <- data %>%
   select(stock, stock_short, esa_status, reason_catg) %>%
   unique() %>% 
   mutate(reason_catg=factor(reason_catg, reason_catgs)) %>% 
-  arrange(esa_status, reason_catg)
+  arrange(esa_status, reason_catg) %>% 
+  # Add big picture reason
+  mutate(reason_catg_big=case_when(grepl("Endangered", reason_catg) ~ "ESA",
+                                   grepl("Depleted", reason_catg) ~ "MMPA",
+                                   reason_catg=="M/SI > PBR" ~ "PBR",
+                                   T ~ "Expert opinion"))
+
+table(stock_key$reason_catg_big) / nrow(stock_key) * 100 
 
 # Plot data
 ################################################################################

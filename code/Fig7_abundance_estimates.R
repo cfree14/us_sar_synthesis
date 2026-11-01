@@ -111,6 +111,32 @@ stats_cv <- data %>%
          region_label=paste0(region, " (", round(p_no_cv_region*100,0), "%)")) %>% 
   ungroup()
 
+# Overall number of stocks with no CV but an Nest in 2024
+data %>% 
+  # Has N_est
+  filter(!is.na(n_est)) %>% 
+  # CV type
+  mutate(cv_na=ifelse(is.na(n_cv), "No CV", "CV")) %>% 
+  count(cv_na) %>% 
+  mutate(prop=n/sum(n))
+163+34
+
+# Overall percent with CV > 0.3
+n_cvs_in_24 <- data %>% filter(!is.na(n_cv)) %>% pull(n_cv)
+sum(n_cvs_in_24>0.3) / length(n_cvs_in_24)
+
+# Overall survey age stats
+survey_ages <- data %>% 
+  # Only stocks with survey years
+  filter(!is.na(last_survey_yr)) %>% 
+  # Calculate years since survey
+  mutate(yrs_since_survey=2024-last_survey_yr) %>% 
+  pull(yrs_since_survey)
+length(survey_ages)
+sum(survey_ages<=8) / length(survey_ages)
+sum(survey_ages<=5) / length(survey_ages)
+
+
 # Plot data
 ################################################################################
 

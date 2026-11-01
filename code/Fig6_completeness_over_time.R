@@ -68,6 +68,7 @@ subregion_colors <- c(RColorBrewer::brewer.pal(9, "Blues")[c(5, 7)],
 
 # Theme
 my_theme <-  theme(axis.text=element_text(size=8),
+                   axis.text.x = element_text(angle = 45, vjust = 1, hjust=1),
                    axis.title=element_text(size=9),
                    legend.text=element_text(size=8),
                    legend.title=element_text(size=9),
@@ -79,6 +80,8 @@ my_theme <-  theme(axis.text=element_text(size=8),
                    panel.background = element_blank(), 
                    axis.line = element_line(colour = "black"),
                    # Legend
+                   legend.box.spacing = grid::unit(0, "pt"),
+                   legend.margin = margin(t = 0, r = 0, b = 5, l = 0),
                    legend.key = element_rect(fill = NA, color=NA),
                    legend.background = element_rect(fill=alpha('blue', 0)))
 
@@ -90,6 +93,7 @@ g <- ggplot(stats, aes(x=year, y=p_complete, color=factor(subregion, subregions)
   geom_line() +
   # Labels
   labs(x="Year", y="Percent of SARs with value") +
+  scale_x_continuous(breaks=seq(1995, 2025, 5)) +
   scale_y_continuous(labels=scales::percent_format()) +
   # Legend
   scale_color_manual(name="Region",
@@ -101,6 +105,6 @@ g
 
 # Export
 ggsave(g, filename=file.path(plotdir, "Fig6_completeness_over_time.png"), 
-       width=6.5, height=6.5, units="in", dpi=600, bg="white")
+       width=6.5, height=5.5, units="in", dpi=600, bg="white")
 
 
