@@ -131,6 +131,7 @@ g2
 # P(fisheries) first row
 g1a <- ggplot(pfisheries1, aes(x=year, y=pfisheries)) +
   facet_wrap(~group, ncol=4) +
+  geom_hline(yintercept=0.5, color="grey80", linetype="dashed") +
   geom_line(color="red") +
   # Labels
   labs(x="Year", y="Percent of\ntotal M/SI") +
@@ -147,6 +148,7 @@ g1a
 # P(fisheries) first row
 g2a <- ggplot(pfisheries2, aes(x=year, y=pfisheries)) +
   facet_wrap(~group, ncol=4) +
+  geom_hline(yintercept=0.5, color="grey80", linetype="dashed") +
   geom_line(color="red") +
   # Labels
   labs(x="Year", y="Percent of\ntotal M/SI") +
